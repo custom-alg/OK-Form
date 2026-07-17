@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor / OS cruft
+*.swp
+.idea/
+.vscode/
+
+# If you ever add a local static server or tooling
+node_modules/
