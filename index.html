@@ -20,10 +20,24 @@ input, select, button, textarea { font-family:var(--font-body); }
 ::placeholder { color:var(--muted); opacity:.7; }
 :focus-visible { outline:2px solid var(--red); outline-offset:2px; }
 ::selection { background:color-mix(in srgb, var(--red) 22%, transparent); }
+img { max-width:100%; }
+/* Responzivní úpravy pro telefony - přepisují inline styly (!important), aplikace styluje inline). */
+@media (max-width:640px) {
+  .app-header { padding:12px 16px !important; }
+  .app-main { padding:22px 14px 60px !important; }
+  .hero-title { font-size:27px !important; }
+  .page-title { font-size:23px !important; }
+  .form1-cols { grid-template-columns:1fr !important; }
+  .rating-grid { grid-template-columns:minmax(116px,1.2fr) repeat(7, minmax(42px,1fr)) !important; min-width:480px !important; }
+  .rating-label { font-size:13px !important; }
+}
+@media (max-width:400px) {
+  .rating-grid { min-width:430px !important; }
+}
 </style>
 </helmet>
 <div style="min-height:100vh; display:flex; flex-direction:column;">
-  <header style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 28px; background:var(--card); border-bottom:2px solid var(--line); position:sticky; top:0; z-index:10;">
+  <header class="app-header" style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 28px; background:var(--card); border-bottom:2px solid var(--line); position:sticky; top:0; z-index:10;">
     <div style="display:flex; align-items:center; gap:14px; cursor:pointer;" onClick="{{ goHome }}">
       <div style="width:38px; height:38px; background:var(--red); display:grid; place-items:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="square"><path d="M4 12.5 L9.5 18 L20 6.5"></path></svg></div>
       <div>
@@ -39,7 +53,7 @@ input, select, button, textarea { font-family:var(--font-body); }
     </sc-if>
   </header>
 
-  <main style="flex:1; width:100%; max-width:980px; margin:0 auto; padding:36px 24px 80px; box-sizing:border-box;">
+  <main class="app-main" style="flex:1; width:100%; max-width:980px; margin:0 auto; padding:36px 24px 80px; box-sizing:border-box;">
 
     <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
       <div style="display:grid; gap:28px;">
@@ -76,7 +90,7 @@ input, select, button, textarea { font-family:var(--font-body); }
         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;">
           <div>
             <a onClick="{{ goHome }}" style="font-size:13px; font-weight:600; cursor:pointer; text-decoration:none;">← Rozcestník</a>
-            <div style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací formulář - témata · návrhy</div>
+            <div class="page-title" style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací formulář - témata · návrhy</div>
           </div>
           <div style="font-size:13px; color:var(--muted);">Lístek 1 / 3</div>
         </div>
@@ -118,12 +132,27 @@ input, select, button, textarea { font-family:var(--font-body); }
               <div style="font-weight:800; font-size:13px; letter-spacing:.08em; font-family:var(--font-heading);">{{ g.titul }}</div>
               <div style="font-size:12.5px; font-weight:600; padding:5px 12px; background: {{ g.stavBg }}; color: {{ g.stavFg }};">{{ g.stav }}</div>
             </div>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px;">
-              <sc-for list="{{ g.pole }}" as="f" hint-placeholder-count="4">
-                <label style="display:grid; gap:6px; font-size:13px; font-weight:600; color:var(--muted);">{{ f.label }}
-                  <input value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="jedno téma" style="padding:11px 12px; border:1px solid var(--line); background:var(--field); color:var(--text); font-size:15px;">
-                </label>
-              </sc-for>
+            <div class="form1-cols" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div style="border:1px solid var(--line); border-left:3px solid var(--green); background:var(--greenbg); padding:16px; display:grid; gap:12px; align-content:start;">
+                <div style="display:flex; align-items:center; gap:8px; color:var(--green); font-weight:800; font-size:12px; letter-spacing:.08em; font-family:var(--font-heading);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>PŘIDAT DO POOLU
+                </div>
+                <sc-for list="{{ g.pridat }}" as="f" hint-placeholder-count="2">
+                  <label style="display:grid; gap:6px; font-size:13px; font-weight:600; color:var(--muted);">{{ f.label }}
+                    <input value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="název nového tématu" style="padding:11px 12px; border:1px solid var(--line); background:var(--field); color:var(--text); font-size:15px;">
+                  </label>
+                </sc-for>
+              </div>
+              <div style="border:1px solid var(--line); border-left:3px solid var(--red); background:var(--redbg); padding:16px; display:grid; gap:12px; align-content:start;">
+                <div style="display:flex; align-items:center; gap:8px; color:var(--red); font-weight:800; font-size:12px; letter-spacing:.08em; font-family:var(--font-heading);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14"></path></svg>VYŘADIT Z POOLU
+                </div>
+                <sc-for list="{{ g.vyradit }}" as="f" hint-placeholder-count="2">
+                  <label style="display:grid; gap:6px; font-size:13px; font-weight:600; color:var(--muted);">{{ f.label }}
+                    <input value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="téma k vyřazení" style="padding:11px 12px; border:1px solid var(--line); background:var(--field); color:var(--text); font-size:15px;">
+                  </label>
+                </sc-for>
+              </div>
             </div>
           </div>
         </sc-for>
@@ -143,7 +172,7 @@ input, select, button, textarea { font-family:var(--font-body); }
         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;">
           <div>
             <a onClick="{{ goHome }}" style="font-size:13px; font-weight:600; cursor:pointer; text-decoration:none;">← Rozcestník</a>
-            <div style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací lístek - témata · priority</div>
+            <div class="page-title" style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací lístek - témata · priority</div>
           </div>
           <div style="font-size:13px; color:var(--muted);">Lístek 2 / 3</div>
         </div>
@@ -186,11 +215,14 @@ input, select, button, textarea { font-family:var(--font-body); }
             <sc-if value="{{ akcieEmpty }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed var(--line); padding:18px; font-size:14px; color:var(--muted); text-align:left;">Zatím prázdné - klepněte na téma výše.</div></sc-if>
             <div style="display:grid; gap:6px;">
               <sc-for list="{{ akcieRanked }}" as="r" hint-placeholder-count="0">
-                <div draggable="true" onDragStart="{{ r.dragStart }}" onDragOver="{{ r.dragOver }}" onDragEnd="{{ dragEnd }}" style="display:flex; align-items:center; gap:12px; background:var(--field); border:1px solid var(--line); padding:10px 14px; cursor:grab;">
-                  <div style="width:28px; height:28px; background:var(--red); color:#fff; display:grid; place-items:center; font-weight:800; font-size:14px; flex-shrink:0; font-family:var(--font-heading);">{{ r.num }}</div>
-                  <div style="flex:1; font-size:15px; font-weight:600;">{{ r.nazev }}</div>
-                  <div style="color:var(--muted); font-size:16px; letter-spacing:2px;">⋮⋮</div>
-                  <button onClick="{{ r.remove }}" style="border:none; background:none; color:var(--muted); font-size:16px; cursor:pointer; padding:4px;" style-hover="color:var(--red);">✕</button>
+                <div class="rank-row" draggable="true" onDragStart="{{ r.dragStart }}" onDragOver="{{ r.dragOver }}" onDragEnd="{{ dragEnd }}" style="display:flex; align-items:center; gap:10px; background:var(--field); border:1px solid var(--line); padding:8px 12px;">
+                  <div style="width:30px; height:30px; background:var(--red); color:#fff; display:grid; place-items:center; font-weight:800; font-size:14px; flex-shrink:0; font-family:var(--font-heading);">{{ r.num }}</div>
+                  <div style="flex:1; font-size:15px; font-weight:600; min-width:0;">{{ r.nazev }}</div>
+                  <div style="display:flex; align-items:center; gap:2px; flex-shrink:0;">
+                    <button onClick="{{ r.moveUp }}" disabled="{{ r.upDis }}" title="Nahoru" aria-label="Posunout nahoru" style="border:1px solid var(--line); background:var(--chip); color:var(--text); width:38px; height:38px; display:grid; place-items:center; cursor:{{ r.upCur }}; opacity:{{ r.upOp }};" style-hover="border-color:var(--red); color:var(--red);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg></button>
+                    <button onClick="{{ r.moveDown }}" disabled="{{ r.downDis }}" title="Dolů" aria-label="Posunout dolů" style="border:1px solid var(--line); background:var(--chip); color:var(--text); width:38px; height:38px; display:grid; place-items:center; cursor:{{ r.downCur }}; opacity:{{ r.downOp }};" style-hover="border-color:var(--red); color:var(--red);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></button>
+                    <button onClick="{{ r.remove }}" title="Odebrat" aria-label="Odebrat téma" style="border:1px solid var(--line); background:none; color:var(--muted); width:38px; height:38px; display:grid; place-items:center; cursor:pointer;" style-hover="color:var(--red); border-color:var(--red);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+                  </div>
                 </div>
               </sc-for>
             </div>
@@ -219,11 +251,14 @@ input, select, button, textarea { font-family:var(--font-body); }
             <sc-if value="{{ dluhEmpty }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed var(--line); padding:18px; font-size:14px; color:var(--muted); text-align:left;">Zatím prázdné - klepněte na téma výše.</div></sc-if>
             <div style="display:grid; gap:6px;">
               <sc-for list="{{ dluhRanked }}" as="r" hint-placeholder-count="0">
-                <div draggable="true" onDragStart="{{ r.dragStart }}" onDragOver="{{ r.dragOver }}" onDragEnd="{{ dragEnd }}" style="display:flex; align-items:center; gap:12px; background:var(--field); border:1px solid var(--line); padding:10px 14px; cursor:grab;">
-                  <div style="width:28px; height:28px; background:var(--red); color:#fff; display:grid; place-items:center; font-weight:800; font-size:14px; flex-shrink:0; font-family:var(--font-heading);">{{ r.num }}</div>
-                  <div style="flex:1; font-size:15px; font-weight:600;">{{ r.nazev }}</div>
-                  <div style="color:var(--muted); font-size:16px; letter-spacing:2px;">⋮⋮</div>
-                  <button onClick="{{ r.remove }}" style="border:none; background:none; color:var(--muted); font-size:16px; cursor:pointer; padding:4px;" style-hover="color:var(--red);">✕</button>
+                <div class="rank-row" draggable="true" onDragStart="{{ r.dragStart }}" onDragOver="{{ r.dragOver }}" onDragEnd="{{ dragEnd }}" style="display:flex; align-items:center; gap:10px; background:var(--field); border:1px solid var(--line); padding:8px 12px;">
+                  <div style="width:30px; height:30px; background:var(--red); color:#fff; display:grid; place-items:center; font-weight:800; font-size:14px; flex-shrink:0; font-family:var(--font-heading);">{{ r.num }}</div>
+                  <div style="flex:1; font-size:15px; font-weight:600; min-width:0;">{{ r.nazev }}</div>
+                  <div style="display:flex; align-items:center; gap:2px; flex-shrink:0;">
+                    <button onClick="{{ r.moveUp }}" disabled="{{ r.upDis }}" title="Nahoru" aria-label="Posunout nahoru" style="border:1px solid var(--line); background:var(--chip); color:var(--text); width:38px; height:38px; display:grid; place-items:center; cursor:{{ r.upCur }}; opacity:{{ r.upOp }};" style-hover="border-color:var(--red); color:var(--red);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"></path></svg></button>
+                    <button onClick="{{ r.moveDown }}" disabled="{{ r.downDis }}" title="Dolů" aria-label="Posunout dolů" style="border:1px solid var(--line); background:var(--chip); color:var(--text); width:38px; height:38px; display:grid; place-items:center; cursor:{{ r.downCur }}; opacity:{{ r.downOp }};" style-hover="border-color:var(--red); color:var(--red);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></button>
+                    <button onClick="{{ r.remove }}" title="Odebrat" aria-label="Odebrat téma" style="border:1px solid var(--line); background:none; color:var(--muted); width:38px; height:38px; display:grid; place-items:center; cursor:pointer;" style-hover="color:var(--red); border-color:var(--red);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+                  </div>
                 </div>
               </sc-for>
             </div>
@@ -245,7 +280,7 @@ input, select, button, textarea { font-family:var(--font-body); }
         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;">
           <div>
             <a onClick="{{ goHome }}" style="font-size:13px; font-weight:600; cursor:pointer; text-decoration:none;">← Rozcestník</a>
-            <div style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací lístek - hlavní část</div>
+            <div class="page-title" style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací lístek - hlavní část</div>
           </div>
           <div style="font-size:13px; color:var(--muted);">Lístek 3 / 3</div>
         </div>
@@ -296,14 +331,14 @@ input, select, button, textarea { font-family:var(--font-body); }
                 <div style="font-size:12.5px; font-weight:700; padding:6px 14px; background: {{ s.stavBg }}; color: {{ s.stavFg }};">{{ s.stav }}</div>
               </div>
             </div>
-            <div style="display:grid; gap:6px; overflow-x:auto;">
-              <div style="display:grid; grid-template-columns:minmax(150px,1.4fr) repeat(7, minmax(46px,1fr)); gap:6px; min-width:560px;">
-                <div></div>
+            <div class="rating-scroll" style="display:grid; gap:6px; overflow-x:auto; -webkit-overflow-scrolling:touch;">
+              <div class="rating-grid" style="display:grid; grid-template-columns:minmax(140px,1.4fr) repeat(7, minmax(46px,1fr)); gap:6px; min-width:560px;">
+                <div class="rating-label" style="position:sticky; left:0; background:var(--card); z-index:1;"></div>
                 <sc-for list="{{ skala }}" as="h" hint-placeholder-count="7"><div style="text-align:center; font-size:12px; font-weight:700; color:var(--muted); padding:4px 0;">{{ h }}</div></sc-for>
               </div>
               <sc-for list="{{ s.radky }}" as="r" hint-placeholder-count="4">
-                <div style="display:grid; grid-template-columns:minmax(150px,1.4fr) repeat(7, minmax(46px,1fr)); gap:6px; align-items:center; min-width:560px;">
-                  <div style="font-size:14px; font-weight:600; padding-right:8px;">{{ r.nazev }}</div>
+                <div class="rating-grid" style="display:grid; grid-template-columns:minmax(140px,1.4fr) repeat(7, minmax(46px,1fr)); gap:6px; align-items:center; min-width:560px;">
+                  <div class="rating-label" style="font-size:14px; font-weight:600; padding-right:10px; position:sticky; left:0; background:var(--card); z-index:1;">{{ r.nazev }}</div>
                   <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="7">
                     <button onClick="{{ c.pick }}" disabled="{{ c.dis }}" style="border:1px solid {{ c.bc }}; padding:9px 2px; font-size:12.5px; font-weight:700; background: {{ c.bg }}; color: {{ c.fg }}; opacity: {{ c.op }}; cursor: {{ c.cur }}; white-space:nowrap;" style-hover="border-color:var(--muted);">{{ c.label }}</button>
                   </sc-for>
@@ -391,6 +426,11 @@ function csvPole(v, sep) {
 }
 const DRAFT_KEY = "bc-hlasovani-draft-v1";
 const EMPTY_B1 = { az1:"", az2:"", av1:"", av2:"", dz1:"", dz2:"", dv1:"", dv2:"" };
+// ---- Směrování přes URL hash (funguje na statickém hostingu, umožňuje tlačítko Zpět) ----
+// Každé zobrazení má vlastní hash → vlastní záznam v historii prohlížeče.
+const VIEW_HASH = { home:"#/", b1:"#/temata-navrhy", b2:"#/temata-priority", b3:"#/hlavni-cast", done:"#/hotovo" };
+const HASH_VIEW = { "":"home", "#":"home", "#/":"home", "#/temata-navrhy":"b1", "#/temata-priority":"b2", "#/hlavni-cast":"b3", "#/hotovo":"done" };
+const viewFromHash = () => HASH_VIEW[location.hash] || "home";
 // Záložní prázdná konfigurace, než se načte config.js
 const K_FALLBACK = { vysledkyEmail:"", csvDelimiter:",", darkLightMode:true, defaultTheme:"light", validaceRezim:"block", nettoSkore:false,
   obrazky:{}, clenoveJmeno:[], clenoveMail:[], pool:{ akcie:{aktualne:0,max:5,min:2}, dluhopisy:{aktualne:0,max:5,min:2} },
@@ -409,8 +449,24 @@ class Component extends DCLogic {
       } catch (e) {}
       if (!k.darkLightMode) theme = this.props.defaultTheme ?? k.defaultTheme;
       document.body.dataset.theme = theme;
-      this.setState({ k, rezim: k.validaceRezim, theme, ...(draft ? { email:draft.email||"", jmeno:draft.jmeno||"", b1:{...EMPTY_B1, ...draft.b1}, rankA:draft.rankA||[], rankD:draft.rankD||[], ratings:draft.ratings||{} } : {}) });
+      // Stránka "hotovo" není po reloadu smysluplná (lastCsv se neukládá) - vrať na rozcestník.
+      let view = viewFromHash();
+      if (view === "done") { view = "home"; history.replaceState(null, "", location.pathname + location.search); }
+      this.setState({ k, rezim: k.validaceRezim, theme, view, ...(draft ? { email:draft.email||"", jmeno:draft.jmeno||"", b1:{...EMPTY_B1, ...draft.b1}, rankA:draft.rankA||[], rankD:draft.rankD||[], ratings:draft.ratings||{} } : {}) });
     });
+    // URL je jediný zdroj pravdy pro aktuální stránku - zpět/vpřed v prohlížeči i gesto zpět na mobilu.
+    this.onRoute = () => this.setState({ view: viewFromHash() });
+    window.addEventListener("hashchange", this.onRoute);
+    window.addEventListener("popstate", this.onRoute);
+  }
+  componentWillUnmount() {
+    if (this.onRoute) { window.removeEventListener("hashchange", this.onRoute); window.removeEventListener("popstate", this.onRoute); }
+  }
+  // Navigace mění URL hash; posluchač pak přepne view (vznikne záznam v historii → tlačítko Zpět funguje).
+  jdiNa(view) {
+    const h = VIEW_HASH[view] || "#/";
+    if ((location.hash || "") === h) this.setState({ view });
+    else location.hash = h;
   }
   componentDidUpdate() {
     const { email, jmeno, b1, rankA, rankD, ratings } = this.state;
@@ -438,10 +494,20 @@ class Component extends DCLogic {
   }
 
   // ---- lístek 2 ----
-  rankItem(cls, nazev, i) {
+  rankItem(cls, nazev, i, count) {
     const key = cls === "A" ? "rankA" : "rankD";
+    // Přesun mezi indexy i a j (šipky ▲/▼ fungují i na dotykových zařízeních, kde HTML5 drag ne).
+    const presun = (j) => this.setState(st => {
+      if (j < 0 || j >= st[key].length) return null;
+      const a = [...st[key]]; const [m] = a.splice(i, 1); a.splice(j, 0, m); return { [key]: a };
+    });
+    const isFirst = i === 0, isLast = i === count - 1;
     return {
       nazev, num: i + 1,
+      upDis: isFirst, upOp: isFirst ? 0.3 : 1, upCur: isFirst ? "default" : "pointer",
+      downDis: isLast, downOp: isLast ? 0.3 : 1, downCur: isLast ? "default" : "pointer",
+      moveUp: () => presun(i - 1),
+      moveDown: () => presun(i + 1),
       remove: () => this.setState(st => ({ [key]: st[key].filter((_, j) => j !== i) })),
       dragStart: (e) => { this.drag = { key, i }; e.dataTransfer.effectAllowed = "move"; },
       dragOver: (e) => {
@@ -515,14 +581,17 @@ class Component extends DCLogic {
   odevzdat(typ) {
     const { csv, filename } = this.buildCsv(typ);
     this.stahnout(csv, filename);
-    this.setState({ view:"done", lastCsv:csv, lastFilename:filename });
+    this.setState({ lastCsv:csv, lastFilename:filename });
+    this.jdiNa("done");
   }
 
-  // Obrázek se vykreslí až po načtení configu; při chybě načtení se skryje (zůstane placeholder)
+  // Obrázek se vykreslí až po načtení configu; při chybě načtení se skryje (zůstane placeholder).
+  // Po úspěšném načtení skryjeme sourozenecký placeholder, aby jeho text neprosvítal přes obrázek.
   imgEl(src, alt) {
     if (!this.state.k || !src) return null;
     return React.createElement("img", { src, alt, className: "grayscale",
       style: { position: "relative", display: "block", width: "100%" },
+      onLoad: (e) => { const ph = e.currentTarget.previousElementSibling; if (ph) ph.style.display = "none"; },
       onError: (e) => { e.currentTarget.style.display = "none"; } });
   }
 
@@ -578,8 +647,8 @@ class Component extends DCLogic {
 
     return {
       isHome: st.view === "home", isB1: st.view === "b1", isB2: st.view === "b2", isB3: st.view === "b3", isDone: st.view === "done",
-      goHome: () => this.setState({ view: "home" }),
-      goB1: () => this.setState({ view: "b1" }), goB2: () => this.setState({ view: "b2" }), goB3: () => this.setState({ view: "b3" }),
+      goHome: () => this.jdiNa("home"),
+      goB1: () => this.jdiNa("b1"), goB2: () => this.jdiNa("b2"), goB3: () => this.jdiNa("b3"),
       temaPrepinac: k.darkLightMode !== false,
       isDark: st.theme === "dark", isLight: st.theme !== "dark",
       toggleTheme: () => { const t = st.theme === "dark" ? "light" : "dark"; document.body.dataset.theme = t; try { localStorage.setItem("bc-hlasovani-theme", t); } catch (e) {} this.setState({ theme: t }); },
@@ -597,8 +666,12 @@ class Component extends DCLogic {
       imgFail: (e) => { e.currentTarget.style.display = "none"; },
 
       b1Skupiny: [
-        { titul: "AKCIE - NÁVRHY", ...chip(ak), stav: ak.stav, pole: [b1Pole("az1", "Zařazení nového tématu č. 1"), b1Pole("az2", "Zařazení nového tématu č. 2"), b1Pole("av1", "Vyřazení stávajícího tématu č. 1"), b1Pole("av2", "Vyřazení stávajícího tématu č. 2")] },
-        { titul: "DLUHOPISY - NÁVRHY", ...chip(dl), stav: dl.stav, pole: [b1Pole("dz1", "Zařazení nového tématu č. 1"), b1Pole("dz2", "Zařazení nového tématu č. 2"), b1Pole("dv1", "Vyřazení stávajícího tématu č. 1"), b1Pole("dv2", "Vyřazení stávajícího tématu č. 2")] },
+        { titul: "AKCIE - NÁVRHY", ...chip(ak), stav: ak.stav,
+          pridat: [b1Pole("az1", "Nové téma č. 1"), b1Pole("az2", "Nové téma č. 2")],
+          vyradit: [b1Pole("av1", "Stávající téma č. 1"), b1Pole("av2", "Stávající téma č. 2")] },
+        { titul: "DLUHOPISY - NÁVRHY", ...chip(dl), stav: dl.stav,
+          pridat: [b1Pole("dz1", "Nové téma č. 1"), b1Pole("dz2", "Nové téma č. 2")],
+          vyradit: [b1Pole("dv1", "Stávající téma č. 1"), b1Pole("dv2", "Stávající téma č. 2")] },
       ],
       b1Dis: !b1Ok, b1BtnBg: btn(b1Ok).bg, b1BtnCur: btn(b1Ok).cur, b1Hint: hint(b1Ok, b1Chybi), b1HintFg: b1Ok ? "var(--green)" : "var(--muted)",
       submitB1: () => this.odevzdat("navrhy"),
@@ -606,8 +679,8 @@ class Component extends DCLogic {
 
       akcieAvail: k.temataAkcie.map(t => this.availItem("A", t)),
       dluhAvail: k.temataDluhopisy.map(t => this.availItem("D", t)),
-      akcieRanked: st.rankA.map((t, i) => this.rankItem("A", t, i)),
-      dluhRanked: st.rankD.map((t, i) => this.rankItem("D", t, i)),
+      akcieRanked: st.rankA.map((t, i) => this.rankItem("A", t, i, st.rankA.length)),
+      dluhRanked: st.rankD.map((t, i) => this.rankItem("D", t, i, st.rankD.length)),
       akcieEmpty: st.rankA.length === 0, dluhEmpty: st.rankD.length === 0,
       dragEnd: () => { this.drag = null; },
       b2AkcieStav: sA.stav, b2AkcieBg: sA.ok ? "var(--greenbg)" : "var(--chip)", b2AkcieFg: sA.ok ? "var(--green)" : "var(--muted)",

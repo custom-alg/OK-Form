@@ -54,8 +54,8 @@ export default {
       { id: "d_cz", nazev: "České státní dluhopisy" },
       { id: "d_us", nazev: "Americké státní dluhopisy" },
       { id: "d_eu", nazev: "Evropské státní dluhopisy" },
-      { id: "d_ig", nazev: "Korporátní dluhopisy - investiční stupeň" },
-      { id: "d_hy", nazev: "Korporátní dluhopisy - spekulativní stupeň" },
+      { id: "d_ig", nazev: "Korpo. dluhopisy - investiční stupeň" },
+      { id: "d_hy", nazev: "Korpo. dluhopisy - spekulativní stupeň" },
       { id: "d_ost", nazev: "Ostatní dluhopisové pozice" } ] },
     { id: "fx", nazev: "FX", poznamka: "Kontrolní pravidlo se zde neuplatňuje.", pravidlo: false, radky: [
       { id: "fx_eur", nazev: "EUR/CZK" },
