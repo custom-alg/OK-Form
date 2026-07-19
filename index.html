@@ -289,7 +289,12 @@ input, select, button, textarea { font-family:var(--font-body); }
                 <div style="font-weight:800; font-size:13px; letter-spacing:.08em; font-family:var(--font-heading);">{{ s.nazev }}</div>
                 <div style="font-size:12.5px; color:var(--muted);">{{ s.poznamka }}</div>
               </div>
-              <div style="font-size:12.5px; font-weight:700; padding:6px 14px; background: {{ s.stavBg }}; color: {{ s.stavFg }};">{{ s.stav }}</div>
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <sc-if value="{{ s.showNetto }}" hint-placeholder-val="{{ true }}">
+                  <div title="Souhrn přesvědčení sekce" style="font-size:12.5px; font-weight:700; padding:6px 14px; background: {{ s.nettoBg }}; color: {{ s.nettoFg }};">{{ s.netto }}</div>
+                </sc-if>
+                <div style="font-size:12.5px; font-weight:700; padding:6px 14px; background: {{ s.stavBg }}; color: {{ s.stavFg }};">{{ s.stav }}</div>
+              </div>
             </div>
             <div style="display:grid; gap:6px; overflow-x:auto;">
               <div style="display:grid; grid-template-columns:minmax(150px,1.4fr) repeat(7, minmax(46px,1fr)); gap:6px; min-width:560px;">
@@ -387,8 +392,8 @@ function csvPole(v, sep) {
 const DRAFT_KEY = "bc-hlasovani-draft-v1";
 const EMPTY_B1 = { az1:"", az2:"", av1:"", av2:"", dz1:"", dz2:"", dv1:"", dv2:"" };
 // Záložní prázdná konfigurace, než se načte config.js
-const K_FALLBACK = { vysledkyEmail:"", csvDelimiter:",", darkLightMode:true, defaultTheme:"light", validaceRezim:"block",
-  obrazky:{}, clenove:[], pool:{ akcie:{aktualne:0,max:5,min:2}, dluhopisy:{aktualne:0,max:5,min:2} },
+const K_FALLBACK = { vysledkyEmail:"", csvDelimiter:",", darkLightMode:true, defaultTheme:"light", validaceRezim:"block", nettoSkore:false,
+  obrazky:{}, clenoveJmeno:[], clenoveMail:[], pool:{ akcie:{aktualne:0,max:5,min:2}, dluhopisy:{aktualne:0,max:5,min:2} },
   temataAkcie:[], temataDluhopisy:[], maxPriorit:5, skala:["- - -","- -","-","N","+","+ +","+ + +"], sekceHlavni:[] };
 
 class Component extends DCLogic {
@@ -479,6 +484,17 @@ class Component extends DCLogic {
     return { ok:true, sum, stav:"✓ Součet 0", bg:"var(--greenbg)", fg:"var(--green)" };
   }
 
+  // Netto skóre sekce = souhrn přesvědčení hlasujícího (kladné = důvěra, záporné = nedůvěra),
+  // počítané z celé škály (-3…+3). Odznak se zobrazí jen když je nettoSkore=true.
+  sekceNetto(sec) {
+    const r = this.state.ratings, k = this.k(), mid = (k.skala.length - 1) / 2;
+    const skore = (i) => i - mid;
+    const sum = sec.radky.reduce((a, x) => a + (r[x.id] == null ? 0 : skore(r[x.id])), 0);
+    const fmt = (n) => (n > 0 ? "+" : "") + n;
+    return { sum, label: "Netto " + fmt(sum), bg: "var(--chip)",
+      fg: sum > 0 ? "var(--green)" : sum < 0 ? "var(--red)" : "var(--muted)" };
+  }
+
   // ---- CSV ----
   buildCsv(typ) {
     const sep = this.sep();
@@ -532,8 +548,10 @@ class Component extends DCLogic {
     // lístek 3
     const sekce = k.sekceHlavni.map(sec => {
       const stav = this.sekceStav(sec);
+      const netto = this.sekceNetto(sec);
       const hodnota = (id) => st.ratings[id] == null ? 0 : st.ratings[id] < 3 ? -1 : st.ratings[id] > 3 ? 1 : 0;
       return { nazev: sec.nazev, poznamka: sec.poznamka, stav: stav.stav, stavBg: stav.bg, stavFg: stav.fg, ok: stav.ok,
+        showNetto: k.nettoSkore === true, netto: netto.label, nettoBg: netto.bg, nettoFg: netto.fg,
         radky: sec.radky.map(r => {
           const ostatni = sec.radky.filter(o => o.id !== r.id);
           const sumOstatni = ostatni.reduce((a, o) => a + hodnota(o.id), 0);
@@ -565,13 +583,17 @@ class Component extends DCLogic {
       temaPrepinac: k.darkLightMode !== false,
       isDark: st.theme === "dark", isLight: st.theme !== "dark",
       toggleTheme: () => { const t = st.theme === "dark" ? "light" : "dark"; document.body.dataset.theme = t; try { localStorage.setItem("bc-hlasovani-theme", t); } catch (e) {} this.setState({ theme: t }); },
-      clenove: k.clenove, obrazky: k.obrazky,
+      clenove: k.clenoveJmeno, obrazky: k.obrazky,
       imgTemata: this.imgEl(k.obrazky.temataAktualni, "Aktuálně zařazená témata"),
       imgAkcie: this.imgEl(k.obrazky.akciePrehled, "Přehled témat - akcie"),
       imgDluhopisy: this.imgEl(k.obrazky.dluhopisyPrehled, "Přehled témat - dluhopisy"),
       imgPool: this.imgEl(k.obrazky.poolSchvaleny, "Nově schválený pool témat"),
       email: st.email, onEmail: (e) => this.setState({ email: e.target.value }),
-      jmeno: st.jmeno, onJmeno: (e) => this.setState({ jmeno: e.target.value }),
+      jmeno: st.jmeno, onJmeno: (e) => {
+        const jmeno = e.target.value, i = k.clenoveJmeno.indexOf(jmeno);
+        // Výběr jména předvyplní e-mail z config.js; uživatel jej může ručně změnit.
+        this.setState(i >= 0 ? { jmeno, email: k.clenoveMail[i] || "" } : { jmeno });
+      },
       imgFail: (e) => { e.currentTarget.style.display = "none"; },
 
       b1Skupiny: [

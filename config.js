@@ -10,7 +10,7 @@ export default {
   defaultTheme: "light",                 // "light" | "dark"
   validaceRezim: "block",                // "block" = nedosažitelné volby zešednou a nejdou stisknout
                                          // "warning" = vše lze klikat, ale lístek se součtem ≠ 0 nelze odeslat
-  nettoSkore: false,                     // true = - -- --- jsou -1 -2 -3, false = - -- --- jsou všechny -1
+  nettoSkore: true,                      // badge with netto score (−3…+3) is shown in section header; false = only direction (−1/0/+1) as control value
 
   // --- Cesty k obrázkům (admin je přepisuje soubory se stejným názvem) ---
   obrazky: {
