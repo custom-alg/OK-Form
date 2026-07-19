@@ -1,5 +1,5 @@
 // ================================================================
-// KONFIGURACE APLIKACE — vše, co spravuje administrátor, je zde.
+// KONFIGURACE APLIKACE - vše, co spravuje administrátor, je zde.
 // Hlavní program (Hlasovani.dc.html) tento soubor pouze načítá.
 // ================================================================
 export default {
@@ -10,6 +10,7 @@ export default {
   defaultTheme: "light",                 // "light" | "dark"
   validaceRezim: "block",                // "block" = nedosažitelné volby zešednou a nejdou stisknout
                                          // "warning" = vše lze klikat, ale lístek se součtem ≠ 0 nelze odeslat
+  nettoSkore: false,                     // true = - -- --- jsou -1 -2 -3, false = - -- --- jsou všechny -1
 
   // --- Cesty k obrázkům (admin je přepisuje soubory se stejným názvem) ---
   obrazky: {
@@ -20,7 +21,8 @@ export default {
   },
 
   // --- Hlasující ---
-  clenove: ["Petr Budinský", "Jiří Mikeš", "Ondřej Pěška", "Petr Šimčák", "Jiří Šindelář"],
+  clenoveJmeno: ["Petr Budinský", "Jiří Mikeš", "Ondřej Pěška", "Petr Šimčák", "Jiří Šindelář"],
+  clenoveMail: ["petr.budinsky@monecois.cz", "jiri.mikes@monecois.cz", "ondrej.peska@monecois.cz", "petr.simcak@monecois.cz", "jiri.sindelar@monecois.cz"],
 
   // --- Lístek 1: stav poolu témat (určuje, kolik vyřazení musí doprovázet zařazení) ---
   pool: {
@@ -39,16 +41,24 @@ export default {
   // pravidlo: true = součet kontrolních hodnot sekce musí být 0.
   sekceHlavni: [
     { id: "tridy", nazev: "TŘÍDY AKTIV", pravidlo: true, radky: [
-      { id: "t_penezni", nazev: "Peněžní trh" }, { id: "t_akcie", nazev: "Akcie" },
-      { id: "t_dluhopisy", nazev: "Dluhopisy" }, { id: "t_alternativy", nazev: "Alternativy" } ] },
+      { id: "t_penezni", nazev: "Peněžní trh" },
+      { id: "t_akcie", nazev: "Akcie" },
+      { id: "t_dluhopisy", nazev: "Dluhopisy" },
+      { id: "t_alternativy", nazev: "Alternativy" } ] },
     { id: "akcie", nazev: "AKCIE", pravidlo: true, radky: [
-      { id: "a_us", nazev: "Americké akcie" }, { id: "a_eu", nazev: "Evropské akcie" },
-      { id: "a_em", nazev: "Akcie rozvíjejících se trhů" }, { id: "a_temata", nazev: "Témata / ostatní akciové pozice" } ] },
+      { id: "a_us", nazev: "Americké akcie" },
+      { id: "a_eu", nazev: "Evropské akcie" },
+      { id: "a_em", nazev: "Akcie rozvíjejících se trhů" },
+      { id: "a_temata", nazev: "Témata / ostatní akciové pozice" } ] },
     { id: "dluhopisy", nazev: "DLUHOPISY", pravidlo: true, radky: [
-      { id: "d_cz", nazev: "České státní dluhopisy" }, { id: "d_us", nazev: "Americké státní dluhopisy" },
-      { id: "d_eu", nazev: "Evropské státní dluhopisy" }, { id: "d_ig", nazev: "Korporátní dluhopisy — investiční stupeň" },
-      { id: "d_hy", nazev: "Korporátní dluhopisy — spekulativní stupeň" }, { id: "d_ost", nazev: "Ostatní dluhopisové pozice" } ] },
+      { id: "d_cz", nazev: "České státní dluhopisy" },
+      { id: "d_us", nazev: "Americké státní dluhopisy" },
+      { id: "d_eu", nazev: "Evropské státní dluhopisy" },
+      { id: "d_ig", nazev: "Korporátní dluhopisy - investiční stupeň" },
+      { id: "d_hy", nazev: "Korporátní dluhopisy - spekulativní stupeň" },
+      { id: "d_ost", nazev: "Ostatní dluhopisové pozice" } ] },
     { id: "fx", nazev: "FX", poznamka: "Kontrolní pravidlo se zde neuplatňuje.", pravidlo: false, radky: [
-      { id: "fx_eur", nazev: "EUR/CZK" }, { id: "fx_usd", nazev: "USD/CZK" } ] },
+      { id: "fx_eur", nazev: "EUR/CZK" },
+      { id: "fx_usd", nazev: "USD/CZK" } ] },
   ],
 };
