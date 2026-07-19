@@ -45,7 +45,7 @@ input, select, button, textarea { font-family:var(--font-body); }
       <div style="display:grid; gap:28px;">
         <div style="display:grid; gap:10px; padding:8px 0 4px;">
           <div style="font-family:var(--font-heading); font-weight:800; font-size:38px; line-height:1.08; letter-spacing:-.015em;">Hlasování investičního výboru</div>
-          <div style="font-size:16px; color:var(--muted); max-width:640px; text-wrap:pretty;">Vyberte hlasovací formulář. Pravidla hlasování jsou kontrolována přímo ve formuláři — neplatný lístek nelze odeslat. Výsledkem je soubor CSV, který po vyplnění stáhnete a odešlete.</div>
+          <div style="font-size:16px; color:var(--muted); max-width:640px; text-wrap:pretty;">Vyberte hlasovací formulář. Pravidla hlasování jsou kontrolována přímo ve formuláři - neplatný lístek nelze odeslat. Výsledkem je soubor CSV, který po vyplnění stáhnete a odešlete.</div>
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:18px;">
           <div style="background:var(--card); border:1px solid var(--line); border-top:2px solid var(--text); padding:24px; display:flex; flex-direction:column; gap:12px;">
@@ -67,7 +67,7 @@ input, select, button, textarea { font-family:var(--font-body); }
             <button onClick="{{ goB3 }}" style="background:var(--red); color:#fff; border:none; padding:12px 20px; font-size:15px; font-weight:700; cursor:pointer; text-align:left; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">Vyplnit formulář →</button>
           </div>
         </div>
-        <div style="font-size:13px; color:var(--muted); border-top:2px solid var(--line); padding-top:16px;">Rozpracovaný lístek se automaticky ukládá v tomto prohlížeči. Aplikace nemá server — data opouštějí stránku pouze jako CSV soubor.</div>
+        <div style="font-size:13px; color:var(--muted); border-top:2px solid var(--line); padding-top:16px;">Rozpracovaný lístek se automaticky ukládá v tomto prohlížeči. Aplikace nemá server - data opouštějí stránku pouze jako CSV soubor.</div>
       </div>
     </sc-if>
 
@@ -76,7 +76,7 @@ input, select, button, textarea { font-family:var(--font-body); }
         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;">
           <div>
             <a onClick="{{ goHome }}" style="font-size:13px; font-weight:600; cursor:pointer; text-decoration:none;">← Rozcestník</a>
-            <div style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací formulář — témata · návrhy</div>
+            <div style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací formulář - témata · návrhy</div>
           </div>
           <div style="font-size:13px; color:var(--muted);">Lístek 1 / 3</div>
         </div>
@@ -86,7 +86,7 @@ input, select, button, textarea { font-family:var(--font-body); }
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px;">
             <label style="display:grid; gap:6px; font-size:13px; font-weight:600; color:var(--muted);">Jméno a příjmení *
               <select value="{{ jmeno }}" onChange="{{ onJmeno }}" style="padding:11px 12px; border:1px solid var(--line); background:var(--field); color:var(--text); font-size:15px;">
-                <option value="">— vyberte —</option>
+                <option value="">- vyberte -</option>
                 <sc-for list="{{ clenove }}" as="c" hint-placeholder-count="5"><option value="{{ c }}">{{ c }}</option></sc-for>
               </select>
             </label>
@@ -105,9 +105,9 @@ input, select, button, textarea { font-family:var(--font-body); }
           <details style="font-size:14px; color:var(--muted);">
             <summary style="cursor:pointer; font-weight:600; color:var(--text);">Pravidla hlasování</summary>
             <div style="padding-top:10px; display:grid; gap:8px; text-wrap:pretty;">
-              <div>Každý hlasující může navrhnout až 2 témata ke každé třídě aktiv. Každý návrh na zařazení musí být doprovázen jedním návrhem na vyřazení — výjimkou je nenaplněný pool (méně než 5 témat).</div>
+              <div>Každý hlasující může navrhnout až 2 témata ke každé třídě aktiv. Každý návrh na zařazení musí být doprovázen jedním návrhem na vyřazení - výjimkou je nenaplněný pool (méně než 5 témat).</div>
               <div>Každý pool musí obsahovat minimálně 2 a maximálně 5 témat. Do každého pole uveďte vždy jen jedno téma.</div>
-              <div>Pokud nenavrhujete žádné téma, odešlete lístek nevyplněný — v archivu se tak odliší chybějící hlas od neutrálního.</div>
+              <div>Pokud nenavrhujete žádné téma, odešlete lístek nevyplněný - v archivu se tak odliší chybějící hlas od neutrálního.</div>
             </div>
           </details>
         </div>
@@ -143,7 +143,7 @@ input, select, button, textarea { font-family:var(--font-body); }
         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;">
           <div>
             <a onClick="{{ goHome }}" style="font-size:13px; font-weight:600; cursor:pointer; text-decoration:none;">← Rozcestník</a>
-            <div style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací lístek — témata · priority</div>
+            <div style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací lístek - témata · priority</div>
           </div>
           <div style="font-size:13px; color:var(--muted);">Lístek 2 / 3</div>
         </div>
@@ -153,7 +153,7 @@ input, select, button, textarea { font-family:var(--font-body); }
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px;">
             <label style="display:grid; gap:6px; font-size:13px; font-weight:600; color:var(--muted);">Jméno a příjmení *
               <select value="{{ jmeno }}" onChange="{{ onJmeno }}" style="padding:11px 12px; border:1px solid var(--line); background:var(--field); color:var(--text); font-size:15px;">
-                <option value="">— vyberte —</option>
+                <option value="">- vyberte -</option>
                 <sc-for list="{{ clenove }}" as="c" hint-placeholder-count="5"><option value="{{ c }}">{{ c }}</option></sc-for>
               </select>
             </label>
@@ -170,7 +170,7 @@ input, select, button, textarea { font-family:var(--font-body); }
             <div style="font-size:12.5px; font-weight:600; padding:5px 12px; background: {{ b2AkcieBg }}; color: {{ b2AkcieFg }};">{{ b2AkcieStav }}</div>
           </div>
           <div style="position:relative; min-height:130px; border:1px dashed var(--line); overflow:hidden;">
-            <div style="position:absolute; inset:0; display:grid; place-items:center; color:var(--muted); font-size:13px; text-align:center; padding:16px;">Souhrnná tabulka — akcie: zařazeno · návrhy k zařazení · návrhy k vyřazení<br>(soubor: {{ obrazky.akciePrehled }})</div>
+            <div style="position:absolute; inset:0; display:grid; place-items:center; color:var(--muted); font-size:13px; text-align:center; padding:16px;">Souhrnná tabulka - akcie: zařazeno · návrhy k zařazení · návrhy k vyřazení<br>(soubor: {{ obrazky.akciePrehled }})</div>
             {{ imgAkcie }}
           </div>
           <div style="display:grid; gap:8px;">
@@ -183,7 +183,7 @@ input, select, button, textarea { font-family:var(--font-body); }
           </div>
           <div style="display:grid; gap:8px;">
             <div style="font-size:11px; font-weight:800; color:var(--muted); letter-spacing:.1em;">VAŠE POŘADÍ PRIORIT</div>
-            <sc-if value="{{ akcieEmpty }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed var(--line); padding:18px; font-size:14px; color:var(--muted); text-align:left;">Zatím prázdné — klepněte na téma výše.</div></sc-if>
+            <sc-if value="{{ akcieEmpty }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed var(--line); padding:18px; font-size:14px; color:var(--muted); text-align:left;">Zatím prázdné - klepněte na téma výše.</div></sc-if>
             <div style="display:grid; gap:6px;">
               <sc-for list="{{ akcieRanked }}" as="r" hint-placeholder-count="0">
                 <div draggable="true" onDragStart="{{ r.dragStart }}" onDragOver="{{ r.dragOver }}" onDragEnd="{{ dragEnd }}" style="display:flex; align-items:center; gap:12px; background:var(--field); border:1px solid var(--line); padding:10px 14px; cursor:grab;">
@@ -203,7 +203,7 @@ input, select, button, textarea { font-family:var(--font-body); }
             <div style="font-size:12.5px; font-weight:600; padding:5px 12px; background: {{ b2DluhBg }}; color: {{ b2DluhFg }};">{{ b2DluhStav }}</div>
           </div>
           <div style="position:relative; min-height:130px; border:1px dashed var(--line); overflow:hidden;">
-            <div style="position:absolute; inset:0; display:grid; place-items:center; color:var(--muted); font-size:13px; text-align:center; padding:16px;">Souhrnná tabulka — dluhopisy: zařazeno · návrhy k zařazení · návrhy k vyřazení<br>(soubor: {{ obrazky.dluhopisyPrehled }})</div>
+            <div style="position:absolute; inset:0; display:grid; place-items:center; color:var(--muted); font-size:13px; text-align:center; padding:16px;">Souhrnná tabulka - dluhopisy: zařazeno · návrhy k zařazení · návrhy k vyřazení<br>(soubor: {{ obrazky.dluhopisyPrehled }})</div>
             {{ imgDluhopisy }}
           </div>
           <div style="display:grid; gap:8px;">
@@ -216,7 +216,7 @@ input, select, button, textarea { font-family:var(--font-body); }
           </div>
           <div style="display:grid; gap:8px;">
             <div style="font-size:11px; font-weight:800; color:var(--muted); letter-spacing:.1em;">VAŠE POŘADÍ PRIORIT</div>
-            <sc-if value="{{ dluhEmpty }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed var(--line); padding:18px; font-size:14px; color:var(--muted); text-align:left;">Zatím prázdné — klepněte na téma výše.</div></sc-if>
+            <sc-if value="{{ dluhEmpty }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed var(--line); padding:18px; font-size:14px; color:var(--muted); text-align:left;">Zatím prázdné - klepněte na téma výše.</div></sc-if>
             <div style="display:grid; gap:6px;">
               <sc-for list="{{ dluhRanked }}" as="r" hint-placeholder-count="0">
                 <div draggable="true" onDragStart="{{ r.dragStart }}" onDragOver="{{ r.dragOver }}" onDragEnd="{{ dragEnd }}" style="display:flex; align-items:center; gap:12px; background:var(--field); border:1px solid var(--line); padding:10px 14px; cursor:grab;">
@@ -245,7 +245,7 @@ input, select, button, textarea { font-family:var(--font-body); }
         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;">
           <div>
             <a onClick="{{ goHome }}" style="font-size:13px; font-weight:600; cursor:pointer; text-decoration:none;">← Rozcestník</a>
-            <div style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací lístek — hlavní část</div>
+            <div style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací lístek - hlavní část</div>
           </div>
           <div style="font-size:13px; color:var(--muted);">Lístek 3 / 3</div>
         </div>
@@ -255,7 +255,7 @@ input, select, button, textarea { font-family:var(--font-body); }
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px;">
             <label style="display:grid; gap:6px; font-size:13px; font-weight:600; color:var(--muted);">Jméno a příjmení *
               <select value="{{ jmeno }}" onChange="{{ onJmeno }}" style="padding:11px 12px; border:1px solid var(--line); background:var(--field); color:var(--text); font-size:15px;">
-                <option value="">— vyberte —</option>
+                <option value="">- vyberte -</option>
                 <sc-for list="{{ clenove }}" as="c" hint-placeholder-count="5"><option value="{{ c }}">{{ c }}</option></sc-for>
               </select>
             </label>
@@ -263,7 +263,7 @@ input, select, button, textarea { font-family:var(--font-body); }
               <input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="jmeno@spolecnost.cz" style="padding:11px 12px; border:1px solid var(--line); background:var(--field); color:var(--text); font-size:15px;">
             </label>
           </div>
-          <div style="font-size:13.5px; color:var(--muted); text-wrap:pretty;">Ratingy „−“ mají kontrolní hodnotu −1, „N“ hodnotu 0 a „+“ hodnotu +1. Součet kontrolních hodnot každé sekce musí být 0 — jinak nelze lístek odeslat. U FX se pravidlo neuplatňuje.</div>
+          <div style="font-size:13.5px; color:var(--muted); text-wrap:pretty;">Ratingy „−“ mají kontrolní hodnotu −1, „N“ hodnotu 0 a „+“ hodnotu +1. Součet kontrolních hodnot každé sekce musí být 0 - jinak nelze lístek odeslat. U FX se pravidlo neuplatňuje.</div>
           <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:14px;">
             <div style="font-size:12.5px; font-weight:600; color:var(--muted);">Režim kontroly:</div>
             <div style="display:inline-flex; border:1px solid var(--line);">
@@ -322,7 +322,7 @@ input, select, button, textarea { font-family:var(--font-body); }
       <div style="max-width:560px; margin:40px auto 0; background:var(--card); border:1px solid var(--line); border-top:2px solid var(--green); padding:36px; display:grid; gap:18px;">
         <div style="width:56px; height:56px; background:var(--greenbg); color:var(--green); display:grid; place-items:center; font-size:26px; font-weight:700;">✓</div>
         <div style="font-family:var(--font-heading); font-weight:800; font-size:26px; letter-spacing:-.015em;">Lístek odevzdán</div>
-        <div style="font-size:14.5px; color:var(--muted); text-wrap:pretty;">Soubor <strong style="color:var(--text);">{{ lastFilename }}</strong> byl stažen. Aplikace nemá server — odešlete prosím CSV e-mailem, nebo jej nahrajte na dohodnuté úložiště.</div>
+        <div style="font-size:14.5px; color:var(--muted); text-wrap:pretty;">Soubor <strong style="color:var(--text);">{{ lastFilename }}</strong> byl stažen. Aplikace nemá server - odešlete prosím CSV e-mailem, nebo jej nahrajte na dohodnuté úložiště.</div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button onClick="{{ downloadAgain }}" style="background:var(--chip); color:var(--text); border:1px solid var(--line); padding:12px 20px; font-size:14px; font-weight:600; cursor:pointer;" style-hover="background:color-mix(in srgb, var(--text) 8%, transparent);">Stáhnout znovu</button>
           <button onClick="{{ sendMail }}" style="background:var(--red); color:#fff; border:none; padding:12px 20px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">Odeslat e-mailem</button>
@@ -334,14 +334,14 @@ input, select, button, textarea { font-family:var(--font-body); }
   </main>
   <footer style="padding:18px 28px; border-top:2px solid var(--line); color:var(--muted); font-size:12.5px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
     <div>OK Formuláře · Investiční výbor</div>
-    <div>Statická aplikace bez serveru — výstupem je CSV.</div>
+    <div>Statická aplikace bez serveru - výstupem je CSV.</div>
   </footer>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;vysledkyEmail&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;vysledky@moneco.cz&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Odeslání&quot;}, &quot;csvDelimiter&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;,&quot;, &quot;;&quot;], &quot;default&quot;: &quot;;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Odeslání&quot;}, &quot;defaultTheme&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;light&quot;, &quot;dark&quot;], &quot;default&quot;: &quot;light&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Vzhled&quot;}}">
 // Veškerá nastavení (témata, pool, obrázky, e-mail, režimy…) jsou v config.js.
 // ================================================================
-// DEFINICE CSV — upravte hlavičky a hodnoty zde.
+// DEFINICE CSV - upravte hlavičky a hodnoty zde.
 // Každá funkce vrací pole dvojic [ "Hlavička sloupce", hodnota ].
 // Výstup: 1. řádek hlavičky, 2. řádek odpověď (formát exportu Google Forms).
 // ================================================================
@@ -475,7 +475,7 @@ class Component extends DCLogic {
       return { ok:true, sum, stav:"✓ Vyplněno", bg:"var(--greenbg)", fg:"var(--green)" };
     }
     if (zbyva > 0) return { ok:false, sum, stav:"Součet " + fmt(sum), bg:"var(--chip)", fg:"var(--muted)" };
-    if (sum !== 0) return { ok:false, sum, stav:"Součet " + fmt(sum) + " — upravte", bg:"var(--redbg)", fg:"var(--red)" };
+    if (sum !== 0) return { ok:false, sum, stav:"Součet " + fmt(sum) + " - upravte", bg:"var(--redbg)", fg:"var(--red)" };
     return { ok:true, sum, stav:"✓ Součet 0", bg:"var(--greenbg)", fg:"var(--green)" };
   }
 
@@ -567,16 +567,16 @@ class Component extends DCLogic {
       toggleTheme: () => { const t = st.theme === "dark" ? "light" : "dark"; document.body.dataset.theme = t; try { localStorage.setItem("bc-hlasovani-theme", t); } catch (e) {} this.setState({ theme: t }); },
       clenove: k.clenove, obrazky: k.obrazky,
       imgTemata: this.imgEl(k.obrazky.temataAktualni, "Aktuálně zařazená témata"),
-      imgAkcie: this.imgEl(k.obrazky.akciePrehled, "Přehled témat — akcie"),
-      imgDluhopisy: this.imgEl(k.obrazky.dluhopisyPrehled, "Přehled témat — dluhopisy"),
+      imgAkcie: this.imgEl(k.obrazky.akciePrehled, "Přehled témat - akcie"),
+      imgDluhopisy: this.imgEl(k.obrazky.dluhopisyPrehled, "Přehled témat - dluhopisy"),
       imgPool: this.imgEl(k.obrazky.poolSchvaleny, "Nově schválený pool témat"),
       email: st.email, onEmail: (e) => this.setState({ email: e.target.value }),
       jmeno: st.jmeno, onJmeno: (e) => this.setState({ jmeno: e.target.value }),
       imgFail: (e) => { e.currentTarget.style.display = "none"; },
 
       b1Skupiny: [
-        { titul: "AKCIE — NÁVRHY", ...chip(ak), stav: ak.stav, pole: [b1Pole("az1", "Zařazení nového tématu č. 1"), b1Pole("az2", "Zařazení nového tématu č. 2"), b1Pole("av1", "Vyřazení stávajícího tématu č. 1"), b1Pole("av2", "Vyřazení stávajícího tématu č. 2")] },
-        { titul: "DLUHOPISY — NÁVRHY", ...chip(dl), stav: dl.stav, pole: [b1Pole("dz1", "Zařazení nového tématu č. 1"), b1Pole("dz2", "Zařazení nového tématu č. 2"), b1Pole("dv1", "Vyřazení stávajícího tématu č. 1"), b1Pole("dv2", "Vyřazení stávajícího tématu č. 2")] },
+        { titul: "AKCIE - NÁVRHY", ...chip(ak), stav: ak.stav, pole: [b1Pole("az1", "Zařazení nového tématu č. 1"), b1Pole("az2", "Zařazení nového tématu č. 2"), b1Pole("av1", "Vyřazení stávajícího tématu č. 1"), b1Pole("av2", "Vyřazení stávajícího tématu č. 2")] },
+        { titul: "DLUHOPISY - NÁVRHY", ...chip(dl), stav: dl.stav, pole: [b1Pole("dz1", "Zařazení nového tématu č. 1"), b1Pole("dz2", "Zařazení nového tématu č. 2"), b1Pole("dv1", "Vyřazení stávajícího tématu č. 1"), b1Pole("dv2", "Vyřazení stávajícího tématu č. 2")] },
       ],
       b1Dis: !b1Ok, b1BtnBg: btn(b1Ok).bg, b1BtnCur: btn(b1Ok).cur, b1Hint: hint(b1Ok, b1Chybi), b1HintFg: b1Ok ? "var(--green)" : "var(--muted)",
       submitB1: () => this.odevzdat("navrhy"),
@@ -609,7 +609,7 @@ class Component extends DCLogic {
       sendMail: () => {
         const mail = this.props.vysledkyEmail ?? k.vysledkyEmail;
         const body = "Dobrý den,\n\nv příloze zasílám svůj hlasovací lístek (obsah CSV níže):\n\n" + st.lastCsv.replace("\ufeff", "") + "\n" + st.jmeno;
-        window.location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("Hlasovací lístek — " + st.jmeno) + "&body=" + encodeURIComponent(body);
+        window.location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("Hlasovací lístek - " + st.jmeno) + "&body=" + encodeURIComponent(body);
       },
     };
   }
