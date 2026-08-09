@@ -769,6 +769,7 @@ class Component extends DCLogic {
   // Ovládání a hlášky kolem sdílené složky.
   slozkaVals() {
     const st = this.state, mam = !!st.slozka;
+    const ncOdkaz = (this.k().nextcloudOdkaz || "").trim();
     const vSlozce = mam ? "Lístek se uloží rovnou do složky " + st.slozkaNazev + "." : "";
     const doneText = {
       ulozeno: "Lístek byl uložen do sdílené složky " + st.slozkaNazev + " jako "
@@ -781,7 +782,6 @@ class Component extends DCLogic {
                    : "Uložte ho prosím do sdílené složky, nebo použijte odeslání e-mailem."),
     }[st.ulozeniStav] || ("Soubor " + st.lastFilename + " byl stažen.");
 
-    const ncOdkaz = (this.k().nextcloudOdkaz || "").trim();
     return {
       maNc: !!ncOdkaz && st.ulozeniStav !== "ulozeno",
       otevritNc: () => window.open(ncOdkaz, "_blank", "noopener"),
