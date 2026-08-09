@@ -5,6 +5,8 @@
 export default {
   // --- Obecné ---
   vysledkyEmail: "vysledky@moneco.cz",   // kam směřuje tlačítko „Odeslat e-mailem"
+  sberRezim: "email",                    // "email" = lístky chodí do sběrné schránky (GitHub Actions)
+  nextcloudOdkaz: "",                    // nepovinný odkaz na sdílenou složku; prázdné = tlačítko skryto
   csvDelimiter: ";",                     // oddělovač CSV: "," nebo ";"
   darkLightMode: true,                   // false = přepínač tmavého režimu se skryje
   defaultTheme: "light",                 // "light" | "dark"
@@ -37,7 +39,7 @@ export default {
 
   // --- Lístek 3: škála a sekce ---
   // Škála: index 0–2 = kontrolní hodnota −1, index 3 = 0, index 4–6 = +1.
-  skala: ["- - -", "- -", "-", "N", "+", "+ +", "+ + +"],
+  skala: ["---", "--", "-", "N", "+", "++", "+++"],   // bez mezer: přesně tak je čte převodní tabulka v matici
   // pravidlo: true = součet kontrolních hodnot sekce musí být 0.
   sekceHlavni: [
     { id: "tridy", nazev: "TŘÍDY AKTIV", pravidlo: true, radky: [

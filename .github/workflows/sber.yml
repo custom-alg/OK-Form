@@ -1,0 +1,38 @@
+name: 2 · Sběr odpovědí
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"     # každých 10 minut (GitHub běh někdy odloží)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ok-form-data
+  cancel-in-progress: false
+
+jobs:
+  sber:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - name: Přečíst schránku a zapsat odpovědi
+        working-directory: scripts
+        env:
+          IMAP_HOST: ${{ secrets.IMAP_HOST }}
+          IMAP_PORT: ${{ secrets.IMAP_PORT }}
+          IMAP_USER: ${{ secrets.IMAP_USER }}
+          IMAP_PASS: ${{ secrets.IMAP_PASS }}
+          IMAP_FOLDER: ${{ vars.IMAP_FOLDER }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+        run: python sber.py

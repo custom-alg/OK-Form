@@ -55,6 +55,13 @@ img { max-width:100%; }
 
   <main class="app-main" style="flex:1; width:100%; max-width:980px; margin:0 auto; padding:36px 24px 80px; box-sizing:border-box;">
 
+    <sc-if value="{{ maBanner }}" hint-placeholder-val="{{ false }}">
+      <div style="margin:0 0 24px; padding:13px 16px; background:var(--chip); border-left:4px solid {{ bannerBarva }}; display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;">
+        <strong style="font-family:var(--font-heading); font-size:13.5px;">{{ bannerNadpis }}</strong>
+        <span style="font-size:13.5px; color:var(--muted); text-wrap:pretty;">{{ bannerText }}</span>
+      </div>
+    </sc-if>
+
     <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
       <div style="display:grid; gap:28px;">
         <div style="display:grid; gap:10px; padding:8px 0 4px;">
@@ -81,7 +88,16 @@ img { max-width:100%; }
             <button onClick="{{ goB3 }}" style="background:var(--red); color:#fff; border:none; padding:12px 20px; font-size:15px; font-weight:700; cursor:pointer; text-align:left; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">Vyplnit formulář →</button>
           </div>
         </div>
-        <div style="font-size:13px; color:var(--muted); border-top:2px solid var(--line); padding-top:16px;">Rozpracovaný lístek se automaticky ukládá v tomto prohlížeči. Aplikace nemá server - data opouštějí stránku pouze jako CSV soubor.</div>
+        <div style="border-top:2px solid var(--line); padding-top:16px; display:grid; gap:12px;">
+          <sc-if value="{{ maFs }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; font-size:13.5px;">
+              <span style="color:var(--muted);">Sdílená složka:</span>
+              <strong style="font-family:var(--font-heading);">{{ slozkaPopis }}</strong>
+              <button onClick="{{ vybratSlozku }}" style="background:var(--chip); color:var(--text); border:1px solid var(--line); padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer;" style-hover="background:color-mix(in srgb, var(--text) 8%, transparent);">{{ slozkaTlacitko }}</button>
+            </div>
+          </sc-if>
+          <div style="font-size:13px; color:var(--muted); text-wrap:pretty;">{{ patickaText }}</div>
+        </div>
       </div>
     </sc-if>
 
@@ -160,7 +176,7 @@ img { max-width:100%; }
         <div style="display:grid; gap:10px; justify-items:start;">
           <div style="font-size:13.5px; color: {{ b1HintFg }};">{{ b1Hint }}</div>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button onClick="{{ submitB1 }}" disabled="{{ b1Dis }}" style="border:none; padding:14px 32px; font-size:16px; font-weight:800; font-family:var(--font-heading); text-align:left; color:#fff; background: {{ b1BtnBg }}; cursor: {{ b1BtnCur }};" style-hover="filter:brightness(.92);">Odevzdat lístek a stáhnout CSV</button>
+            <button onClick="{{ submitB1 }}" disabled="{{ b1Dis }}" style="border:none; padding:14px 32px; font-size:16px; font-weight:800; font-family:var(--font-heading); text-align:left; color:#fff; background: {{ b1BtnBg }}; cursor: {{ b1BtnCur }};" style-hover="filter:brightness(.92);">{{ submitLabel }}</button>
             <button onClick="{{ clearB1 }}" style="border:1px solid var(--line); background:none; color:var(--muted); padding:14px 22px; font-size:14px; font-weight:600; cursor:pointer;" style-hover="color:var(--red); border-color:var(--red);">Vymazat vyplněné</button>
           </div>
         </div>
@@ -268,7 +284,7 @@ img { max-width:100%; }
         <div style="display:grid; gap:10px; justify-items:start;">
           <div style="font-size:13.5px; color: {{ b2HintFg }};">{{ b2Hint }}</div>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button onClick="{{ submitB2 }}" disabled="{{ b2Dis }}" style="border:none; padding:14px 32px; font-size:16px; font-weight:800; font-family:var(--font-heading); text-align:left; color:#fff; background: {{ b2BtnBg }}; cursor: {{ b2BtnCur }};" style-hover="filter:brightness(.92);">Odevzdat lístek a stáhnout CSV</button>
+            <button onClick="{{ submitB2 }}" disabled="{{ b2Dis }}" style="border:none; padding:14px 32px; font-size:16px; font-weight:800; font-family:var(--font-heading); text-align:left; color:#fff; background: {{ b2BtnBg }}; cursor: {{ b2BtnCur }};" style-hover="filter:brightness(.92);">{{ submitLabel }}</button>
             <button onClick="{{ clearB2 }}" style="border:1px solid var(--line); background:none; color:var(--muted); padding:14px 22px; font-size:14px; font-weight:600; cursor:pointer;" style-hover="color:var(--red); border-color:var(--red);">Vymazat vyplněné</button>
           </div>
         </div>
@@ -351,7 +367,7 @@ img { max-width:100%; }
         <div style="display:grid; gap:10px; justify-items:start;">
           <div style="font-size:13.5px; color: {{ b3HintFg }};">{{ b3Hint }}</div>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button onClick="{{ submitB3 }}" disabled="{{ b3Dis }}" style="border:none; padding:14px 32px; font-size:16px; font-weight:800; font-family:var(--font-heading); text-align:left; color:#fff; background: {{ b3BtnBg }}; cursor: {{ b3BtnCur }};" style-hover="filter:brightness(.92);">Odevzdat lístek a stáhnout CSV</button>
+            <button onClick="{{ submitB3 }}" disabled="{{ b3Dis }}" style="border:none; padding:14px 32px; font-size:16px; font-weight:800; font-family:var(--font-heading); text-align:left; color:#fff; background: {{ b3BtnBg }}; cursor: {{ b3BtnCur }};" style-hover="filter:brightness(.92);">{{ submitLabel }}</button>
             <button onClick="{{ clearB3 }}" style="border:1px solid var(--line); background:none; color:var(--muted); padding:14px 22px; font-size:14px; font-weight:600; cursor:pointer;" style-hover="color:var(--red); border-color:var(--red);">Vymazat vyplněné</button>
           </div>
         </div>
@@ -362,11 +378,27 @@ img { max-width:100%; }
       <div style="max-width:560px; margin:40px auto 0; background:var(--card); border:1px solid var(--line); border-top:2px solid var(--green); padding:36px; display:grid; gap:18px;">
         <div style="width:56px; height:56px; background:var(--greenbg); color:var(--green); display:grid; place-items:center; font-size:26px; font-weight:700;">✓</div>
         <div style="font-family:var(--font-heading); font-weight:800; font-size:26px; letter-spacing:-.015em;">Lístek odevzdán</div>
-        <div style="font-size:14.5px; color:var(--muted); text-wrap:pretty;">Soubor <strong style="color:var(--text);">{{ lastFilename }}</strong> byl stažen. Aplikace nemá server - odešlete prosím CSV e-mailem, nebo jej nahrajte na dohodnuté úložiště.</div>
+        <div style="font-size:14.5px; color:var(--muted); text-wrap:pretty;">{{ doneText }}</div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <sc-if value="{{ maUlozit }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ ulozitDoSlozky }}" style="background:var(--red); color:#fff; border:none; padding:12px 20px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">{{ ulozitLabel }}</button>
+          </sc-if>
+          <sc-if value="{{ maNc }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ otevritNc }}" style="background:var(--red); color:#fff; border:none; padding:12px 20px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">Nahrát do Nextcloudu</button>
+          </sc-if>
           <button onClick="{{ downloadAgain }}" style="background:var(--chip); color:var(--text); border:1px solid var(--line); padding:12px 20px; font-size:14px; font-weight:600; cursor:pointer;" style-hover="background:color-mix(in srgb, var(--text) 8%, transparent);">Stáhnout znovu</button>
-          <button onClick="{{ sendMail }}" style="background:var(--red); color:#fff; border:none; padding:12px 20px; font-size:14px; font-weight:700; cursor:pointer; text-align:left; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">Odeslat e-mailem</button>
+          <button onClick="{{ sendMail }}" style="background:var(--chip); color:var(--text); border:1px solid var(--line); padding:12px 20px; font-size:14px; font-weight:600; cursor:pointer;" style-hover="background:color-mix(in srgb, var(--text) 8%, transparent);">Odeslat e-mailem</button>
         </div>
+        <sc-if value="{{ maPayload }}" hint-placeholder-val="{{ false }}">
+          <details style="border-top:1px solid var(--line); padding-top:14px;">
+            <summary style="cursor:pointer; font-weight:600; font-size:13.5px;">Nepodařilo se otevřít e-mail? Vložte kód lístku ručně</summary>
+            <div style="margin-top:12px; display:grid; gap:10px;">
+              <div style="font-size:13.5px; color:var(--muted); text-wrap:pretty;">Zkopírujte kód níže a vložte ho do těla e-mailu na adresu <strong style="color:var(--text);">{{ vysledkyMail }}</strong>. Kód prosím nijak neupravujte.</div>
+              <div style="font-family:ui-monospace, monospace; font-size:10.5px; line-height:1.5; background:var(--field); border:1px solid var(--line); padding:10px; max-height:160px; overflow:auto; word-break:break-all; white-space:pre-wrap;">{{ payloadText }}</div>
+              <button onClick="{{ copyPayload }}" style="background:var(--chip); color:var(--text); border:1px solid var(--line); padding:10px 18px; font-size:13.5px; font-weight:600; cursor:pointer; justify-self:start;" style-hover="background:color-mix(in srgb, var(--text) 8%, transparent);">{{ copyLabel }}</button>
+            </div>
+          </details>
+        </sc-if>
         <a onClick="{{ goHome }}" style="font-size:13.5px; font-weight:600; cursor:pointer;">← Zpět na rozcestník</a>
       </div>
     </sc-if>
@@ -424,6 +456,77 @@ function csvPole(v, sep) {
   v = String(v == null ? "" : v);
   return (v.includes(sep) || v.includes('"') || v.includes("\n")) ? '"' + v.replace(/"/g, '""') + '"' : v;
 }
+// ---- Kód lístku pro e-mail ----------------------------------------------
+// Odpověď se do zprávy vkládá jako base64url blok mezi značkami. Sběrací skript
+// z něj čte data i délku, takže pozná zkrácenou nebo poškozenou zprávu.
+function b64url(bajty) {
+  let bin = "";
+  bajty.forEach(b => { bin += String.fromCharCode(b); });
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function sha256hex(text) {
+  return crypto.subtle.digest("SHA-256", new TextEncoder().encode(text))
+    .then(buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join(""));
+}
+function tokenZUrl() {
+  try { return new URLSearchParams(location.search).get("t") || ""; } catch (e) { return ""; }
+}
+
+// ---- Sdílená složka na disku --------------------------------------------
+// Složka je synchronizovaná cloudem (OneDrive, Disk, Dropbox, síťový disk),
+// aplikace ji vidí jako obyčejný adresář. Odkaz na ni si pamatujeme v IndexedDB,
+// oprávnění k zápisu si prohlížeč hlídá sám.
+const FS_DB = "okform-slozka";
+function fsDb() {
+  return new Promise((ok, chyba) => {
+    const r = indexedDB.open(FS_DB, 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("h");
+    r.onsuccess = () => ok(r.result);
+    r.onerror = () => chyba(r.error);
+  });
+}
+async function fsUloz(handle) {
+  const db = await fsDb();
+  return new Promise((ok, chyba) => {
+    const t = db.transaction("h", "readwrite");
+    t.objectStore("h").put(handle, "slozka");
+    t.oncomplete = ok; t.onerror = () => chyba(t.error);
+  });
+}
+async function fsNacti() {
+  try {
+    const db = await fsDb();
+    return await new Promise((ok) => {
+      const q = db.transaction("h", "readonly").objectStore("h").get("slozka");
+      q.onsuccess = () => ok(q.result || null);
+      q.onerror = () => ok(null);
+    });
+  } catch (e) { return null; }
+}
+// zeptat=true smí vyvolat systémový dotaz – jen v reakci na kliknutí.
+async function fsPovoleni(handle, zeptat) {
+  if (!handle) return false;
+  const rezim = { mode: "readwrite" };
+  try {
+    if (await handle.queryPermission(rezim) === "granted") return true;
+    if (zeptat && await handle.requestPermission(rezim) === "granted") return true;
+  } catch (e) {}
+  return false;
+}
+async function fsZapis(handle, podslozka, nazev, obsah) {
+  let cil = handle;
+  if (podslozka) cil = await handle.getDirectoryHandle(podslozka, { create: true });
+  const soubor = await cil.getFileHandle(nazev, { create: true });
+  const zapis = await soubor.createWritable();
+  await zapis.write(new Blob([obsah], { type: "text/csv;charset=utf-8" }));
+  await zapis.close();
+}
+const maFsApi = () => typeof window.showDirectoryPicker === "function";
+function slugJmena(jmeno) {
+  return String(jmeno || "").toLowerCase().normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 const DRAFT_KEY = "bc-hlasovani-draft-v1";
 const EMPTY_B1 = { az1:"", az2:"", av1:"", av2:"", dz1:"", dz2:"", dv1:"", dv2:"" };
 // ---- Směrování přes URL hash (funguje na statickém hostingu, umožňuje tlačítko Zpět) ----
@@ -432,12 +535,15 @@ const VIEW_HASH = { home:"#/", b1:"#/temata-navrhy", b2:"#/temata-priority", b3:
 const HASH_VIEW = { "":"home", "#":"home", "#/":"home", "#/temata-navrhy":"b1", "#/temata-priority":"b2", "#/hlavni-cast":"b3", "#/hotovo":"done" };
 const viewFromHash = () => HASH_VIEW[location.hash] || "home";
 // Záložní prázdná konfigurace, než se načte config.js
-const K_FALLBACK = { vysledkyEmail:"", csvDelimiter:",", darkLightMode:true, defaultTheme:"light", validaceRezim:"block", nettoSkore:false,
+const K_FALLBACK = { vysledkyEmail:"", nextcloudOdkaz:"", sberRezim:"email", csvDelimiter:",", darkLightMode:true, defaultTheme:"light", validaceRezim:"block", nettoSkore:false,
   obrazky:{}, clenoveJmeno:[], clenoveMail:[], pool:{ akcie:{aktualne:0,max:5,min:2}, dluhopisy:{aktualne:0,max:5,min:2} },
   temataAkcie:[], temataDluhopisy:[], maxPriorit:5, skala:["- - -","- -","-","N","+","+ +","+ + +"], sekceHlavni:[] };
 
 class Component extends DCLogic {
-  state = { k:null, rezim:"block", view:"home", theme:"light", email:"", jmeno:"", b1:{...EMPTY_B1}, rankA:[], rankD:[], ratings:{}, lastCsv:"", lastFilename:"" };
+  state = { k:null, rezim:"block", view:"home", theme:"light", email:"", jmeno:"", b1:{...EMPTY_B1}, rankA:[], rankD:[], ratings:{},
+            lastCsv:"", lastFilename:"", lastTyp:"", lastPayload:"", zkopirovano:false,
+            tok:"", tokenOk:null, kolo:null,
+            slozka:null, slozkaNazev:"", ulozeniStav:"", ulozeniChyba:"" };
 
   componentDidMount() {
     import(new URL("./config.js", document.baseURI).href).then(m => {
@@ -452,9 +558,20 @@ class Component extends DCLogic {
       // Stránka "hotovo" není po reloadu smysluplná (lastCsv se neukládá) - vrať na rozcestník.
       let view = viewFromHash();
       if (view === "done") { view = "home"; history.replaceState(null, "", location.pathname + location.search); }
-      this.setState({ k, rezim: k.validaceRezim, theme, view, ...(draft ? { email:draft.email||"", jmeno:draft.jmeno||"", b1:{...EMPTY_B1, ...draft.b1}, rankA:draft.rankA||[], rankD:draft.rankD||[], ratings:draft.ratings||{} } : {}) });
+      // Token z pozvánky přebíjí rozepsaný koncept – identitu určuje odkaz.
+      const tok = tokenZUrl();
+      const ti = tok ? parseInt(tok.split(".")[0], 10) : -1;
+      const zTokenu = (ti >= 0 && k.clenoveJmeno[ti])
+        ? { jmeno: k.clenoveJmeno[ti], email: k.clenoveMail[ti] || "" } : {};
+      this.setState({ k, rezim: k.validaceRezim, theme, view, tok,
+        ...(draft ? { email:draft.email||"", jmeno:draft.jmeno||"", b1:{...EMPTY_B1, ...draft.b1}, rankA:draft.rankA||[], rankD:draft.rankD||[], ratings:draft.ratings||{} } : {}),
+        ...zTokenu });
+      this.nactiKolo(tok, ti);
     });
     // URL je jediný zdroj pravdy pro aktuální stránku - zpět/vpřed v prohlížeči i gesto zpět na mobilu.
+    // Dřív vybranou složku si vyzvedneme, ale na oprávnění se teď neptáme –
+    // systémový dotaz smí vyskočit jen po kliknutí.
+    if (maFsApi()) fsNacti().then(h => { if (h) this.setState({ slozka: h, slozkaNazev: h.name }); });
     this.onRoute = () => this.setState({ view: viewFromHash() });
     window.addEventListener("hashchange", this.onRoute);
     window.addEventListener("popstate", this.onRoute);
@@ -471,6 +588,23 @@ class Component extends DCLogic {
   componentDidUpdate() {
     const { email, jmeno, b1, rankA, rankD, ratings } = this.state;
     try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ email, jmeno, b1, rankA, rankD, ratings })); } catch (e) {}
+  }
+
+  // Stav kola je veřejný soubor v repozitáři; token ověříme proti jeho otisku.
+  nactiKolo(tok, ti) {
+    fetch(new URL("./data/kolo.json", document.baseURI).href, { cache: "no-store" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(kolo => {
+        if (!kolo) return;
+        this.setState({ kolo });
+        const h = (kolo.hlasujici || []).find(x => x.i === ti);
+        if (!tok || !h) { if (tok) this.setState({ tokenOk: false }); return; }
+        sha256hex(tok).then(otisk => {
+          const platny = h.token_hash === otisk;
+          this.setState({ tokenOk: platny, ...(platny ? { jmeno: h.jmeno } : {}) });
+        });
+      })
+      .catch(() => {});
   }
 
   k() { return this.state.k || K_FALLBACK; }
@@ -566,6 +700,7 @@ class Component extends DCLogic {
     const sep = this.sep();
     const pary = CSV_SPECS[typ](this.state, this.k());
     const csv = "\ufeff" + pary.map(p => csvPole(p[0], sep)).join(sep) + "\r\n" + pary.map(p => csvPole(p[1], sep)).join(sep) + "\r\n";
+    this.poslednPary = pary;
     const slug = this.state.jmeno.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-");
     const d = new Date(), p = (n) => String(n).padStart(2, "0");
     const filename = "hlasovani-" + CSV_NAZVY[typ] + "-" + slug + "-" + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + ".csv";
@@ -578,11 +713,47 @@ class Component extends DCLogic {
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   }
-  odevzdat(typ) {
+  async odevzdat(typ) {
     const { csv, filename } = this.buildCsv(typ);
+    const zaklad = { lastCsv:csv, lastFilename:filename, lastTyp:typ,
+                     lastPayload:this.kodListku(typ, this.poslednPary), zkopirovano:false };
+    this.setState(zaklad);
+
+    // Když je složka nastavená, lístek jde rovnou do ní a nic se nestahuje.
+    if (this.state.slozka && await fsPovoleni(this.state.slozka, true)) {
+      try {
+        await this.zapisDoSlozky(typ, csv);
+        this.setState({ ulozeniStav:"ulozeno", ulozeniChyba:"" });
+        this.jdiNa("done");
+        return;
+      } catch (e) {
+        this.setState({ ulozeniStav:"chyba", ulozeniChyba:String(e.message || e) });
+        this.stahnout(csv, filename);
+        this.jdiNa("done");
+        return;
+      }
+    }
     this.stahnout(csv, filename);
-    this.setState({ lastCsv:csv, lastFilename:filename });
+    this.setState({ ulozeniStav:"stazeno", ulozeniChyba:"" });
     this.jdiNa("done");
+  }
+
+  // Jméno souboru je stálé, takže opravený lístek přepíše ten původní.
+  souborDoSlozky(typ) {
+    return CSV_NAZVY[typ] + "__" + (slugJmena(this.state.jmeno) || "bez-jmena") + ".csv";
+  }
+  async zapisDoSlozky(typ, csv) {
+    const kolo = this.state.kolo && this.state.kolo.id ? this.state.kolo.id : "";
+    await fsZapis(this.state.slozka, kolo, this.souborDoSlozky(typ), csv);
+  }
+
+  // Strojově čitelný otisk lístku vkládaný do e-mailu.
+  kodListku(typ, pary) {
+    const st = this.state;
+    const data = { v:1, k: st.kolo ? st.kolo.id : "", f: typ, t: st.tok,
+                   n: st.jmeno, e: st.email, ts: new Date().toISOString(), p: pary };
+    const kod = b64url(new TextEncoder().encode(JSON.stringify(data)));
+    return "##OKF/1/" + kod.length + "##\n" + (kod.match(/.{1,76}/g) || []).join("\n") + "\n##/OKF##";
   }
 
   // Obrázek se vykreslí až po načtení configu; při chybě načtení se skryje (zůstane placeholder).
@@ -593,6 +764,98 @@ class Component extends DCLogic {
       style: { position: "relative", display: "block", width: "100%" },
       onLoad: (e) => { const ph = e.currentTarget.previousElementSibling; if (ph) ph.style.display = "none"; },
       onError: (e) => { e.currentTarget.style.display = "none"; } });
+  }
+
+  // Ovládání a hlášky kolem sdílené složky.
+  slozkaVals() {
+    const st = this.state, mam = !!st.slozka;
+    const vSlozce = mam ? "Lístek se uloží rovnou do složky " + st.slozkaNazev + "." : "";
+    const doneText = {
+      ulozeno: "Lístek byl uložen do sdílené složky " + st.slozkaNazev + " jako "
+               + (st.lastTyp ? this.souborDoSlozky(st.lastTyp) : "") + ". Hotovo, nic dalšího posílat nemusíte.",
+      chyba: "Do sdílené složky se zapsat nepodařilo (" + st.ulozeniChyba
+             + "). Soubor " + st.lastFilename + " byl proto stažen – přesuňte ho prosím do složky ručně.",
+      stazeno: "Soubor " + st.lastFilename + " byl stažen. "
+               + (ncOdkaz
+                   ? "Klikněte na Nahrát do Nextcloudu a přetáhněte ho na stránku, která se otevře."
+                   : "Uložte ho prosím do sdílené složky, nebo použijte odeslání e-mailem."),
+    }[st.ulozeniStav] || ("Soubor " + st.lastFilename + " byl stažen.");
+
+    const ncOdkaz = (this.k().nextcloudOdkaz || "").trim();
+    return {
+      maNc: !!ncOdkaz && st.ulozeniStav !== "ulozeno",
+      otevritNc: () => window.open(ncOdkaz, "_blank", "noopener"),
+      maFs: maFsApi() && this.k().sberRezim === "slozka",
+      slozkaPopis: mam ? st.slozkaNazev : "není vybraná",
+      slozkaTlacitko: mam ? "Změnit" : "Vybrat složku",
+      vybratSlozku: () => this.vyberSlozku(),
+      patickaText: (maFsApi() && this.k().sberRezim === "slozka")
+        ? (mam
+            ? "Rozpracovaný lístek se ukládá v tomto prohlížeči. " + vSlozce
+            : "Vyberte sdílenou složku, do které se hotové lístky ukládají. Stačí jednou; "
+              + "prohlížeč si ji zapamatuje. Bez ní se lístek jen stáhne.")
+        : ("Rozpracovaný lístek se automaticky ukládá v tomto prohlížeči. Tento prohlížeč neumí zapisovat "
+           + "do složky – lístek se stáhne a nahrajete ho "
+           + (ncOdkaz ? "jedním kliknutím do Nextcloudu." : "do sdílené složky ručně.")
+           + " V Chrome nebo Edge na počítači to jde rovnou."),
+      submitLabel: (mam && this.k().sberRezim === "slozka")
+        ? "Odevzdat lístek do složky" : "Odevzdat lístek a stáhnout CSV",
+      doneText,
+      maUlozit: maFsApi() && this.k().sberRezim === "slozka" && st.ulozeniStav !== "ulozeno",
+      ulozitLabel: mam ? "Zkusit uložit do složky znovu" : "Uložit do sdílené složky",
+      ulozitDoSlozky: async () => {
+        try {
+          let h = st.slozka;
+          if (!h) { h = await window.showDirectoryPicker({ mode: "readwrite", id: "okform" });
+                    await fsUloz(h); this.setState({ slozka:h, slozkaNazev:h.name }); }
+          if (!await fsPovoleni(h, true)) throw new Error("přístup ke složce nebyl povolen");
+          const kolo = st.kolo && st.kolo.id ? st.kolo.id : "";
+          await fsZapis(h, kolo, this.souborDoSlozky(st.lastTyp), st.lastCsv);
+          this.setState({ ulozeniStav:"ulozeno", ulozeniChyba:"" });
+        } catch (e) {
+          if (e && e.name === "AbortError") return;
+          this.setState({ ulozeniStav:"chyba", ulozeniChyba:String(e.message || e) });
+        }
+      },
+    };
+  }
+
+  async vyberSlozku() {
+    try {
+      const h = await window.showDirectoryPicker({ mode: "readwrite", id: "okform" });
+      await fsUloz(h);
+      this.setState({ slozka: h, slozkaNazev: h.name });
+    } catch (e) { /* uživatel dialog zavřel */ }
+  }
+
+  // Hlášky nad formulářem: čí je odkaz, jestli se ještě sbírá.
+  banner() {
+    const st = this.state, kolo = st.kolo;
+    const prazdny = { maBanner:false, bannerNadpis:"", bannerText:"", bannerBarva:"var(--line)" };
+    if (!st.tok) {
+      if (kolo && kolo.stav === "uzavreno") {
+        return { maBanner:true, bannerNadpis:"Sběr je uzavřen.",
+          bannerText:"Kolo " + kolo.id + " už bylo vyhodnoceno. Nový lístek se nezpracuje.",
+          bannerBarva:"var(--red)" };
+      }
+      return prazdny;
+    }
+    if (kolo && kolo.stav === "uzavreno") {
+      return { maBanner:true, bannerNadpis:"Sběr je uzavřen.",
+        bannerText:"Odkaz patří ke kolu " + kolo.id + ", které už bylo vyhodnoceno.",
+        bannerBarva:"var(--red)" };
+    }
+    if (st.tokenOk === false) {
+      return { maBanner:true, bannerNadpis:"Odkaz nerozpoznán.",
+        bannerText:"Lístek můžete vyplnit, ale nemusí se přiřadit automaticky. Použijte prosím odkaz z poslední pozvánky.",
+        bannerBarva:"var(--red)" };
+    }
+    if (st.tokenOk === true && kolo) {
+      return { maBanner:true, bannerNadpis:kolo.nazev,
+        bannerText:"Hlasuje " + st.jmeno + "." + (kolo.termin ? " Termín: " + kolo.termin + "." : ""),
+        bannerBarva:"var(--green)" };
+    }
+    return prazdny;
   }
 
   renderVals() {
@@ -699,12 +962,27 @@ class Component extends DCLogic {
       submitB3: () => this.odevzdat("hlavni"),
       clearB3: () => this.setState({ ratings: {} }),
 
+      ...this.banner(),
+      ...this.slozkaVals(),
       lastFilename: st.lastFilename,
       downloadAgain: () => this.stahnout(st.lastCsv, st.lastFilename),
+      vysledkyMail: this.props.vysledkyEmail ?? k.vysledkyEmail,
+      maPayload: !!st.lastPayload,
+      payloadText: st.lastPayload,
+      copyLabel: st.zkopirovano ? "Zkopírováno ✓" : "Zkopírovat kód",
+      copyPayload: () => {
+        const hotovo = () => { this.setState({ zkopirovano: true });
+          setTimeout(() => this.setState({ zkopirovano: false }), 2500); };
+        if (navigator.clipboard) navigator.clipboard.writeText(st.lastPayload).then(hotovo, () => {});
+        else hotovo();
+      },
       sendMail: () => {
         const mail = this.props.vysledkyEmail ?? k.vysledkyEmail;
-        const body = "Dobrý den,\n\nv příloze zasílám svůj hlasovací lístek (obsah CSV níže):\n\n" + st.lastCsv.replace("\ufeff", "") + "\n" + st.jmeno;
-        window.location.href = "mailto:" + mail + "?subject=" + encodeURIComponent("Hlasovací lístek - " + st.jmeno) + "&body=" + encodeURIComponent(body);
+        const kolo = st.kolo ? st.kolo.id : "-";
+        const predmet = "[" + kolo + "] Hlasovací lístek - " + (CSV_NAZVY[st.lastTyp] || "") + " - " + st.jmeno;
+        const body = "Dobrý den,\n\nposílám vyplněný hlasovací lístek.\n\n" + st.jmeno
+          + "\n\n----- neupravujte text níže, čte ho automat -----\n" + st.lastPayload + "\n";
+        window.location.href = "mailto:" + mail + "?subject=" + encodeURIComponent(predmet) + "&body=" + encodeURIComponent(body);
       },
     };
   }

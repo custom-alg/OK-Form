@@ -1,0 +1,42 @@
+name: 3 · Ukončit sběr
+
+on:
+  workflow_dispatch:
+    inputs:
+      znovu:
+        description: Znovu vygenerovat souhrn už uzavřeného kola
+        type: boolean
+        default: false
+      vsem:
+        description: Poslat výsledky všem hlasujícím (jinak jen administrátorovi)
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ok-form-data
+  cancel-in-progress: false
+
+jobs:
+  uzavrit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - name: Uzavřít kolo a odeslat výsledky
+        working-directory: scripts
+        env:
+          ZNOVU: ${{ inputs.znovu }}
+          VSEM: ${{ inputs.vsem }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+        run: python uzavrit.py

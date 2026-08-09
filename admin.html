@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Administrace hlasování</title>
+<link rel="stylesheet" href="_ds/modernist-eaa7314a-4039-4f0f-ab8b-c88ed36cc16c/styles.css">
+<style>
+  :root { --card:#fff; --line:var(--color-divider); --muted:color-mix(in srgb, var(--color-text) 62%, transparent);
+          --field:var(--color-surface); --chip:var(--color-neutral-100); --red:var(--color-accent);
+          --green:#0d7a44; --greenbg:#e2f2e9; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--color-bg); color:var(--color-text); font-family:var(--font-body); }
+  header { display:flex; align-items:center; gap:14px; padding:14px 28px; background:var(--card);
+           border-bottom:2px solid var(--line); position:sticky; top:0; z-index:10; }
+  .mark { width:38px; height:38px; background:var(--red); display:grid; place-items:center; color:#fff;
+          font-weight:800; font-family:var(--font-heading); }
+  main { max-width:900px; margin:0 auto; padding:32px 24px 90px; display:grid; gap:26px; }
+  section { background:var(--card); border:1px solid var(--line); border-top:2px solid var(--color-text); padding:24px; display:grid; gap:16px; }
+  section[data-locked="1"] { opacity:.45; pointer-events:none; }
+  h1 { font-family:var(--font-heading); font-size:32px; font-weight:800; letter-spacing:-.015em; margin:0; }
+  h2 { font-family:var(--font-heading); font-size:19px; font-weight:800; margin:0; }
+  .kicker { font-size:11px; font-weight:800; color:var(--red); letter-spacing:.1em; }
+  .hint { font-size:13.5px; color:var(--muted); text-wrap:pretty; margin:0; }
+  label { display:grid; gap:6px; font-size:13px; font-weight:600; color:var(--muted); }
+  input[type=text], input[type=password], input[type=url], textarea, select {
+    padding:11px 12px; border:1px solid var(--line); background:var(--field); color:var(--color-text);
+    font-size:15px; font-family:var(--font-body); width:100%; border-radius:0; }
+  textarea { min-height:110px; font-family:ui-monospace, monospace; font-size:12px; }
+  .rada { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px; }
+  button { border:none; padding:12px 20px; font-size:14.5px; font-weight:700; font-family:var(--font-heading);
+           cursor:pointer; text-align:left; border-radius:0; }
+  button:hover { filter:brightness(.92); }
+  button:disabled { opacity:.4; cursor:not-allowed; filter:none; }
+  .primar { background:var(--red); color:#fff; }
+  .druhy { background:var(--chip); color:var(--color-text); border:1px solid var(--line); font-weight:600; }
+  .velky { padding:16px 28px; font-size:17px; font-weight:800; }
+  :focus-visible { outline:2px solid var(--red); outline-offset:2px; }
+  table { border-collapse:collapse; width:100%; font-size:14px; }
+  th, td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); }
+  th { font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+  .ok { color:var(--green); font-weight:800; }
+  .ne { color:var(--muted); }
+  .zprava { padding:11px 14px; font-size:13.5px; border-left:4px solid var(--line); background:var(--chip); text-wrap:pretty; }
+  .zprava.chyba { border-color:var(--red); }
+  .zprava.uspech { border-color:var(--green); background:var(--greenbg); }
+  .obrazky { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; }
+  .slot { border:1px solid var(--line); padding:14px; display:grid; gap:9px; align-content:start; }
+  .slot img { width:100%; display:block; border:1px solid var(--line); filter:grayscale(1); }
+  .slot .stav { font-size:12px; color:var(--muted); min-height:1.3em; }
+  .zamek { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  code { font-family:ui-monospace, monospace; font-size:12.5px; background:var(--chip); padding:1px 5px; }
+  details summary { cursor:pointer; font-weight:600; font-size:14px; }
+  .tlacitka { display:flex; gap:10px; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">OK</div>
+  <div>
+    <div style="font-family:var(--font-heading); font-weight:800; font-size:18px;">Administrace hlasování</div>
+    <div style="font-size:12.5px; color:var(--muted);" id="kdo">nepřipojeno</div>
+  </div>
+</header>
+
+<main>
+  <div>
+    <h1>Průběh kola</h1>
+    <p class="hint">Podklady → rozeslání → sběr → uzávěrka. Každý krok běží jako úloha v GitHub Actions;
+      tato stránka je jen ovládací panel a nic si neukládá kromě přístupového tokenu ve vašem prohlížeči.</p>
+  </div>
+
+  <!-- ------------------------------------------------------------ 0. přístup -->
+  <section id="s-pristup">
+    <div class="kicker">KROK 0</div>
+    <h2>Připojení k repozitáři</h2>
+    <p class="hint">Potřebujete jemně odstupňovaný token (Fine-grained PAT) s právy
+      <code>Contents: Read and write</code> a <code>Actions: Read and write</code> pro tento jeden repozitář.
+      Uloží se do <code>localStorage</code> tohoto prohlížeče — na sdíleném počítači se po práci odhlaste.</p>
+    <div class="rada">
+      <label>Vlastník (organizace nebo uživatel)<input type="text" id="i-owner" placeholder="moneco"></label>
+      <label>Repozitář<input type="text" id="i-repo" placeholder="OK-Form"></label>
+    </div>
+    <label>Přístupový token<input type="password" id="i-pat" placeholder="github_pat_…"></label>
+    <label>Adresa publikované stránky<input type="url" id="i-pages" placeholder="https://moneco.github.io/OK-Form"></label>
+    <div class="tlacitka">
+      <button class="primar" id="b-pripojit">Připojit</button>
+      <button class="druhy" id="b-odhlasit">Odhlásit a smazat token</button>
+    </div>
+    <div id="z-pristup"></div>
+  </section>
+
+  <!-- ------------------------------------------------------------ 1. obrázky -->
+  <section id="s-obrazky" data-locked="1">
+    <div class="kicker">KROK 1</div>
+    <h2>Podklady k hlasování</h2>
+    <p class="hint">Nahrané soubory se rovnou zapíšou do repozitáře. Publikování na Pages trvá zhruba minutu —
+      počkejte na potvrzení <strong>publikováno</strong>, teprve pak rozesílejte lístky.</p>
+    <div class="obrazky" id="sloty"></div>
+    <div id="z-obrazky"></div>
+  </section>
+
+  <!-- ------------------------------------------------------------ 2. rozeslání -->
+  <section id="s-rozeslat" data-locked="1">
+    <div class="kicker">KROK 2</div>
+    <h2>Rozeslat lístky</h2>
+    <p class="hint">Každý hlasující dostane e-mail s vlastními odkazy. Odkaz obsahuje token, který ho
+      identifikuje — v repozitáři zůstává jen jeho otisk, ne token samotný.</p>
+    <div class="rada">
+      <label>Název kola<input type="text" id="i-nazev" value="Hlasování investičního výboru"></label>
+      <label>Termín pro vyplnění<input type="text" id="i-termin" placeholder="5. 8. 2026"></label>
+    </div>
+    <label>Doplňující věta do pozvánky (nepovinné)<input type="text" id="i-poznamka"></label>
+    <label>Formuláře
+      <div style="display:flex; gap:18px; flex-wrap:wrap; padding-top:4px; font-weight:400; color:var(--color-text);">
+        <span><input type="checkbox" class="f" value="navrhy" checked> Témata – návrhy</span>
+        <span><input type="checkbox" class="f" value="priority" checked> Témata – priority</span>
+        <span><input type="checkbox" class="f" value="hlavni" checked> Hlavní část</span>
+      </div>
+    </label>
+    <div class="tlacitka">
+      <button class="primar velky" id="b-ok">OK — rozeslat hlasujícím</button>
+    </div>
+    <div id="z-rozeslat"></div>
+  </section>
+
+  <!-- ------------------------------------------------------------ 3. sběr -->
+  <section id="s-slozka" data-locked="1">
+    <div class="kicker">ALTERNATIVA</div>
+    <h2>Sběr ze sdílené složky</h2>
+    <p class="hint">Otevřete tutéž složku, do které hlasující ukládají lístky. Stránka si ji zapamatuje.
+      Čte se jen z ní — nic se nikam neodesílá a lístky zůstávají ve vašem cloudu.</p>
+    <div class="tlacitka">
+      <button class="primar" id="b-slozka">Otevřít sdílenou složku</button>
+      <button class="druhy" id="b-slouc">Načíst znovu</button>
+    </div>
+    <div id="slozka-nazev" class="hint"></div>
+    <div id="slozka-tabulka"></div>
+    <div class="tlacitka" id="slozka-export"></div>
+    <div id="z-slozka"></div>
+  </section>
+
+  <section id="s-stav" data-locked="1">
+    <div class="kicker">KROK 3</div>
+    <h2>Sběr odpovědí</h2>
+    <p class="hint">Úloha čte sběrnou schránku každých deset minut a zapisuje lístky do repozitáře.
+      Výsledky se průběžně skládají do jednoho sešitu — nic se nestahuje po jednotlivých souborech.</p>
+    <div id="prehled-kola" class="hint">Žádné kolo zatím neběží.</div>
+    <div id="tabulka"></div>
+    <div class="tlacitka">
+      <button class="druhy" id="b-obnovit">Obnovit stav</button>
+      <button class="druhy" id="b-sber">Zkontrolovat schránku teď</button>
+    </div>
+    <div id="z-stav"></div>
+    <div id="neprirazene"></div>
+  </section>
+
+  <!-- ------------------------------------------------------------ 4. uzávěrka -->
+  <section id="s-konec" data-locked="1">
+    <div class="kicker">KROK 4</div>
+    <h2>Uzávěrka a výsledky</h2>
+    <p class="hint">Sešit obsahuje list Přehled a jeden list na každý formulář — jeden soubor místo
+      patnácti. Stáhnout ho jde kdykoli, ne až po uzávěrce. Ukončení sběru je nevratné: od té chvíle
+      sběrač nové lístky nepřijímá a odesílateli to napíše.</p>
+    <div class="tlacitka" id="stahovani"></div>
+    <label style="font-weight:400; color:var(--color-text);">
+      <span style="display:flex; gap:8px; align-items:center; font-size:14px;">
+        <input type="checkbox" id="i-vsem"> Odeslat výsledky všem hlasujícím, ne jen mně
+      </span>
+    </label>
+    <div class="tlacitka">
+      <button class="primar velky" id="b-uzavrit">Ukončit sběr a odeslat výsledky</button>
+    </div>
+    <details>
+      <summary>Ruční doplnění odpovědi, kterou se nepodařilo zpracovat</summary>
+      <div style="display:grid; gap:14px; padding-top:14px;">
+        <p class="hint">Vložte buď celý text e-mailu od hlasujícího (kód lístku se v něm najde sám),
+          nebo obsah staženého souboru CSV — v tom případě vyberte hlasujícího i formulář.</p>
+        <label>Text e-mailu nebo kód lístku<textarea id="i-kod" placeholder="##OKF/1/…##"></textarea></label>
+        <label>Nebo obsah CSV<textarea id="i-csv" placeholder="Timestamp;Email Address;…"></textarea></label>
+        <div class="rada">
+          <label>Hlasující<select id="i-hlasujici"><option value="">– podle kódu lístku –</option></select></label>
+          <label>Formulář<select id="i-formular">
+            <option value="">– podle kódu lístku –</option>
+            <option value="navrhy">Témata – návrhy</option>
+            <option value="priority">Témata – priority</option>
+            <option value="hlavni">Hlavní část</option>
+          </select></label>
+        </div>
+        <div class="tlacitka"><button class="druhy" id="b-doplnit">Zapsat odpověď</button></div>
+      </div>
+    </details>
+    <div id="z-konec"></div>
+  </section>
+</main>
+
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const KLIC = "okform-admin-v1";
+let A = { owner: "", repo: "", pat: "", pages: "" };
+let KOLO = null, KONFIG = null;
+
+const NAZVY = { navrhy: "Témata – návrhy", priority: "Témata – priority", hlavni: "Hlavní část" };
+
+// ---------------------------------------------------------------- pomocné
+function zprava(kam, text, druh = "") {
+  $(kam).innerHTML = `<div class="zprava ${druh}">${text}</div>`;
+}
+function zamkni(otevrit) {
+  ["s-obrazky", "s-rozeslat", "s-stav", "s-konec"].forEach(
+    (id) => $(id).setAttribute("data-locked", otevrit ? "0" : "1"));
+}
+async function gh(cesta, moznosti = {}) {
+  const r = await fetch(`https://api.github.com/repos/${A.owner}/${A.repo}${cesta}`, {
+    ...moznosti,
+    headers: {
+      Authorization: `Bearer ${A.pat}`,
+      Accept: moznosti.raw ? "application/vnd.github.raw" : "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      ...(moznosti.body ? { "Content-Type": "application/json" } : {}),
+      ...(moznosti.headers || {}),
+    },
+  });
+  if (r.status === 204) return null;
+  if (!r.ok) {
+    let detail = r.statusText;
+    try { detail = (await r.json()).message || detail; } catch (e) {}
+    throw new Error(`${r.status} – ${detail}`);
+  }
+  return moznosti.raw ? r.text() : r.json();
+}
+async function spust(soubor, vstupy) {
+  await gh(`/actions/workflows/${soubor}/dispatches`, {
+    method: "POST",
+    body: JSON.stringify({ ref: "main", inputs: vstupy }),
+  });
+}
+function odkazNaBehy() {
+  return `<a href="https://github.com/${A.owner}/${A.repo}/actions" target="_blank" rel="noopener">průběh v GitHub Actions</a>`;
+}
+
+// ---------------------------------------------------------------- připojení
+function nactiUlozene() {
+  try {
+    const u = JSON.parse(localStorage.getItem(KLIC) || "null");
+    if (u) { A = u; $("i-owner").value = u.owner; $("i-repo").value = u.repo;
+             $("i-pat").value = u.pat; $("i-pages").value = u.pages; }
+  } catch (e) {}
+  // adresu Pages odvodíme z aktuální stránky, pokud ji admin nevyplnil
+  if (!$("i-pages").value) $("i-pages").value = location.href.replace(/\/admin\.html.*$/, "");
+}
+$("b-pripojit").onclick = async () => {
+  A = { owner: $("i-owner").value.trim(), repo: $("i-repo").value.trim(),
+        pat: $("i-pat").value.trim(), pages: $("i-pages").value.trim().replace(/\/$/, "") };
+  if (!A.owner || !A.repo || !A.pat) { zprava("z-pristup", "Vyplňte vlastníka, repozitář i token.", "chyba"); return; }
+  zprava("z-pristup", "Ověřuji…");
+  try {
+    const repo = await gh("");
+    localStorage.setItem(KLIC, JSON.stringify(A));
+    $("kdo").textContent = `${repo.full_name}${repo.private ? " (soukromý)" : " (veřejný)"}`;
+    zprava("z-pristup", `Připojeno k <strong>${repo.full_name}</strong>.`, "uspech");
+    zamkni(true);
+    await Promise.all([pripravObrazky(), obnovStav()]);
+  } catch (e) {
+    zprava("z-pristup", `Připojení selhalo: ${e.message}. Zkontrolujte token a jeho oprávnění.`, "chyba");
+  }
+};
+$("b-odhlasit").onclick = () => {
+  localStorage.removeItem(KLIC);
+  A = { owner: "", repo: "", pat: "", pages: "" };
+  $("i-pat").value = "";
+  $("kdo").textContent = "nepřipojeno";
+  zamkni(false);
+  zprava("z-pristup", "Token byl z prohlížeče smazán.");
+};
+
+// ---------------------------------------------------------------- obrázky
+async function pripravObrazky() {
+  if (!KONFIG) KONFIG = (await import("./config.js?" + Date.now())).default;
+  naplnHlasujici();
+  const sloty = $("sloty");
+  sloty.innerHTML = "";
+  for (const [klic, cesta] of Object.entries(KONFIG.obrazky || {})) {
+    const el = document.createElement("div");
+    el.className = "slot";
+    el.innerHTML = `
+      <div style="font-weight:700; font-size:13.5px;">${klic}</div>
+      <div style="font-size:12px; color:var(--muted);"><code>${cesta}</code></div>
+      <img src="${A.pages}/${cesta}?cb=${Date.now()}" alt="" onerror="this.style.display='none'">
+      <input type="file" accept="image/png,image/jpeg" style="font-size:12px;">
+      <div class="stav"></div>`;
+    el.querySelector("input").onchange = (ev) => nahrajObrazek(ev.target.files[0], cesta, el);
+    sloty.appendChild(el);
+  }
+}
+
+async function nahrajObrazek(soubor, cesta, el) {
+  if (!soubor) return;
+  const stav = el.querySelector(".stav");
+  const napis = (t) => { stav.textContent = t; };
+  try {
+    napis("nahrávám…");
+    const bajty = new Uint8Array(await soubor.arrayBuffer());
+    let bin = "";
+    bajty.forEach((b) => { bin += String.fromCharCode(b); });
+    let sha = null;
+    try { sha = (await gh(`/contents/${cesta}`)).sha; } catch (e) {}
+    await gh(`/contents/${cesta}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        message: `Podklad ${cesta}`, content: btoa(bin), ...(sha ? { sha } : {}),
+      }),
+    });
+    napis("zapsáno, čekám na publikování…");
+    const hotovo = await pockejNaPublikovani(cesta, soubor.size);
+    if (hotovo) {
+      napis(`publikováno ✓ (${Math.round(soubor.size / 1024)} kB)`);
+      stav.style.color = "var(--green)";
+      el.querySelector("img").src = `${A.pages}/${cesta}?cb=${Date.now()}`;
+      el.querySelector("img").style.display = "block";
+    } else {
+      napis("zapsáno, ale publikovanou verzi se zatím nepodařilo ověřit — zkuste za chvíli obnovit stránku.");
+      stav.style.color = "var(--red)";
+    }
+  } catch (e) {
+    napis(`chyba: ${e.message}`);
+    stav.style.color = "var(--red)";
+  }
+}
+
+// Ověření je poctivé: stahujeme skutečný publikovaný soubor a porovnáváme velikost.
+async function pockejNaPublikovani(cesta, velikost) {
+  for (let pokus = 0; pokus < 30; pokus++) {
+    await new Promise((r) => setTimeout(r, 4000));
+    try {
+      const r = await fetch(`${A.pages}/${cesta}?cb=${Date.now()}`, { cache: "no-store" });
+      if (r.ok) {
+        const b = await r.blob();
+        if (b.size === velikost) return true;
+      }
+    } catch (e) {}
+  }
+  return false;
+}
+
+// ---------------------------------------------------------------- rozeslání
+$("b-ok").onclick = async () => {
+  const formulare = [...document.querySelectorAll(".f:checked")].map((x) => x.value);
+  if (!formulare.length) { zprava("z-rozeslat", "Vyberte alespoň jeden formulář.", "chyba"); return; }
+  const bezici = KOLO && KOLO.stav === "otevreno";
+  const otazka = bezici
+    ? `Kolo ${KOLO.id} je stále otevřené. Rozesláním vzniknou nové tokeny a staré odkazy přestanou platit. Pokračovat?`
+    : `Rozeslat lístky ${formulare.length === 1 ? "" : formulare.length + " formulářů "}všem hlasujícím z config.js?`;
+  if (!confirm(otazka)) return;
+  zprava("z-rozeslat", "Spouštím rozesílání…");
+  try {
+    await spust("rozeslat.yml", {
+      nazev: $("i-nazev").value.trim() || "Hlasování investičního výboru",
+      formulare: formulare.join(","),
+      termin: $("i-termin").value.trim(),
+      poznamka: $("i-poznamka").value.trim(),
+      prepsat: bezici,
+    });
+    zprava("z-rozeslat", `Rozesílání běží. Sledujte ${odkazNaBehy()}; stav kola se tu objeví do minuty.`, "uspech");
+    setTimeout(obnovStav, 25000);
+  } catch (e) {
+    zprava("z-rozeslat", `Nepodařilo se spustit: ${e.message}`, "chyba");
+  }
+};
+
+// ---------------------------------------------------------------- stav sběru
+async function obnovStav() {
+  if (!A.pat) return;
+  try {
+    KOLO = JSON.parse(await gh("/contents/data/kolo.json", { raw: true }));
+  } catch (e) {
+    $("prehled-kola").textContent = "Zatím neproběhlo žádné kolo.";
+    return;
+  }
+  const hotovo = KOLO.hlasujici.filter((h) => KOLO.formulare.every((t) => h.odevzdal?.[t])).length;
+  const celkem = KOLO.hlasujici.length;
+  $("prehled-kola").innerHTML =
+    `<strong>${KOLO.nazev}</strong> · <code>${KOLO.id}</code> · `
+    + (KOLO.stav === "otevreno" ? "sběr běží" : "uzavřeno")
+    + ` · kompletně odevzdalo ${hotovo} z ${celkem}`
+    + (KOLO.termin ? ` · termín ${KOLO.termin}` : "");
+
+  const hlavicka = KOLO.formulare.map((t) => `<th>${NAZVY[t]}</th>`).join("");
+  const radky = KOLO.hlasujici.map((h) => {
+    const bunky = KOLO.formulare.map((t) => h.odevzdal?.[t]
+      ? `<td class="ok" title="${h.odevzdal[t]}">vyplnil</td>` : `<td class="ne">–</td>`).join("");
+    return `<tr><td>${h.jmeno}</td>${bunky}</tr>`;
+  }).join("");
+  $("tabulka").innerHTML = `<table><thead><tr><th>Hlasující</th>${hlavicka}</tr></thead><tbody>${radky}</tbody></table>`;
+
+  naplnHlasujici();
+  await zjistiNeprirazene();
+  pripravStahovani();
+}
+
+async function zjistiNeprirazene() {
+  try {
+    const soubory = await gh(`/contents/data/kola/${KOLO.id}/neprirazene`);
+    if (Array.isArray(soubory) && soubory.length) {
+      $("neprirazene").innerHTML =
+        `<div class="zprava chyba"><strong>${soubory.length} zpráv se nepodařilo zpracovat.</strong>
+         Otevřete je v repozitáři a doplňte ručně v kroku 4:<br>`
+        + soubory.map((s) => `<a href="${s.html_url}" target="_blank" rel="noopener">${s.name}</a>`).join("<br>")
+        + `</div>`;
+      return;
+    }
+  } catch (e) {}
+  $("neprirazene").innerHTML = "";
+}
+
+function naplnHlasujici() {
+  const sel = $("i-hlasujici");
+  const jmena = KOLO ? KOLO.hlasujici.map((h) => h.jmeno) : (KONFIG?.clenoveJmeno || []);
+  sel.innerHTML = `<option value="">– podle kódu lístku –</option>`
+    + jmena.map((j) => `<option>${j}</option>`).join("");
+}
+
+$("b-obnovit").onclick = obnovStav;
+$("b-sber").onclick = async () => {
+  zprava("z-stav", "Spouštím kontrolu schránky…");
+  try {
+    await spust("sber.yml", {});
+    zprava("z-stav", `Kontrola běží (${odkazNaBehy()}). Nové odpovědi se objeví do minuty.`, "uspech");
+    setTimeout(obnovStav, 30000);
+  } catch (e) { zprava("z-stav", `Nepodařilo se spustit: ${e.message}`, "chyba"); }
+};
+
+// ---------------------------------------------------------------- sdílená složka
+let SLOZKA = null, NALEZENO = {};
+const SLUG_TYPU = { "temata-navrhy": "navrhy", "temata-priority": "priority", "hlavni-cast": "hlavni" };
+
+function fsDb() {
+  return new Promise((ok, chyba) => {
+    const r = indexedDB.open("okform-admin", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("h");
+    r.onsuccess = () => ok(r.result);
+    r.onerror = () => chyba(r.error);
+  });
+}
+async function fsUloz(h) {
+  const db = await fsDb();
+  return new Promise((ok, chyba) => {
+    const t = db.transaction("h", "readwrite");
+    t.objectStore("h").put(h, "slozka");
+    t.oncomplete = ok; t.onerror = () => chyba(t.error);
+  });
+}
+async function fsNacti() {
+  try {
+    const db = await fsDb();
+    return await new Promise((ok) => {
+      const q = db.transaction("h", "readonly").objectStore("h").get("slozka");
+      q.onsuccess = () => ok(q.result || null);
+      q.onerror = () => ok(null);
+    });
+  } catch (e) { return null; }
+}
+
+// Vlastní parser: lístky mohou mít středník i čárku a hodnoty v uvozovkách.
+function parsujCsv(text) {
+  text = text.replace(/^\uFEFF/, "");
+  const prvni = text.split("\n")[0];
+  const sep = prvni.split(";").length > prvni.split(",").length ? ";" : ",";
+  const radky = []; let pole = [], bunka = "", vUvozovkach = false;
+  for (let i = 0; i < text.length; i++) {
+    const z = text[i];
+    if (vUvozovkach) {
+      if (z === '"') { if (text[i + 1] === '"') { bunka += '"'; i++; } else vUvozovkach = false; }
+      else bunka += z;
+    } else if (z === '"') vUvozovkach = true;
+    else if (z === sep) { pole.push(bunka); bunka = ""; }
+    else if (z === "\n") { pole.push(bunka); radky.push(pole); pole = []; bunka = ""; }
+    else if (z !== "\r") bunka += z;
+  }
+  if (bunka || pole.length) { pole.push(bunka); radky.push(pole); }
+  return radky.filter((r) => r.some((b) => b.trim() !== ""));
+}
+
+async function prohledej(handle, hloubka, sber) {
+  for await (const [nazev, polozka] of handle.entries()) {
+    if (polozka.kind === "directory" && hloubka > 0) { await prohledej(polozka, hloubka - 1, sber); continue; }
+    if (polozka.kind !== "file") continue;
+    if (!nazev.toLowerCase().endsWith(".csv")) continue;
+    if (nazev.toUpperCase().startsWith("SOUHRN")) continue;   // vlastní výstupy nečteme
+    const zaklad = nazev.replace(/\.csv$/i, "");
+    const typ = SLUG_TYPU[zaklad.split("__")[0]];
+    if (!typ) continue;
+    const soubor = await polozka.getFile();
+    const radky = parsujCsv(await soubor.text());
+    if (radky.length < 2) continue;
+    const dvojice = radky[0].map((h, i) => [h, radky[1][i] ?? ""]);
+    const jmeno = (dvojice.find(([h]) => /jm[ée]no/i.test(h)) || [null, ""])[1];
+    (sber[typ] = sber[typ] || []).push({ jmeno, dvojice, kdy: soubor.lastModified, soubor: nazev });
+  }
+}
+
+async function nactiSlozku(zeptat) {
+  if (!SLOZKA) { zprava("z-slozka", "Nejdřív otevřete sdílenou složku.", "chyba"); return; }
+  const rezim = { mode: "read" };
+  let stav = await SLOZKA.queryPermission(rezim);
+  if (stav !== "granted" && zeptat) stav = await SLOZKA.requestPermission(rezim);
+  if (stav !== "granted") { zprava("z-slozka", "Přístup ke složce nebyl povolen.", "chyba"); return; }
+
+  NALEZENO = {};
+  try { await prohledej(SLOZKA, 1, NALEZENO); }
+  catch (e) { zprava("z-slozka", `Složku se nepodařilo přečíst: ${e.message}`, "chyba"); return; }
+
+  // Kdyby někdo odevzdal dvakrát, platí novější soubor.
+  Object.keys(NALEZENO).forEach((typ) => {
+    const podleJmena = {};
+    NALEZENO[typ].forEach((z) => {
+      if (!podleJmena[z.jmeno] || podleJmena[z.jmeno].kdy < z.kdy) podleJmena[z.jmeno] = z;
+    });
+    NALEZENO[typ] = Object.values(podleJmena);
+  });
+
+  vykresliSlozku();
+}
+
+function vykresliSlozku() {
+  const typy = Object.keys(SLUG_TYPU).map((s) => SLUG_TYPU[s]);
+  const jmena = KONFIG?.clenoveJmeno || [];
+  const cizi = [];
+  Object.values(NALEZENO).forEach((zaznamy) => zaznamy.forEach((z) => {
+    if (z.jmeno && !jmena.includes(z.jmeno) && !cizi.includes(z.jmeno)) cizi.push(z.jmeno);
+  }));
+
+  const hlavicka = typy.map((t) => `<th>${NAZVY[t]}</th>`).join("");
+  const radky = [...jmena, ...cizi].map((j) => {
+    const bunky = typy.map((t) => {
+      const z = (NALEZENO[t] || []).find((x) => x.jmeno === j);
+      return z
+        ? `<td class="ok" title="${z.soubor}">odevzdal</td>`
+        : `<td class="ne">–</td>`;
+    }).join("");
+    const znacka = jmena.includes(j) ? j : `${j} <span style="color:var(--red);">(není v config.js)</span>`;
+    return `<tr><td>${znacka}</td>${bunky}</tr>`;
+  }).join("");
+  $("slozka-tabulka").innerHTML = radky
+    ? `<table><thead><tr><th>Hlasující</th>${hlavicka}</tr></thead><tbody>${radky}</tbody></table>`
+    : `<p class="hint">Ve složce zatím není žádný lístek.</p>`;
+
+  const dostupne = typy.filter((t) => (NALEZENO[t] || []).length);
+  $("slozka-export").innerHTML = dostupne
+    .map((t) => `<button class="druhy" data-slouc="${t}">Stáhnout ${NAZVY[t]} (${NALEZENO[t].length})</button>`)
+    .join("") + (dostupne.length
+      ? `<button class="primar" id="b-souhrn">Uložit souhrny do složky</button>` : "");
+  $("slozka-export").querySelectorAll("[data-slouc]").forEach((b) => {
+    b.onclick = () => { const { csv, nazev } = sloucCsv(b.dataset.slouc); stahni(csv, nazev); };
+  });
+  if ($("b-souhrn")) $("b-souhrn").onclick = ulozSouhrny;
+
+  const celkem = dostupne.reduce((a, t) => a + NALEZENO[t].length, 0);
+  zprava("z-slozka", `Načteno ${celkem} lístků ze složky <strong>${SLOZKA.name}</strong>.`,
+         celkem ? "uspech" : "");
+}
+
+// Sloučení: sloupce se sjednotí, pořadí řádků podle config.js.
+function sloucCsv(typ) {
+  const sep = KONFIG?.csvDelimiter || ";";
+  const jmena = KONFIG?.clenoveJmeno || [];
+  const zaznamy = [...(NALEZENO[typ] || [])].sort((a, b) => {
+    const ia = jmena.indexOf(a.jmeno), ib = jmena.indexOf(b.jmeno);
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+  });
+  const sloupce = [];
+  zaznamy.forEach((z) => z.dvojice.forEach(([h]) => { if (!sloupce.includes(h)) sloupce.push(h); }));
+  const pole = (v) => {
+    v = String(v ?? "");
+    return /[";\n,]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+  };
+  const radky = [sloupce.map((h) => pole(h)).join(sep)];
+  zaznamy.forEach((z) => {
+    const mapa = Object.fromEntries(z.dvojice);
+    radky.push(sloupce.map((h) => pole(mapa[h] ?? "")).join(sep));
+  });
+  const kolo = KOLO ? KOLO.id : new Date().toISOString().slice(0, 10);
+  return { csv: "\ufeff" + radky.join("\r\n") + "\r\n", nazev: `SOUHRN-${kolo}-${typ}.csv` };
+}
+
+function stahni(text, nazev) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type: "text/csv;charset=utf-8" }));
+  a.download = nazev;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+async function ulozSouhrny() {
+  try {
+    if (await SLOZKA.queryPermission({ mode: "readwrite" }) !== "granted"
+        && await SLOZKA.requestPermission({ mode: "readwrite" }) !== "granted") {
+      zprava("z-slozka", "K zápisu souhrnů je potřeba povolit i úpravy složky.", "chyba"); return;
+    }
+    const ulozene = [];
+    for (const typ of Object.keys(NALEZENO)) {
+      if (!NALEZENO[typ].length) continue;
+      const { csv, nazev } = sloucCsv(typ);
+      const f = await SLOZKA.getFileHandle(nazev, { create: true });
+      const w = await f.createWritable();
+      await w.write(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+      await w.close();
+      ulozene.push(nazev);
+    }
+    zprava("z-slozka", `Uloženo do složky: ${ulozene.join(", ")}.`, "uspech");
+  } catch (e) {
+    zprava("z-slozka", `Zápis se nepodařil: ${e.message}`, "chyba");
+  }
+}
+
+$("b-slozka").onclick = async () => {
+  try {
+    SLOZKA = await window.showDirectoryPicker({ mode: "readwrite", id: "okform-sber" });
+    await fsUloz(SLOZKA);
+    $("slozka-nazev").innerHTML = `Složka: <strong>${SLOZKA.name}</strong>`;
+    await nactiSlozku(true);
+  } catch (e) { if (e.name !== "AbortError") zprava("z-slozka", e.message, "chyba"); }
+};
+$("b-slouc").onclick = () => nactiSlozku(true);
+
+// ---------------------------------------------------------------- uzávěrka
+function pripravStahovani() {
+  if (!KOLO) return;
+  $("stahovani").innerHTML =
+    `<button class="primar" id="b-xlsx">Stáhnout výsledky (jeden sešit XLSX)</button>`
+    + `<details style="width:100%; margin-top:6px;"><summary>Raději jednotlivá CSV</summary>
+        <div class="tlacitka" style="padding-top:10px;">`
+    + KOLO.formulare.map((t) => `<button class="druhy" data-csv="${t}">${NAZVY[t]}</button>`).join("")
+    + `</div></details>`;
+  $("b-xlsx").onclick = () => stahniSoubor("vysledky.xlsx", `${KOLO.id}-vysledky.xlsx`, true);
+  $("stahovani").querySelectorAll("[data-csv]").forEach((b) => {
+    b.onclick = () => stahniSoubor(`${b.dataset.csv}.csv`, `${KOLO.id}-${b.dataset.csv}.csv`, false);
+  });
+}
+
+// Sešit je binární, proto se tahá přes base64 z API, ne jako text.
+async function stahniSoubor(nazev, jako, binarni) {
+  try {
+    const cesta = `/contents/data/kola/${KOLO.id}/${nazev}`;
+    let blob;
+    if (binarni) {
+      const meta = await gh(cesta);
+      const bin = atob(meta.content.replace(/\n/g, ""));
+      const bajty = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bajty[i] = bin.charCodeAt(i);
+      blob = new Blob([bajty], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    } else {
+      blob = new Blob([await gh(cesta, { raw: true })], { type: "text/csv;charset=utf-8" });
+    }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = jako;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  } catch (e) {
+    zprava("z-konec", `Soubor zatím neexistuje — počkejte na první sběr. (${e.message})`, "chyba");
+  }
+}
+$("b-uzavrit").onclick = async () => {
+  if (!KOLO) return;
+  const chybi = KOLO.hlasujici.filter((h) => !KOLO.formulare.every((t) => h.odevzdal?.[t]));
+  const text = chybi.length
+    ? `Ještě nevyplnili: ${chybi.map((h) => h.jmeno).join(", ")}.\n\nOpravdu sběr ukončit?`
+    : "Ukončit sběr a odeslat výsledky?";
+  if (!confirm(text)) return;
+  zprava("z-konec", "Ukončuji…");
+  try {
+    await spust("uzavrit.yml", { znovu: KOLO.stav !== "otevreno", vsem: $("i-vsem").checked });
+    zprava("z-konec", `Uzávěrka běží (${odkazNaBehy()}). Výsledky dorazí e-mailem.`, "uspech");
+    setTimeout(obnovStav, 30000);
+  } catch (e) { zprava("z-konec", `Nepodařilo se spustit: ${e.message}`, "chyba"); }
+};
+$("b-doplnit").onclick = async () => {
+  const kod = $("i-kod").value.trim(), csv = $("i-csv").value.trim();
+  if (!kod && !csv) { zprava("z-konec", "Vložte kód lístku nebo obsah CSV.", "chyba"); return; }
+  if (csv && !kod && (!$("i-hlasujici").value || !$("i-formular").value)) {
+    zprava("z-konec", "U vloženého CSV vyberte hlasujícího i formulář.", "chyba"); return;
+  }
+  zprava("z-konec", "Zapisuji…");
+  try {
+    await spust("doplnit.yml", {
+      kod, csv, hlasujici: $("i-hlasujici").value, formular: $("i-formular").value,
+    });
+    $("i-kod").value = ""; $("i-csv").value = "";
+    zprava("z-konec", `Zápis běží (${odkazNaBehy()}).`, "uspech");
+    setTimeout(obnovStav, 25000);
+  } catch (e) { zprava("z-konec", `Nepodařilo se spustit: ${e.message}`, "chyba"); }
+};
+
+// ---------------------------------------------------------------- start
+nactiUlozene();
+if (A.pat) $("b-pripojit").click();
+if (typeof window.showDirectoryPicker !== "function") {
+  $("s-slozka").innerHTML = `<div class="kicker">KROK 3</div><h2>Sběr ze sdílené složky</h2>
+    <div class="zprava chyba">Tento prohlížeč neumí číst složku na disku. Otevřete administraci
+    v Chrome nebo Edge na počítači.</div>`;
+} else {
+  fsNacti().then((h) => {
+    if (!h) return;
+    SLOZKA = h;
+    $("slozka-nazev").innerHTML = `Složka: <strong>${h.name}</strong> — klikněte na Načíst znovu.`;
+  });
+}
+setInterval(() => { if (A.pat && KOLO && KOLO.stav === "otevreno") obnovStav(); }, 60000);
+</script>
+</body>
+</html>

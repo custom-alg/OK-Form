@@ -1,0 +1,57 @@
+name: 1 · Rozeslat hlasovací lístky
+
+on:
+  workflow_dispatch:
+    inputs:
+      nazev:
+        description: Název kola (objeví se v předmětu e-mailu)
+        required: true
+        default: Hlasování investičního výboru
+      formulare:
+        description: Které formuláře rozeslat (čárkou oddělené - navrhy,priority,hlavni)
+        required: true
+        default: navrhy,priority,hlavni
+      termin:
+        description: Termín pro vyplnění (volitelné, např. 5. 8. 2026)
+        required: false
+        default: ""
+      poznamka:
+        description: Doplňující věta do pozvánky (volitelné)
+        required: false
+        default: ""
+      prepsat:
+        description: Přepsat kolo, které je ještě otevřené
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ok-form-data
+  cancel-in-progress: false
+
+jobs:
+  rozeslat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Rozeslat pozvánky
+        working-directory: scripts
+        env:
+          NAZEV: ${{ inputs.nazev }}
+          FORMULARE: ${{ inputs.formulare }}
+          TERMIN: ${{ inputs.termin }}
+          POZNAMKA: ${{ inputs.poznamka }}
+          PREPSAT: ${{ inputs.prepsat }}
+          PAGES_URL: ${{ vars.PAGES_URL }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+        run: python rozeslat.py

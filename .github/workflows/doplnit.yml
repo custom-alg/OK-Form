@@ -1,0 +1,45 @@
+name: 4 · Doplnit odpověď ručně
+
+on:
+  workflow_dispatch:
+    inputs:
+      kod:
+        description: Vložený text e-mailu nebo kódový blok
+        required: false
+        default: ""
+      csv:
+        description: Obsah souboru CSV (hlavička + řádek odpovědi)
+        required: false
+        default: ""
+      hlasujici:
+        description: Jméno hlasujícího (nutné u vloženého CSV)
+        required: false
+        default: ""
+      formular:
+        description: navrhy / priority / hlavni (nutné u vloženého CSV)
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ok-form-data
+  cancel-in-progress: false
+
+jobs:
+  doplnit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Zapsat doplněnou odpověď
+        working-directory: scripts
+        env:
+          KOD: ${{ inputs.kod }}
+          CSV: ${{ inputs.csv }}
+          HLASUJICI: ${{ inputs.hlasujici }}
+          FORMULAR: ${{ inputs.formular }}
+        run: python doplnit.py
