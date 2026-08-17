@@ -101,7 +101,7 @@ Nastavte v repozitáři **Settings → Secrets and variables → Actions**:
 | `SMTP_HOST` | `smtp.gmail.com` | |
 | `SMTP_PORT` | `587` | 465 = SSL, jinak STARTTLS |
 | `SMTP_USER` / `SMTP_PASS` | | zpravidla stejné jako IMAP |
-| `MAIL_FROM` | `hlasovani@moneco.cz` | nepovinné, jinak `SMTP_USER` |
+| `MAIL_FROM` | `ok.form.monecois@gmail.com` | nepovinné, jinak `SMTP_USER` |
 | `ADMIN_EMAIL` | váš e-mail | sem chodí „X vyplnil Y“ a výsledky |
 
 A ve stejném okně v záložce **Variables**:
