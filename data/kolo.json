@@ -1,28 +1,36 @@
 {
-  "id": "2026-08-17-2",
+  "id": "2026-08-17-3",
   "nazev": "Hlasování investičního výboru",
-  "stav": "uzavreno",
-  "otevreno": "2026-08-17T06:36:10Z",
-  "uzavreno": "2026-08-17T06:44:02Z",
+  "stav": "otevreno",
+  "otevreno": "2026-08-17T07:50:18Z",
+  "uzavreno": null,
   "termin": "17. 8. 2026",
   "formulare": [
-    "priority"
+    "navrhy"
   ],
   "hlasujici": [
     {
       "i": 0,
-      "jmeno": "Pokus 1",
-      "token_hash": "c6ee1b83698a26ad91ed44417e4f7f64096cebaadb0777e29e597590f8e51918",
+      "jmeno": "Peta",
+      "token_hash": "ec4ca4f9c2584ecf489dfebe573aa7c365c60da5198d732682ad78b899e58deb",
       "odevzdal": {
-        "priority": "2026-08-17T06:41:50Z"
+        "navrhy": null
       }
     },
     {
       "i": 1,
-      "jmeno": "Pokus 2",
-      "token_hash": "dc871e100cd0def279d110a6e13c7cd3d3a0b5fd1d5f8e5833b3d49b2fd3f357",
+      "jmeno": "michael",
+      "token_hash": "4e446e1ad0aea22836ae0c48dfbeb657a824071807286258cf05060dda254ccc",
       "odevzdal": {
-        "priority": "2026-08-17T06:41:51Z"
+        "navrhy": null
+      }
+    },
+    {
+      "i": 2,
+      "jmeno": "Vojtech",
+      "token_hash": "f2f76dc516584ee9b303a8532a02fcaac5b41fd7d6f34ba8602621fc09d001b1",
+      "odevzdal": {
+        "navrhy": null
       }
     }
   ]
