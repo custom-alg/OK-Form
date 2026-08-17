@@ -1,0 +1,122 @@
+[
+  {
+    "i": 0,
+    "jmeno": "Pokus 1",
+    "prijato": "2026-08-17T06:41:50Z",
+    "odesilatel": "peta.simcak@gmail.com",
+    "pary": [
+      [
+        "Timestamp",
+        "8/17/2026 08:37:47"
+      ],
+      [
+        "Email Address",
+        "peta.simcak@gmail.com"
+      ],
+      [
+        "Jméno a příjmení",
+        "Pokus 1"
+      ],
+      [
+        "AKCIE - Priorita 1",
+        "Obrana"
+      ],
+      [
+        "AKCIE - Priorita 2",
+        "Nukleární energie"
+      ],
+      [
+        "AKCIE - Priorita 3",
+        "Inovace ve zdravotnictví"
+      ],
+      [
+        "AKCIE - Priorita 4",
+        "Umělá inteligence"
+      ],
+      [
+        "AKCIE - Priorita 5",
+        "Indie"
+      ],
+      [
+        "DLUHOPISY - Priorita 1",
+        "ABS"
+      ],
+      [
+        "DLUHOPISY - Priorita 2",
+        "Absolute return"
+      ],
+      [
+        "DLUHOPISY - Priorita 3",
+        "Global Enhanced"
+      ],
+      [
+        "DLUHOPISY - Priorita 4",
+        "Konvertibilní dluhopisy"
+      ],
+      [
+        "DLUHOPISY - Priorita 5",
+        "hello"
+      ]
+    ]
+  },
+  {
+    "i": 1,
+    "jmeno": "Pokus 2",
+    "prijato": "2026-08-17T06:41:51Z",
+    "odesilatel": "peta.simcak@outlook.cz",
+    "pary": [
+      [
+        "Timestamp",
+        "8/17/2026 08:41:09"
+      ],
+      [
+        "Email Address",
+        "peta.simcak@outlook.cz"
+      ],
+      [
+        "Jméno a příjmení",
+        "Pokus 2"
+      ],
+      [
+        "AKCIE - Priorita 1",
+        "Obrana"
+      ],
+      [
+        "AKCIE - Priorita 2",
+        "Nukleární energie"
+      ],
+      [
+        "AKCIE - Priorita 3",
+        "Inovace ve zdravotnictví"
+      ],
+      [
+        "AKCIE - Priorita 4",
+        "Umělá inteligence"
+      ],
+      [
+        "AKCIE - Priorita 5",
+        "Polovodiče"
+      ],
+      [
+        "DLUHOPISY - Priorita 1",
+        "ABS"
+      ],
+      [
+        "DLUHOPISY - Priorita 2",
+        "Konvertibilní dluhopisy"
+      ],
+      [
+        "DLUHOPISY - Priorita 3",
+        "hello"
+      ],
+      [
+        "DLUHOPISY - Priorita 4",
+        "Absolute return"
+      ],
+      [
+        "DLUHOPISY - Priorita 5",
+        "Global Enhanced"
+      ]
+    ]
+  }
+]
