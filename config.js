@@ -1,18 +1,20 @@
 // ================================================================
 // KONFIGURACE APLIKACE - vše, co spravuje administrátor, je zde.
-// Hlavní program (Hlasovani.dc.html) tento soubor pouze načítá.
+// Soubor vzniká z administrace (admin.html → Nastavení → Uložit).
+// Ruční úpravy jsou možné, ale při dalším uložení z administrace
+// se přepíšou.
 // ================================================================
 export default {
   // --- Obecné ---
-  vysledkyEmail: "vysledky@moneco.cz",   // kam směřuje tlačítko „Odeslat e-mailem"
-  sberRezim: "email",                    // "email" = lístky chodí do sběrné schránky (GitHub Actions)
-  nextcloudOdkaz: "",                    // nepovinný odkaz na sdílenou složku; prázdné = tlačítko skryto
-  csvDelimiter: ";",                     // oddělovač CSV: "," nebo ";"
-  darkLightMode: true,                   // false = přepínač tmavého režimu se skryje
-  defaultTheme: "light",                 // "light" | "dark"
-  validaceRezim: "block",                // "block" = nedosažitelné volby zešednou a nejdou stisknout
-                                         // "warning" = vše lze klikat, ale lístek se součtem ≠ 0 nelze odeslat
-  nettoSkore: true,                      // badge with netto score (−3…+3) is shown in section header; false = only direction (−1/0/+1) as control value
+  vysledkyEmail: "ok.form.monecois@gmail.com",   // kam směřuje tlačítko „Odeslat e-mailem"
+  sberRezim: "email",                            // "email" = lístky chodí do sběrné schránky (GitHub Actions)
+  nextcloudOdkaz: "",                            // nepovinný odkaz na sdílenou složku; prázdné = tlačítko skryto
+  csvDelimiter: ";",                             // oddělovač CSV: "," nebo ";"
+  darkLightMode: true,                           // false = přepínač tmavého režimu se skryje
+  defaultTheme: "light",                         // "light" | "dark"
+  validaceRezim: "block",                        // "block" = nedosažitelné volby zešednou a nejdou stisknout
+                                                 // "warning" = vše lze klikat, ale lístek se součtem != 0 nelze odeslat
+  nettoSkore: true,                              // true = v hlavičce sekce se ukazuje netto skóre (-3 az +3)
 
   // --- Cesty k obrázkům (admin je přepisuje soubory se stejným názvem) ---
   obrazky: {
@@ -38,7 +40,7 @@ export default {
   maxPriorit: 5,
 
   // --- Lístek 3: škála a sekce ---
-  // Škála: index 0–2 = kontrolní hodnota −1, index 3 = 0, index 4–6 = +1.
+  // Škála: index 0-2 = kontrolní hodnota -1, index 3 = 0, index 4-6 = +1.
   skala: ["---", "--", "-", "N", "+", "++", "+++"],   // bez mezer: přesně tak je čte převodní tabulka v matici
   // pravidlo: true = součet kontrolních hodnot sekce musí být 0.
   sekceHlavni: [

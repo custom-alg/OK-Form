@@ -3,148 +3,349 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Administrace hlasování</title>
+<title>OK Forms — administrace</title>
 <link rel="stylesheet" href="_ds/modernist-eaa7314a-4039-4f0f-ab8b-c88ed36cc16c/styles.css">
 <style>
   :root { --card:#fff; --line:var(--color-divider); --muted:color-mix(in srgb, var(--color-text) 62%, transparent);
           --field:var(--color-surface); --chip:var(--color-neutral-100); --red:var(--color-accent);
-          --green:#0d7a44; --greenbg:#e2f2e9; }
+          --green:#0d7a44; --greenbg:#e2f2e9; --zluta:#fff8e1; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--color-bg); color:var(--color-text); font-family:var(--font-body); }
-  header { display:flex; align-items:center; gap:14px; padding:14px 28px; background:var(--card);
-           border-bottom:2px solid var(--line); position:sticky; top:0; z-index:10; }
-  .mark { width:38px; height:38px; background:var(--red); display:grid; place-items:center; color:#fff;
-          font-weight:800; font-family:var(--font-heading); }
-  main { max-width:900px; margin:0 auto; padding:32px 24px 90px; display:grid; gap:26px; }
-  section { background:var(--card); border:1px solid var(--line); border-top:2px solid var(--color-text); padding:24px; display:grid; gap:16px; }
-  section[data-locked="1"] { opacity:.45; pointer-events:none; }
-  h1 { font-family:var(--font-heading); font-size:32px; font-weight:800; letter-spacing:-.015em; margin:0; }
-  h2 { font-family:var(--font-heading); font-size:19px; font-weight:800; margin:0; }
+
+  header { background:var(--card); border-bottom:2px solid var(--line); position:sticky; top:0; z-index:20; }
+  .hlava { display:flex; align-items:center; gap:14px; padding:12px 28px; }
+  .mark { width:36px; height:36px; background:var(--red); display:grid; place-items:center; color:#fff;
+          font-weight:800; font-family:var(--font-heading); flex:none; }
+  .zalozky { display:flex; gap:2px; padding:0 22px; overflow-x:auto; }
+  .zalozky button { background:none; border:none; border-bottom:3px solid transparent; padding:11px 16px;
+    font-family:var(--font-heading); font-weight:700; font-size:14.5px; color:var(--muted); cursor:pointer; white-space:nowrap; }
+  .zalozky button[aria-selected="true"] { color:var(--color-text); border-bottom-color:var(--red); }
+  .zalozky button:disabled { opacity:.35; cursor:not-allowed; }
+
+  main { max-width:960px; margin:0 auto; padding:28px 24px 120px; }
+  .panel { display:none; }
+  .panel[data-aktivni="1"] { display:grid; gap:24px; }
+  section { background:var(--card); border:1px solid var(--line); border-top:2px solid var(--color-text); padding:22px; display:grid; gap:15px; }
+  h1 { font-family:var(--font-heading); font-size:29px; font-weight:800; letter-spacing:-.015em; margin:0; }
+  h2 { font-family:var(--font-heading); font-size:18px; font-weight:800; margin:0; }
+  h3 { font-family:var(--font-heading); font-size:14px; font-weight:800; margin:0; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
   .kicker { font-size:11px; font-weight:800; color:var(--red); letter-spacing:.1em; }
-  .hint { font-size:13.5px; color:var(--muted); text-wrap:pretty; margin:0; }
-  label { display:grid; gap:6px; font-size:13px; font-weight:600; color:var(--muted); }
-  input[type=text], input[type=password], input[type=url], textarea, select {
-    padding:11px 12px; border:1px solid var(--line); background:var(--field); color:var(--color-text);
-    font-size:15px; font-family:var(--font-body); width:100%; border-radius:0; }
-  textarea { min-height:110px; font-family:ui-monospace, monospace; font-size:12px; }
-  .rada { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px; }
-  button { border:none; padding:12px 20px; font-size:14.5px; font-weight:700; font-family:var(--font-heading);
+  .hint { font-size:13.5px; color:var(--muted); text-wrap:pretty; margin:0; line-height:1.55; }
+
+  label { display:grid; gap:5px; font-size:12.5px; font-weight:600; color:var(--muted); }
+  input[type=text], input[type=password], input[type=url], input[type=email], input[type=number], textarea, select {
+    padding:10px 11px; border:1px solid var(--line); background:var(--field); color:var(--color-text);
+    font-size:14.5px; font-family:var(--font-body); width:100%; border-radius:0; }
+  textarea { min-height:96px; font-family:ui-monospace, monospace; font-size:12px; }
+  .prepinac { display:flex; gap:9px; align-items:center; font-size:14px; font-weight:400; color:var(--color-text); }
+  .rada { display:grid; grid-template-columns:repeat(auto-fit, minmax(210px,1fr)); gap:13px; }
+  .rada3 { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:13px; }
+
+  button { border:none; padding:11px 19px; font-size:14px; font-weight:700; font-family:var(--font-heading);
            cursor:pointer; text-align:left; border-radius:0; }
-  button:hover { filter:brightness(.92); }
+  button:hover:not(:disabled) { filter:brightness(.92); }
   button:disabled { opacity:.4; cursor:not-allowed; filter:none; }
   .primar { background:var(--red); color:#fff; }
   .druhy { background:var(--chip); color:var(--color-text); border:1px solid var(--line); font-weight:600; }
-  .velky { padding:16px 28px; font-size:17px; font-weight:800; }
+  .maly { padding:6px 12px; font-size:12.5px; font-weight:600; }
+  .velky { padding:15px 26px; font-size:16.5px; font-weight:800; }
+  .tlacitka { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   :focus-visible { outline:2px solid var(--red); outline-offset:2px; }
+
   table { border-collapse:collapse; width:100%; font-size:14px; }
-  th, td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); }
-  th { font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); }
+  th { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
   .ok { color:var(--green); font-weight:800; }
   .ne { color:var(--muted); }
-  .zprava { padding:11px 14px; font-size:13.5px; border-left:4px solid var(--line); background:var(--chip); text-wrap:pretty; }
+
+  .zprava { padding:11px 14px; font-size:13.5px; border-left:4px solid var(--line); background:var(--chip); text-wrap:pretty; line-height:1.5; }
   .zprava.chyba { border-color:var(--red); }
   .zprava.uspech { border-color:var(--green); background:var(--greenbg); }
+  .zprava.pozor { border-color:#e8a33d; background:var(--zluta); }
+  .zprava:empty { display:none; }
+
+  /* --- editor konfigurace --- */
+  .polozka { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end;
+             padding:10px 0; border-bottom:1px solid var(--line); }
+  .polozka:last-child { border-bottom:none; }
+  .polozka .pole { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:10px; }
+  .sekce-box { border:1px solid var(--line); border-left:3px solid var(--red); padding:14px; display:grid; gap:12px; background:var(--field); }
+  .sekce-hlava { display:grid; grid-template-columns:1fr 1fr auto; gap:10px; align-items:end; }
+  .radky-box { display:grid; gap:7px; padding-left:14px; border-left:2px solid var(--line); }
+  .radek { display:grid; grid-template-columns:1fr 150px auto; gap:8px; align-items:center; }
+  .radek input { font-size:13.5px; padding:7px 9px; }
+  .mono { font-family:ui-monospace, monospace; }
+  .skala-mriz { display:grid; grid-template-columns:repeat(7, 1fr); gap:8px; }
+  .skala-mriz label { text-align:center; }
+  .skala-mriz input { text-align:center; font-family:ui-monospace, monospace; font-weight:700; }
+  .odstranit { background:none; border:1px solid var(--line); color:var(--red); padding:6px 10px;
+               font-size:16px; line-height:1; font-weight:700; cursor:pointer; }
   .obrazky { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; }
-  .slot { border:1px solid var(--line); padding:14px; display:grid; gap:9px; align-content:start; }
+  .slot { border:1px solid var(--line); padding:13px; display:grid; gap:8px; align-content:start; }
   .slot img { width:100%; display:block; border:1px solid var(--line); filter:grayscale(1); }
   .slot .stav { font-size:12px; color:var(--muted); min-height:1.3em; }
-  .zamek { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   code { font-family:ui-monospace, monospace; font-size:12.5px; background:var(--chip); padding:1px 5px; }
   details summary { cursor:pointer; font-weight:600; font-size:14px; }
-  .tlacitka { display:flex; gap:10px; flex-wrap:wrap; }
+
+  /* lišta uložení konfigurace */
+  .lista { position:sticky; bottom:0; background:var(--card); border-top:2px solid var(--color-text);
+           padding:13px 22px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; z-index:15;
+           margin:0 -24px -120px; }
+  .lista .stav-zmen { font-size:13px; color:var(--muted); flex:1; min-width:170px; }
+  .neulozeno { color:var(--red); font-weight:700; }
 </style>
 </head>
 <body>
+
 <header>
-  <div class="mark">OK</div>
-  <div>
-    <div style="font-family:var(--font-heading); font-weight:800; font-size:18px;">Administrace hlasování</div>
-    <div style="font-size:12.5px; color:var(--muted);" id="kdo">nepřipojeno</div>
+  <div class="hlava">
+    <div class="mark">OK</div>
+    <div style="flex:1;">
+      <div style="font-family:var(--font-heading); font-weight:800; font-size:17px;">OK Forms — administrace</div>
+      <div style="font-size:12.5px; color:var(--muted);" id="kdo">nepřipojeno</div>
+    </div>
   </div>
+  <nav class="zalozky" id="zalozky">
+    <button data-panel="p-pripojeni" aria-selected="true">Připojení</button>
+    <button data-panel="p-nastaveni" aria-selected="false" disabled>Nastavení</button>
+    <button data-panel="p-podklady" aria-selected="false" disabled>Podklady</button>
+    <button data-panel="p-hlasovani" aria-selected="false" disabled>Hlasování</button>
+    <button data-panel="p-vysledky" aria-selected="false" disabled>Výsledky</button>
+  </nav>
 </header>
 
 <main>
-  <div>
-    <h1>Průběh kola</h1>
-    <p class="hint">Podklady → rozeslání → sběr → uzávěrka. Každý krok běží jako úloha v GitHub Actions;
-      tato stránka je jen ovládací panel a nic si neukládá kromě přístupového tokenu ve vašem prohlížeči.</p>
-  </div>
 
-  <!-- ------------------------------------------------------------ 0. přístup -->
-  <section id="s-pristup">
-    <div class="kicker">KROK 0</div>
-    <h2>Připojení k repozitáři</h2>
-    <p class="hint">Potřebujete jemně odstupňovaný token (Fine-grained PAT) s právy
-      <code>Contents: Read and write</code> a <code>Actions: Read and write</code> pro tento jeden repozitář.
-      Uloží se do <code>localStorage</code> tohoto prohlížeče — na sdíleném počítači se po práci odhlaste.</p>
+<!-- ============================================ PŘIPOJENÍ -->
+<div class="panel" id="p-pripojeni" data-aktivni="1">
+  <div>
+    <h1>Připojení k repozitáři</h1>
+    <p class="hint">Administrace pracuje přímo s GitHubem — čte a zapisuje soubory a spouští úlohy.
+      K tomu potřebuje přístupový token. Uloží se jen do tohoto prohlížeče, nikam se neodesílá.</p>
+  </div>
+  <section>
     <div class="rada">
-      <label>Vlastník (organizace nebo uživatel)<input type="text" id="i-owner" placeholder="moneco"></label>
-      <label>Repozitář<input type="text" id="i-repo" placeholder="OK-Form"></label>
+      <label>Vlastník (organizace nebo uživatel)<input type="text" id="i-owner" placeholder="custom-alg"></label>
+      <label>Repozitář<input type="text" id="i-repo" placeholder="OK-Form-Git"></label>
     </div>
-    <label>Přístupový token<input type="password" id="i-pat" placeholder="github_pat_…"></label>
-    <label>Adresa publikované stránky<input type="url" id="i-pages" placeholder="https://moneco.github.io/OK-Form"></label>
+    <label>Přístupový token (fine-grained PAT)<input type="password" id="i-pat" placeholder="github_pat_…"></label>
+    <label>Adresa publikované stránky<input type="url" id="i-pages" placeholder="https://custom-alg.github.io/OK-Form-Git"></label>
     <div class="tlacitka">
       <button class="primar" id="b-pripojit">Připojit</button>
       <button class="druhy" id="b-odhlasit">Odhlásit a smazat token</button>
     </div>
     <div id="z-pristup"></div>
+    <details>
+      <summary>Kde token vezmu</summary>
+      <p class="hint" style="padding-top:10px;">Avatar vpravo nahoře na GitHubu → Settings → úplně dole
+        Developer settings → Personal access tokens → Fine-grained tokens → Generate new token.
+        V <em>Repository access</em> zvolte „Only select repositories" a tenhle repozitář,
+        v <em>Permissions</em> nastavte <strong>Contents: Read and write</strong> a
+        <strong>Actions: Read and write</strong>. Podrobně v docs/PRUVODCE-GITHUB.md, krok 6.</p>
+    </details>
+  </section>
+</div>
+
+<!-- ============================================ NASTAVENÍ -->
+<div class="panel" id="p-nastaveni">
+  <div>
+    <h1>Nastavení</h1>
+    <p class="hint">Vše z tohoto panelu se ukládá do souboru <code>config.js</code> v repozitáři.
+      Změny se projeví ve formuláři do minuty po uložení. Pole popsaná níže jsou jediné,
+      co formulář ovlivňuje — nic dalšího se nikde ručně needituje.</p>
+  </div>
+
+  <section>
+    <div class="kicker">OBECNÉ</div>
+    <h2>Chování aplikace</h2>
+    <div class="rada">
+      <label>Sběrná adresa
+        <input type="email" id="c-vysledkyEmail">
+        <span class="hint">Kam míří tlačítko „Odeslat e-mailem". Musí to být schránka,
+          kterou čte sběrná úloha.</span>
+      </label>
+      <label>Režim sběru
+        <select id="c-sberRezim">
+          <option value="email">E-mailem do sběrné schránky</option>
+          <option value="slozka">Zápisem do sdílené složky</option>
+        </select>
+        <span class="hint">Složka funguje jen v Chrome a Edge na počítači.</span>
+      </label>
+    </div>
+    <div class="rada">
+      <label>Odkaz na sdílenou složku (nepovinné)
+        <input type="url" id="c-nextcloudOdkaz" placeholder="https://nextcloud…/s/…">
+        <span class="hint">Prázdné = tlačítko „Nahrát do Nextcloudu" se skryje.</span>
+      </label>
+      <label>Oddělovač CSV
+        <select id="c-csvDelimiter">
+          <option value=";">Středník ;  (český Excel)</option>
+          <option value=",">Čárka ,  (anglický Excel)</option>
+        </select>
+      </label>
+    </div>
+    <div class="rada">
+      <label>Výchozí motiv
+        <select id="c-defaultTheme">
+          <option value="light">Světlý</option>
+          <option value="dark">Tmavý</option>
+        </select>
+      </label>
+      <label>Kontrola součtu v lístku
+        <select id="c-validaceRezim">
+          <option value="block">Blokovat — nedosažitelné volby zešednou</option>
+          <option value="warning">Varovat — klikat lze vše, odeslat ne</option>
+        </select>
+      </label>
+    </div>
+    <div style="display:grid; gap:9px; padding-top:4px;">
+      <span class="prepinac"><input type="checkbox" id="c-darkLightMode"> Nabídnout hlasujícím přepínač světlý/tmavý</span>
+      <span class="prepinac"><input type="checkbox" id="c-nettoSkore"> V hlavičce sekce ukazovat netto skóre (−3…+3)</span>
+    </div>
   </section>
 
-  <!-- ------------------------------------------------------------ 1. obrázky -->
-  <section id="s-obrazky" data-locked="1">
-    <div class="kicker">KROK 1</div>
-    <h2>Podklady k hlasování</h2>
-    <p class="hint">Nahrané soubory se rovnou zapíšou do repozitáře. Publikování na Pages trvá zhruba minutu —
-      počkejte na potvrzení <strong>publikováno</strong>, teprve pak rozesílejte lístky.</p>
+  <section>
+    <div class="kicker">HLASUJÍCÍ</div>
+    <h2>Kdo dostane lístek</h2>
+    <p class="hint">Pořadí určuje, v jakém pořadí se hlasující objeví ve formuláři i ve výsledcích.
+      Na adresy chodí pozvánky — překlep znamená, že lístek nedorazí.</p>
+    <div id="c-clenove"></div>
+    <div class="tlacitka"><button class="druhy maly" id="b-clen-pridat">+ Přidat hlasujícího</button></div>
+  </section>
+
+  <section>
+    <div class="kicker">LÍSTEK 1 — NÁVRHY</div>
+    <h2>Stav poolu témat</h2>
+    <p class="hint">Určuje, kolik vyřazení musí doprovázet zařazení nového tématu.
+      Je-li pool plný (aktuálně = max), zařazení bez vyřazení nejde odeslat.</p>
+    <div class="rada">
+      <div class="sekce-box">
+        <h3>Akcie</h3>
+        <div class="rada3">
+          <label>Aktuálně<input type="number" id="c-pool-akcie-aktualne" min="0" max="99"></label>
+          <label>Maximum<input type="number" id="c-pool-akcie-max" min="1" max="99"></label>
+          <label>Minimum<input type="number" id="c-pool-akcie-min" min="0" max="99"></label>
+        </div>
+      </div>
+      <div class="sekce-box">
+        <h3>Dluhopisy</h3>
+        <div class="rada3">
+          <label>Aktuálně<input type="number" id="c-pool-dluhopisy-aktualne" min="0" max="99"></label>
+          <label>Maximum<input type="number" id="c-pool-dluhopisy-max" min="1" max="99"></label>
+          <label>Minimum<input type="number" id="c-pool-dluhopisy-min" min="0" max="99"></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">LÍSTEK 2 — PRIORITY</div>
+    <h2>Témata k prioritizaci</h2>
+    <p class="hint">Seznam, ze kterého hlasující sestavují pořadí. Musí mít alespoň tolik položek,
+      kolik je maximum priorit.</p>
+    <div class="rada">
+      <div>
+        <h3 style="margin-bottom:9px;">Akciová témata</h3>
+        <div id="c-temataAkcie"></div>
+        <div class="tlacitka" style="padding-top:9px;"><button class="druhy maly" data-pridat="temataAkcie">+ Přidat téma</button></div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:9px;">Dluhopisová témata</h3>
+        <div id="c-temataDluhopisy"></div>
+        <div class="tlacitka" style="padding-top:9px;"><button class="druhy maly" data-pridat="temataDluhopisy">+ Přidat téma</button></div>
+      </div>
+    </div>
+    <label style="max-width:230px;">Maximum priorit<input type="number" id="c-maxPriorit" min="1" max="20"></label>
+  </section>
+
+  <section>
+    <div class="kicker">LÍSTEK 3 — HLAVNÍ ČÁST</div>
+    <h2>Hodnotící škála</h2>
+    <p class="hint">Sedm stupňů zleva doprava. První tři mají kontrolní hodnotu −1, prostřední 0,
+      poslední tři +1. <strong>Zapisujte bez mezer</strong> — přesně v tomto tvaru je čte
+      převodní tabulka v modelu; „+ +" by v matici nenašlo shodu.</p>
+    <div class="skala-mriz" id="c-skala"></div>
+    <div class="hint" style="display:grid; grid-template-columns:repeat(7,1fr); gap:8px; text-align:center; font-size:11px;">
+      <span>−1</span><span>−1</span><span>−1</span><span>0</span><span>+1</span><span>+1</span><span>+1</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sekce a řádky</h2>
+    <p class="hint">Každá sekce je jeden blok v lístku. „Kontrolní pravidlo" znamená, že součet
+      hodnot v sekci musí být nula — kolik zvýšení, tolik snížení.
+      <strong>Identifikátory neměňte</strong> u řádků, které už se používají: podle nich se
+      páruje rozepsaný lístek. Nový řádek dostane vlastní id.</p>
+    <div id="c-sekce" style="display:grid; gap:16px;"></div>
+    <div class="tlacitka"><button class="druhy maly" id="b-sekce-pridat">+ Přidat sekci</button></div>
+    <div class="zprava pozor">Přidáte-li řádek nebo sekci, změní se i sloupce v CSV.
+      Model <code>databaze.xlsx</code> má pevně dané sloupce — nové položky se do něj nepřenesou,
+      dokud v něm nepřidáte odpovídající sloupec.</div>
+  </section>
+
+  <section>
+    <h2>Obrázky</h2>
+    <p class="hint">Cesty k podkladům. Soubory samotné se nahrávají v záložce Podklady;
+      tady se mění jen názvy, což je potřeba jen výjimečně.</p>
+    <div class="rada" id="c-obrazky"></div>
+  </section>
+
+  <div class="lista">
+    <span class="stav-zmen" id="stav-zmen">Načteno z repozitáře.</span>
+    <button class="druhy" id="b-config-znovu">Zahodit změny</button>
+    <button class="druhy" id="b-config-nahled">Náhled souboru</button>
+    <button class="primar" id="b-config-ulozit">Uložit do repozitáře</button>
+  </div>
+  <div id="z-config"></div>
+</div>
+
+<!-- ============================================ PODKLADY -->
+<div class="panel" id="p-podklady">
+  <div>
+    <h1>Podklady</h1>
+    <p class="hint">Obrázky, které hlasující vidí u lístků. Nahrané soubory se zapíšou do repozitáře;
+      stránka pak počká, až se objeví na publikované adrese, a teprve potom napíše
+      <strong>publikováno</strong>. Nespoléhejte na náhled, spoléhejte na tu hlášku.</p>
+  </div>
+  <section>
     <div class="obrazky" id="sloty"></div>
     <div id="z-obrazky"></div>
   </section>
+</div>
 
-  <!-- ------------------------------------------------------------ 2. rozeslání -->
-  <section id="s-rozeslat" data-locked="1">
-    <div class="kicker">KROK 2</div>
+<!-- ============================================ HLASOVÁNÍ -->
+<div class="panel" id="p-hlasovani">
+  <div>
+    <h1>Hlasování</h1>
+    <p class="hint">Rozeslání lístků a sledování, kdo odevzdal.</p>
+  </div>
+
+  <section>
+    <div class="kicker">KROK 1</div>
     <h2>Rozeslat lístky</h2>
     <p class="hint">Každý hlasující dostane e-mail s vlastními odkazy. Odkaz obsahuje token, který ho
       identifikuje — v repozitáři zůstává jen jeho otisk, ne token samotný.</p>
     <div class="rada">
       <label>Název kola<input type="text" id="i-nazev" value="Hlasování investičního výboru"></label>
-      <label>Termín pro vyplnění<input type="text" id="i-termin" placeholder="5. 8. 2026"></label>
+      <label>Termín pro vyplnění<input type="text" id="i-termin" placeholder="15. 8. 2026"></label>
     </div>
     <label>Doplňující věta do pozvánky (nepovinné)<input type="text" id="i-poznamka"></label>
     <label>Formuláře
       <div style="display:flex; gap:18px; flex-wrap:wrap; padding-top:4px; font-weight:400; color:var(--color-text);">
-        <span><input type="checkbox" class="f" value="navrhy" checked> Témata – návrhy</span>
-        <span><input type="checkbox" class="f" value="priority" checked> Témata – priority</span>
-        <span><input type="checkbox" class="f" value="hlavni" checked> Hlavní část</span>
+        <span class="prepinac"><input type="checkbox" class="f" value="navrhy" checked> Témata – návrhy</span>
+        <span class="prepinac"><input type="checkbox" class="f" value="priority" checked> Témata – priority</span>
+        <span class="prepinac"><input type="checkbox" class="f" value="hlavni" checked> Hlavní část</span>
       </div>
     </label>
-    <div class="tlacitka">
-      <button class="primar velky" id="b-ok">OK — rozeslat hlasujícím</button>
-    </div>
+    <div class="tlacitka"><button class="primar velky" id="b-ok">OK — rozeslat hlasujícím</button></div>
     <div id="z-rozeslat"></div>
   </section>
 
-  <!-- ------------------------------------------------------------ 3. sběr -->
-  <section id="s-slozka" data-locked="1">
-    <div class="kicker">ALTERNATIVA</div>
-    <h2>Sběr ze sdílené složky</h2>
-    <p class="hint">Otevřete tutéž složku, do které hlasující ukládají lístky. Stránka si ji zapamatuje.
-      Čte se jen z ní — nic se nikam neodesílá a lístky zůstávají ve vašem cloudu.</p>
-    <div class="tlacitka">
-      <button class="primar" id="b-slozka">Otevřít sdílenou složku</button>
-      <button class="druhy" id="b-slouc">Načíst znovu</button>
-    </div>
-    <div id="slozka-nazev" class="hint"></div>
-    <div id="slozka-tabulka"></div>
-    <div class="tlacitka" id="slozka-export"></div>
-    <div id="z-slozka"></div>
-  </section>
-
-  <section id="s-stav" data-locked="1">
-    <div class="kicker">KROK 3</div>
+  <section>
+    <div class="kicker">KROK 2</div>
     <h2>Sběr odpovědí</h2>
     <p class="hint">Úloha čte sběrnou schránku každých deset minut a zapisuje lístky do repozitáře.
-      Výsledky se průběžně skládají do jednoho sešitu — nic se nestahuje po jednotlivých souborech.</p>
+      Výsledky se průběžně skládají do jednoho sešitu.</p>
     <div id="prehled-kola" class="hint">Žádné kolo zatím neběží.</div>
     <div id="tabulka"></div>
     <div class="tlacitka">
@@ -155,22 +356,49 @@
     <div id="neprirazene"></div>
   </section>
 
-  <!-- ------------------------------------------------------------ 4. uzávěrka -->
-  <section id="s-konec" data-locked="1">
-    <div class="kicker">KROK 4</div>
-    <h2>Uzávěrka a výsledky</h2>
-    <p class="hint">Sešit obsahuje list Přehled a jeden list na každý formulář — jeden soubor místo
-      patnácti. Stáhnout ho jde kdykoli, ne až po uzávěrce. Ukončení sběru je nevratné: od té chvíle
-      sběrač nové lístky nepřijímá a odesílateli to napíše.</p>
+  <section>
+    <details>
+      <summary>Alternativa: sběr ze sdílené složky</summary>
+      <div style="display:grid; gap:14px; padding-top:14px;">
+        <p class="hint">Používá se, jen když je v Nastavení zapnutý režim „sdílená složka".
+          Otevřete tutéž složku, do které hlasující ukládají lístky.</p>
+        <div class="tlacitka">
+          <button class="druhy" id="b-slozka">Otevřít sdílenou složku</button>
+          <button class="druhy" id="b-slouc">Načíst znovu</button>
+        </div>
+        <div id="slozka-nazev" class="hint"></div>
+        <div id="slozka-tabulka"></div>
+        <div class="tlacitka" id="slozka-export"></div>
+        <div id="z-slozka"></div>
+      </div>
+    </details>
+  </section>
+</div>
+
+<!-- ============================================ VÝSLEDKY -->
+<div class="panel" id="p-vysledky">
+  <div>
+    <h1>Výsledky</h1>
+    <p class="hint">Sešit obsahuje list Přehled a jeden list na každý formulář, každý v rozvržení
+      listu „IMPORT HLASOVACÍCH LÍSTKŮ" v modelu — oblast se kopíruje na tutéž adresu, ze které
+      se bere. Stáhnout jde kdykoli, i uprostřed sběru.</p>
+  </div>
+
+  <section>
+    <h2>Stažení</h2>
     <div class="tlacitka" id="stahovani"></div>
-    <label style="font-weight:400; color:var(--color-text);">
-      <span style="display:flex; gap:8px; align-items:center; font-size:14px;">
-        <input type="checkbox" id="i-vsem"> Odeslat výsledky všem hlasujícím, ne jen mně
-      </span>
-    </label>
-    <div class="tlacitka">
-      <button class="primar velky" id="b-uzavrit">Ukončit sběr a odeslat výsledky</button>
-    </div>
+  </section>
+
+  <section>
+    <h2>Uzávěrka</h2>
+    <p class="hint">Ukončení sběru je nevratné: od té chvíle sběrač nové lístky nepřijímá
+      a odesílateli to napíše.</p>
+    <span class="prepinac"><input type="checkbox" id="i-vsem"> Odeslat výsledky všem hlasujícím, ne jen mně</span>
+    <div class="tlacitka"><button class="primar velky" id="b-uzavrit">Ukončit sběr a odeslat výsledky</button></div>
+    <div id="z-konec"></div>
+  </section>
+
+  <section>
     <details>
       <summary>Ruční doplnění odpovědi, kterou se nepodařilo zpracovat</summary>
       <div style="display:grid; gap:14px; padding-top:14px;">
@@ -190,25 +418,43 @@
         <div class="tlacitka"><button class="druhy" id="b-doplnit">Zapsat odpověď</button></div>
       </div>
     </details>
-    <div id="z-konec"></div>
   </section>
-</main>
+</div>
 
+</main>
 <script type="module">
 const $ = (id) => document.getElementById(id);
 const KLIC = "okform-admin-v1";
 let A = { owner: "", repo: "", pat: "", pages: "" };
-let KOLO = null, KONFIG = null;
+let KOLO = null, KONFIG = null, CFG = null, CFG_SHA = null, PUVODNI = "";
 
 const NAZVY = { navrhy: "Témata – návrhy", priority: "Témata – priority", hlavni: "Hlavní část" };
 
-// ---------------------------------------------------------------- pomocné
+// Sloupce, které umí přijmout list „IMPORT HLASOVACÍCH LÍSTKŮ" v modelu.
+// Musí odpovídat tabulce ROZVRZENI["hlavni"] v scripts/vystup.py.
+const SLOUPCE_MODELU = [
+  "TŘÍDY AKTIV [Peněžní trh]", "TŘÍDY AKTIV [Akcie]", "TŘÍDY AKTIV [Dluhopisy]", "TŘÍDY AKTIV [Alternativy]",
+  "AKCIE [Americké akcie]", "AKCIE [Evropské akcie]", "AKCIE [Akcie rozvíjejících se trhů]",
+  "AKCIE [Témata / ostatní akciové pozice]",
+  "DLUHOPISY [České státní dluhopisy]", "DLUHOPISY [Americké státní dluhopisy]",
+  "DLUHOPISY [Evropské státní dluhopisy]", "DLUHOPISY [Korpo. dluhopisy - investiční stupeň]",
+  "DLUHOPISY [Korpo. dluhopisy - spekulativní stupeň]", "DLUHOPISY [Ostatní dluhopisové pozice]",
+  "FX [EUR/CZK]", "FX [USD/CZK]", "FX [EUR/USD]",
+];
+const KAPACITA_MODELU = 5;   // řádků, na které jsou v modelu nastavené vzorce
+const POPIS_OBRAZKU = {
+  temataAktualni: "Aktuální témata (lístek 1)",
+  akciePrehled: "Přehled akcií (lístek 3)",
+  dluhopisyPrehled: "Přehled dluhopisů (lístek 3)",
+  poolSchvaleny: "Schválený pool (lístek 2)",
+};
+
+// ---------------------------------------------------------------- základ
 function zprava(kam, text, druh = "") {
-  $(kam).innerHTML = `<div class="zprava ${druh}">${text}</div>`;
+  $(kam).innerHTML = text ? `<div class="zprava ${druh}">${text}</div>` : "";
 }
-function zamkni(otevrit) {
-  ["s-obrazky", "s-rozeslat", "s-stav", "s-konec"].forEach(
-    (id) => $(id).setAttribute("data-locked", otevrit ? "0" : "1"));
+function esc(t) {
+  return String(t ?? "").replace(/[&<>"]/g, (z) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[z]));
 }
 async function gh(cesta, moznosti = {}) {
   const r = await fetch(`https://api.github.com/repos/${A.owner}/${A.repo}${cesta}`, {
@@ -231,22 +477,501 @@ async function gh(cesta, moznosti = {}) {
 }
 async function spust(soubor, vstupy) {
   await gh(`/actions/workflows/${soubor}/dispatches`, {
-    method: "POST",
-    body: JSON.stringify({ ref: "main", inputs: vstupy }),
+    method: "POST", body: JSON.stringify({ ref: "main", inputs: vstupy }),
   });
 }
 function odkazNaBehy() {
   return `<a href="https://github.com/${A.owner}/${A.repo}/actions" target="_blank" rel="noopener">průběh v GitHub Actions</a>`;
 }
+// Text do souboru: base64 zvládající diakritiku.
+function doBase64(text) {
+  const b = new TextEncoder().encode(text);
+  let bin = "";
+  b.forEach((x) => { bin += String.fromCharCode(x); });
+  return btoa(bin);
+}
 
-// ---------------------------------------------------------------- připojení
+// ---------------------------------------------------------------- záložky
+$("zalozky").querySelectorAll("button").forEach((b) => {
+  b.onclick = () => {
+    if (b.disabled) return;
+    $("zalozky").querySelectorAll("button").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+    document.querySelectorAll(".panel").forEach((p) => p.removeAttribute("data-aktivni"));
+    $(b.dataset.panel).setAttribute("data-aktivni", "1");
+    window.scrollTo(0, 0);
+  };
+});
+function odemkni(ano) {
+  $("zalozky").querySelectorAll("button[data-panel]").forEach((b) => {
+    if (b.dataset.panel !== "p-pripojeni") b.disabled = !ano;
+  });
+}
+function prepni(panel) {
+  $("zalozky").querySelector(`[data-panel="${panel}"]`).click();
+}
+
+// ================================================================
+// EDITOR KONFIGURACE
+// ================================================================
+
+// Soubor se generuje z hodnot, ne upravuje textově — komentáře jsou proto
+// součástí šablony a zůstávají stejné bez ohledu na to, co admin změní.
+function serializuj(c) {
+  const s = (v) => JSON.stringify(String(v ?? ""));
+  const pole = (a) => "[" + a.map((x) => JSON.stringify(x)).join(", ") + "]";
+  const L = [];
+  // Komentáře zarovnáme do sloupce, ať soubor zůstane čitelný i po uložení.
+  const K = (kod, komentar) => kod + " ".repeat(Math.max(1, 48 - kod.length)) + komentar;
+  L.push("// ================================================================");
+  L.push("// KONFIGURACE APLIKACE - vše, co spravuje administrátor, je zde.");
+  L.push("// Soubor vzniká z administrace (admin.html → Nastavení → Uložit).");
+  L.push("// Ruční úpravy jsou možné, ale při dalším uložení z administrace");
+  L.push("// se přepíšou.");
+  L.push("// ================================================================");
+  L.push("export default {");
+  L.push("  // --- Obecné ---");
+  L.push(K(`  vysledkyEmail: ${s(c.vysledkyEmail)},`, `// kam směřuje tlačítko „Odeslat e-mailem"`));
+  L.push(K(`  sberRezim: ${s(c.sberRezim)},`, `// "email" = lístky chodí do sběrné schránky (GitHub Actions)`));
+  L.push(K(`  nextcloudOdkaz: ${s(c.nextcloudOdkaz)},`, `// nepovinný odkaz na sdílenou složku; prázdné = tlačítko skryto`));
+  L.push(K(`  csvDelimiter: ${s(c.csvDelimiter)},`, `// oddělovač CSV: "," nebo ";"`));
+  L.push(K(`  darkLightMode: ${!!c.darkLightMode},`, `// false = přepínač tmavého režimu se skryje`));
+  L.push(K(`  defaultTheme: ${s(c.defaultTheme)},`, `// "light" | "dark"`));
+  L.push(K(`  validaceRezim: ${s(c.validaceRezim)},`, `// "block" = nedosažitelné volby zešednou a nejdou stisknout`));
+  L.push(" ".repeat(48) + `// "warning" = vše lze klikat, ale lístek se součtem != 0 nelze odeslat`);
+  L.push(K(`  nettoSkore: ${!!c.nettoSkore},`, `// true = v hlavičce sekce se ukazuje netto skóre (-3 az +3)`));
+  L.push("");
+  L.push("  // --- Cesty k obrázkům (admin je přepisuje soubory se stejným názvem) ---");
+  L.push("  obrazky: {");
+  const sirka = Math.max(...Object.keys(c.obrazky).map((k) => k.length));
+  Object.entries(c.obrazky).forEach(([k, v]) => L.push(`    ${k}:${" ".repeat(sirka - k.length + 1)}${s(v)},`));
+  L.push("  },");
+  L.push("");
+  L.push("  // --- Hlasující ---");
+  L.push(`  clenoveJmeno: ${pole(c.clenoveJmeno)},`);
+  L.push(`  clenoveMail: ${pole(c.clenoveMail)},`);
+  L.push("");
+  L.push("  // --- Lístek 1: stav poolu témat (určuje, kolik vyřazení musí doprovázet zařazení) ---");
+  L.push("  pool: {");
+  ["akcie", "dluhopisy"].forEach((k) => {
+    const p = c.pool[k];
+    L.push(`    ${k}:${" ".repeat(10 - k.length)}{ aktualne: ${p.aktualne}, max: ${p.max}, min: ${p.min} },`);
+  });
+  L.push("  },");
+  L.push("");
+  L.push("  // --- Lístek 2: dostupná témata k prioritizaci ---");
+  L.push(`  temataAkcie: ${pole(c.temataAkcie)},`);
+  L.push(`  temataDluhopisy: ${pole(c.temataDluhopisy)},`);
+  L.push(`  maxPriorit: ${c.maxPriorit},`);
+  L.push("");
+  L.push("  // --- Lístek 3: škála a sekce ---");
+  L.push("  // Škála: index 0-2 = kontrolní hodnota -1, index 3 = 0, index 4-6 = +1.");
+  L.push(`  skala: ${pole(c.skala)},   // bez mezer: přesně tak je čte převodní tabulka v matici`);
+  L.push("  // pravidlo: true = součet kontrolních hodnot sekce musí být 0.");
+  L.push("  sekceHlavni: [");
+  c.sekceHlavni.forEach((sek) => {
+    const pozn = sek.poznamka ? `poznamka: ${s(sek.poznamka)}, ` : "";
+    L.push(`    { id: ${s(sek.id)}, nazev: ${s(sek.nazev)}, ${pozn}pravidlo: ${!!sek.pravidlo}, radky: [`);
+    sek.radky.forEach((r, i) => {
+      const carka = i === sek.radky.length - 1 ? " ] }," : ",";
+      L.push(`      { id: ${s(r.id)}, nazev: ${s(r.nazev)} }${carka}`);
+    });
+    if (!sek.radky.length) L.push("      ] },");
+  });
+  L.push("  ],");
+  L.push("};");
+  return L.join("\n") + "\n";
+}
+
+function zmeneno() {
+  const ted = serializuj(sesbirej());
+  const jina = ted !== PUVODNI;
+  $("stav-zmen").innerHTML = jina
+    ? `<span class="neulozeno">Neuložené změny.</span> Projeví se až po uložení do repozitáře.`
+    : "Beze změn oproti repozitáři.";
+  return jina;
+}
+
+// ---- vykreslení formulářů ----
+function vykresliConfig() {
+  const c = CFG;
+  $("c-vysledkyEmail").value = c.vysledkyEmail || "";
+  $("c-sberRezim").value = c.sberRezim || "email";
+  $("c-nextcloudOdkaz").value = c.nextcloudOdkaz || "";
+  $("c-csvDelimiter").value = c.csvDelimiter || ";";
+  $("c-defaultTheme").value = c.defaultTheme || "light";
+  $("c-validaceRezim").value = c.validaceRezim || "block";
+  $("c-darkLightMode").checked = !!c.darkLightMode;
+  $("c-nettoSkore").checked = !!c.nettoSkore;
+  ["akcie", "dluhopisy"].forEach((k) => ["aktualne", "max", "min"].forEach((p) => {
+    $(`c-pool-${k}-${p}`).value = c.pool[k][p];
+  }));
+  $("c-maxPriorit").value = c.maxPriorit;
+
+  vykresliClenove();
+  vykresliTemata("temataAkcie");
+  vykresliTemata("temataDluhopisy");
+  vykresliSkalu();
+  vykresliSekce();
+  vykresliObrazky();
+  zmeneno();
+}
+
+function vykresliClenove() {
+  const box = $("c-clenove");
+  box.innerHTML = "";
+  CFG.clenoveJmeno.forEach((jmeno, i) => {
+    const el = document.createElement("div");
+    el.className = "polozka";
+    el.innerHTML = `<div class="pole">
+        <label>Jméno a příjmení<input type="text" data-clen-jmeno="${i}" value="${esc(jmeno)}"></label>
+        <label>E-mail<input type="email" data-clen-mail="${i}" value="${esc(CFG.clenoveMail[i] || "")}"></label>
+      </div>
+      <button class="odstranit" data-clen-pryc="${i}" title="Odebrat">×</button>`;
+    box.appendChild(el);
+  });
+  box.querySelectorAll("[data-clen-jmeno]").forEach((el) => {
+    el.oninput = () => { CFG.clenoveJmeno[+el.dataset.clenJmeno] = el.value; zmeneno(); };
+  });
+  box.querySelectorAll("[data-clen-mail]").forEach((el) => {
+    el.oninput = () => { CFG.clenoveMail[+el.dataset.clenMail] = el.value; zmeneno(); };
+  });
+  box.querySelectorAll("[data-clen-pryc]").forEach((el) => {
+    el.onclick = () => {
+      const i = +el.dataset.clenPryc;
+      if (!confirm(`Odebrat ${CFG.clenoveJmeno[i] || "hlasujícího"}?`)) return;
+      CFG.clenoveJmeno.splice(i, 1); CFG.clenoveMail.splice(i, 1);
+      vykresliClenove(); zmeneno();
+    };
+  });
+}
+$("b-clen-pridat").onclick = () => {
+  CFG.clenoveJmeno.push(""); CFG.clenoveMail.push("");
+  vykresliClenove(); zmeneno();
+  const pole = $("c-clenove").querySelectorAll("[data-clen-jmeno]");
+  pole[pole.length - 1].focus();
+};
+
+function vykresliTemata(klic) {
+  const box = $("c-" + klic);
+  box.innerHTML = "";
+  CFG[klic].forEach((t, i) => {
+    const el = document.createElement("div");
+    el.className = "radek";
+    el.innerHTML = `<input type="text" data-tema="${i}" value="${esc(t)}">
+      <span></span><button class="odstranit" data-tema-pryc="${i}" title="Odebrat">×</button>`;
+    box.appendChild(el);
+  });
+  box.querySelectorAll("[data-tema]").forEach((el) => {
+    el.oninput = () => { CFG[klic][+el.dataset.tema] = el.value; zmeneno(); };
+  });
+  box.querySelectorAll("[data-tema-pryc]").forEach((el) => {
+    el.onclick = () => { CFG[klic].splice(+el.dataset.temaPryc, 1); vykresliTemata(klic); zmeneno(); };
+  });
+}
+document.querySelectorAll("[data-pridat]").forEach((b) => {
+  b.onclick = () => {
+    const klic = b.dataset.pridat;
+    CFG[klic].push(""); vykresliTemata(klic); zmeneno();
+    const pole = $("c-" + klic).querySelectorAll("[data-tema]");
+    pole[pole.length - 1].focus();
+  };
+});
+
+function vykresliSkalu() {
+  const box = $("c-skala");
+  box.innerHTML = "";
+  CFG.skala.forEach((v, i) => {
+    const el = document.createElement("label");
+    el.innerHTML = `${i + 1}.<input type="text" data-skala="${i}" value="${esc(v)}" maxlength="6">`;
+    box.appendChild(el);
+  });
+  box.querySelectorAll("[data-skala]").forEach((el) => {
+    el.oninput = () => { CFG.skala[+el.dataset.skala] = el.value.replace(/\s+/g, ""); zmeneno(); };
+    el.onblur = () => { el.value = CFG.skala[+el.dataset.skala]; };
+  });
+}
+
+function vykresliSekce() {
+  const box = $("c-sekce");
+  box.innerHTML = "";
+  CFG.sekceHlavni.forEach((sek, si) => {
+    const el = document.createElement("div");
+    el.className = "sekce-box";
+    el.innerHTML = `
+      <div class="sekce-hlava">
+        <label>Název sekce<input type="text" data-sek="nazev" data-si="${si}" value="${esc(sek.nazev)}"></label>
+        <label>Identifikátor<input type="text" class="mono" data-sek="id" data-si="${si}" value="${esc(sek.id)}"></label>
+        <button class="odstranit" data-sek-pryc="${si}" title="Odebrat sekci">×</button>
+      </div>
+      <label>Poznámka pod nadpisem (nepovinné)
+        <input type="text" data-sek="poznamka" data-si="${si}" value="${esc(sek.poznamka || "")}"></label>
+      <span class="prepinac"><input type="checkbox" data-sek="pravidlo" data-si="${si}"
+        ${sek.pravidlo ? "checked" : ""}> Kontrolní pravidlo — součet v sekci musí být nula</span>
+      <div>
+        <h3 style="margin-bottom:8px;">Řádky</h3>
+        <div class="radky-box" data-radky="${si}"></div>
+        <div class="tlacitka" style="padding-top:9px;">
+          <button class="druhy maly" data-radek-pridat="${si}">+ Přidat řádek</button>
+        </div>
+      </div>`;
+    box.appendChild(el);
+
+    const rb = el.querySelector(`[data-radky="${si}"]`);
+    sek.radky.forEach((r, ri) => {
+      const rel = document.createElement("div");
+      rel.className = "radek";
+      rel.innerHTML = `<input type="text" data-r="nazev" data-si="${si}" data-ri="${ri}" value="${esc(r.nazev)}" placeholder="Název řádku">
+        <input type="text" class="mono" data-r="id" data-si="${si}" data-ri="${ri}" value="${esc(r.id)}" placeholder="id">
+        <button class="odstranit" data-radek-pryc="${si}:${ri}" title="Odebrat řádek">×</button>`;
+      rb.appendChild(rel);
+    });
+  });
+
+  box.querySelectorAll("[data-sek]").forEach((el) => {
+    const zmen = () => {
+      const sek = CFG.sekceHlavni[+el.dataset.si], k = el.dataset.sek;
+      if (k === "pravidlo") sek.pravidlo = el.checked;
+      else if (k === "poznamka") { if (el.value.trim()) sek.poznamka = el.value; else delete sek.poznamka; }
+      else sek[k] = el.value;
+      zmeneno();
+    };
+    if (el.type === "checkbox") el.onchange = zmen; else el.oninput = zmen;
+  });
+  box.querySelectorAll("[data-r]").forEach((el) => {
+    el.oninput = () => {
+      CFG.sekceHlavni[+el.dataset.si].radky[+el.dataset.ri][el.dataset.r] = el.value;
+      zmeneno();
+    };
+  });
+  box.querySelectorAll("[data-sek-pryc]").forEach((el) => {
+    el.onclick = () => {
+      const si = +el.dataset.sekPryc;
+      if (!confirm(`Odebrat celou sekci „${CFG.sekceHlavni[si].nazev}" i s řádky?`)) return;
+      CFG.sekceHlavni.splice(si, 1); vykresliSekce(); zmeneno();
+    };
+  });
+  box.querySelectorAll("[data-radek-pryc]").forEach((el) => {
+    el.onclick = () => {
+      const [si, ri] = el.dataset.radekPryc.split(":").map(Number);
+      CFG.sekceHlavni[si].radky.splice(ri, 1); vykresliSekce(); zmeneno();
+    };
+  });
+  box.querySelectorAll("[data-radek-pridat]").forEach((el) => {
+    el.onclick = () => {
+      const si = +el.dataset.radekPridat;
+      CFG.sekceHlavni[si].radky.push({ id: noveId(), nazev: "" });
+      vykresliSekce(); zmeneno();
+      const pole = box.querySelectorAll(`[data-radky="${si}"] [data-r="nazev"]`);
+      pole[pole.length - 1].focus();
+    };
+  });
+}
+function noveId() {
+  let i = 1, id;
+  const pouzita = new Set(CFG.sekceHlavni.flatMap((s) => s.radky.map((r) => r.id)));
+  do { id = "r_" + i++; } while (pouzita.has(id));
+  return id;
+}
+$("b-sekce-pridat").onclick = () => {
+  let i = 1, id;
+  const pouzita = new Set(CFG.sekceHlavni.map((s) => s.id));
+  do { id = "sekce" + i++; } while (pouzita.has(id));
+  CFG.sekceHlavni.push({ id, nazev: "", pravidlo: true, radky: [{ id: noveId(), nazev: "" }] });
+  vykresliSekce(); zmeneno();
+};
+
+function vykresliObrazky() {
+  const box = $("c-obrazky");
+  box.innerHTML = "";
+  Object.entries(CFG.obrazky).forEach(([k, v]) => {
+    const el = document.createElement("label");
+    el.innerHTML = `${POPIS_OBRAZKU[k] || k}<input type="text" class="mono" data-obr="${k}" value="${esc(v)}">`;
+    box.appendChild(el);
+  });
+  box.querySelectorAll("[data-obr]").forEach((el) => {
+    el.oninput = () => { CFG.obrazky[el.dataset.obr] = el.value; zmeneno(); };
+  });
+}
+
+// ---- sběr hodnot a kontroly ----
+function sesbirej() {
+  if (!CFG) return {};
+  return {
+    ...CFG,
+    vysledkyEmail: $("c-vysledkyEmail").value.trim(),
+    sberRezim: $("c-sberRezim").value,
+    nextcloudOdkaz: $("c-nextcloudOdkaz").value.trim(),
+    csvDelimiter: $("c-csvDelimiter").value,
+    darkLightMode: $("c-darkLightMode").checked,
+    defaultTheme: $("c-defaultTheme").value,
+    validaceRezim: $("c-validaceRezim").value,
+    nettoSkore: $("c-nettoSkore").checked,
+    maxPriorit: +$("c-maxPriorit").value || 1,
+    pool: {
+      akcie: { aktualne: +$("c-pool-akcie-aktualne").value, max: +$("c-pool-akcie-max").value, min: +$("c-pool-akcie-min").value },
+      dluhopisy: { aktualne: +$("c-pool-dluhopisy-aktualne").value, max: +$("c-pool-dluhopisy-max").value, min: +$("c-pool-dluhopisy-min").value },
+    },
+  };
+}
+
+const chibi = (pole) => pole.length > 0;
+
+// Kontroly, které by jinak rozbily formulář nebo model až za běhu.
+function zkontroluj(c) {
+  const chyby = [], varovani = [];
+  const mail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+  if (!mail.test(c.vysledkyEmail)) chyby.push("Sběrná adresa není platný e-mail.");
+  c.clenoveJmeno.forEach((j, i) => {
+    if (!j.trim()) chyby.push(`Hlasující č. ${i + 1} nemá jméno.`);
+    if (!mail.test(c.clenoveMail[i] || "")) chyby.push(`${j || "Hlasující č. " + (i + 1)}: neplatný e-mail.`);
+  });
+  if (!c.clenoveJmeno.length) chyby.push("Seznam hlasujících je prázdný.");
+  const dupJmena = c.clenoveJmeno.filter((j, i) => c.clenoveJmeno.indexOf(j) !== i);
+  if (dupJmena.length) chyby.push("Dvě stejná jména hlasujících: " + [...new Set(dupJmena)].join(", "));
+
+  if (c.skala.length !== 7) chyby.push("Škála musí mít přesně 7 stupňů.");
+  if (c.skala.some((x) => !x.trim())) chyby.push("Některý stupeň škály je prázdný.");
+  if (new Set(c.skala).size !== c.skala.length) chyby.push("Stupně škály se opakují.");
+
+  ["akcie", "dluhopisy"].forEach((k) => {
+    const p = c.pool[k];
+    if (p.min > p.max) chyby.push(`Pool ${k}: minimum je větší než maximum.`);
+    if (p.aktualne > p.max) chyby.push(`Pool ${k}: aktuální počet překračuje maximum.`);
+    if (p.aktualne < p.min) varovani.push(`Pool ${k}: aktuální počet je pod minimem.`);
+  });
+
+  if (c.temataAkcie.length < c.maxPriorit)
+    varovani.push(`Akciových témat (${c.temataAkcie.length}) je méně než maximum priorit (${c.maxPriorit}).`);
+  if (c.temataDluhopisy.length < c.maxPriorit)
+    varovani.push(`Dluhopisových témat (${c.temataDluhopisy.length}) je méně než maximum priorit (${c.maxPriorit}).`);
+  [["temataAkcie", "Akciová"], ["temataDluhopisy", "Dluhopisová"]].forEach(([k, popis]) => {
+    if (c[k].some((t) => !t.trim())) chyby.push(`${popis} témata obsahují prázdnou položku.`);
+    if (new Set(c[k]).size !== c[k].length) chyby.push(`${popis} témata se opakují.`);
+  });
+
+  const vsechnaId = [];
+  c.sekceHlavni.forEach((s) => {
+    if (!s.nazev.trim()) chyby.push("Sekce bez názvu.");
+    if (!/^[a-z0-9_]+$/i.test(s.id)) chyby.push(`Sekce „${s.nazev}": identifikátor smí mít jen písmena bez diakritiky, číslice a podtržítko.`);
+    if (!s.radky.length) chyby.push(`Sekce „${s.nazev}" nemá žádný řádek.`);
+    if (s.pravidlo && s.radky.length < 2)
+      varovani.push(`Sekce „${s.nazev}" má kontrolní pravidlo, ale jen jeden řádek — nepůjde vyrovnat na nulu.`);
+    s.radky.forEach((r) => {
+      if (!r.nazev.trim()) chyby.push(`Sekce „${s.nazev}": řádek bez názvu.`);
+      if (!/^[a-z0-9_]+$/i.test(r.id)) chyby.push(`Sekce „${s.nazev}": identifikátor „${r.id}" smí mít jen písmena bez diakritiky, číslice a podtržítko.`);
+      vsechnaId.push(r.id);
+    });
+  });
+  const dupId = vsechnaId.filter((x, i) => vsechnaId.indexOf(x) !== i);
+  if (dupId.length) chyby.push("Stejné identifikátory řádků: " + [...new Set(dupId)].join(", "));
+  const dupSek = c.sekceHlavni.map((s) => s.id).filter((x, i, a) => a.indexOf(x) !== i);
+  if (dupSek.length) chyby.push("Stejné identifikátory sekcí: " + [...new Set(dupSek)].join(", "));
+
+  // Shoda s modelem: hlavička sloupce vzniká jako „SEKCE [řádek]".
+  // Co model nezná, propadne při exportu — proto varujeme hned tady.
+  const nase = [];
+  c.sekceHlavni.forEach((s) => s.radky.forEach((r) => nase.push(`${s.nazev} [${r.nazev}]`)));
+  const navic = nase.filter((h) => !SLOUPCE_MODELU.includes(h));
+  const chybi = SLOUPCE_MODELU.filter((h) => !nase.includes(h));
+  if (navic.length)
+    varovani.push("Model tyto sloupce nezná, v exportu do tabulky se ztratí: "
+      + navic.map((x) => `„${x}"`).join(", ")
+      + ". Buď je pojmenujte přesně jako v modelu, nebo doplňte model i scripts/vystup.py.");
+  if (chibi(chybi))
+    varovani.push("Model počítá se sloupci, které formulář nesbírá (v tabulce zůstanou prázdné): "
+      + chybi.map((x) => `„${x}"`).join(", ") + ".");
+  if (c.clenoveJmeno.length > KAPACITA_MODELU)
+    varovani.push(`Hlasujících je ${c.clenoveJmeno.length}, ale vzorce v modelu počítají s ${KAPACITA_MODELU}. `
+      + "Export přebývající lístky nezahrne — rozšiřte rozsahy v modelu.");
+
+  return { chyby, varovani };
+}
+
+// ---- načtení a uložení ----
+async function nactiConfig() {
+  const meta = await gh("/contents/config.js");
+  CFG_SHA = meta.sha;
+  const text = await gh("/contents/config.js", { raw: true });
+  const url = URL.createObjectURL(new Blob([text], { type: "text/javascript" }));
+  try {
+    CFG = structuredClone((await import(/* @vite-ignore */ url)).default);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+  // Chybějící klíče doplníme, ať editor nespadne na starším souboru.
+  CFG.nextcloudOdkaz ??= ""; CFG.sberRezim ??= "email"; CFG.obrazky ??= {};
+  CFG.sekceHlavni ??= []; CFG.skala ??= ["---", "--", "-", "N", "+", "++", "+++"];
+  KONFIG = CFG;
+  // Otisk se bere až po vykreslení – sesbirej() čte hodnoty z formulářů,
+  // které do té chvíle ještě nejsou naplněné.
+  vykresliConfig();
+  PUVODNI = serializuj(sesbirej());
+  zmeneno();
+}
+
+$("b-config-znovu").onclick = async () => {
+  if (zmeneno() && !confirm("Zahodit neuložené změny a načíst znovu z repozitáře?")) return;
+  zprava("z-config", "Načítám…");
+  try { await nactiConfig(); zprava("z-config", "Načteno z repozitáře.", "uspech"); }
+  catch (e) { zprava("z-config", `Nepodařilo se načíst: ${e.message}`, "chyba"); }
+};
+
+$("b-config-nahled").onclick = () => {
+  const text = serializuj(sesbirej());
+  zprava("z-config", `<strong>Takto bude soubor vypadat:</strong>
+    <pre style="max-height:340px; overflow:auto; font-size:11.5px; line-height:1.45; margin:9px 0 0;
+    white-space:pre-wrap;">${esc(text)}</pre>`);
+};
+
+$("b-config-ulozit").onclick = async () => {
+  const c = sesbirej();
+  const { chyby, varovani } = zkontroluj(c);
+  if (chyby.length) {
+    zprava("z-config", `<strong>Takhle to uložit nejde:</strong><br>• ${chyby.map(esc).join("<br>• ")}`, "chyba");
+    return;
+  }
+  if (varovani.length && !confirm("Upozornění:\n\n• " + varovani.join("\n• ") + "\n\nUložit i tak?")) return;
+
+  const text = serializuj(c);
+  zprava("z-config", "Ukládám…");
+  try {
+    const odpoved = await gh("/contents/config.js", {
+      method: "PUT",
+      body: JSON.stringify({
+        message: "Úprava konfigurace z administrace",
+        content: doBase64(text),
+        sha: CFG_SHA,
+      }),
+    });
+    CFG_SHA = odpoved.content.sha;
+    PUVODNI = text;
+    CFG = c; KONFIG = c;
+    zmeneno();
+    pripravObrazky();
+    zprava("z-config", "Uloženo. Publikování na Pages trvá zhruba minutu, "
+      + "pak se změna projeví hlasujícím.", "uspech");
+  } catch (e) {
+    const kolize = /409|sha/i.test(e.message)
+      ? " Soubor se mezitím změnil jinde — dejte „Zahodit změny“, zkontrolujte stav a proveďte úpravu znovu."
+      : "";
+    zprava("z-config", `Uložení selhalo: ${e.message}.${kolize}`, "chyba");
+  }
+};
+
+window.addEventListener("beforeunload", (e) => {
+  if (CFG && zmeneno()) { e.preventDefault(); e.returnValue = ""; }
+});
+
+// ================================================================
+// PŘIPOJENÍ
+// ================================================================
 function nactiUlozene() {
   try {
     const u = JSON.parse(localStorage.getItem(KLIC) || "null");
     if (u) { A = u; $("i-owner").value = u.owner; $("i-repo").value = u.repo;
              $("i-pat").value = u.pat; $("i-pages").value = u.pages; }
   } catch (e) {}
-  // adresu Pages odvodíme z aktuální stránky, pokud ji admin nevyplnil
   if (!$("i-pages").value) $("i-pages").value = location.href.replace(/\/admin\.html.*$/, "");
 }
 $("b-pripojit").onclick = async () => {
@@ -259,8 +984,11 @@ $("b-pripojit").onclick = async () => {
     localStorage.setItem(KLIC, JSON.stringify(A));
     $("kdo").textContent = `${repo.full_name}${repo.private ? " (soukromý)" : " (veřejný)"}`;
     zprava("z-pristup", `Připojeno k <strong>${repo.full_name}</strong>.`, "uspech");
-    zamkni(true);
-    await Promise.all([pripravObrazky(), obnovStav()]);
+    odemkni(true);
+    await nactiConfig();
+    await pripravObrazky();
+    await obnovStav();
+    prepni("p-nastaveni");
   } catch (e) {
     zprava("z-pristup", `Připojení selhalo: ${e.message}. Zkontrolujte token a jeho oprávnění.`, "chyba");
   }
@@ -268,24 +996,23 @@ $("b-pripojit").onclick = async () => {
 $("b-odhlasit").onclick = () => {
   localStorage.removeItem(KLIC);
   A = { owner: "", repo: "", pat: "", pages: "" };
-  $("i-pat").value = "";
-  $("kdo").textContent = "nepřipojeno";
-  zamkni(false);
+  $("i-pat").value = ""; $("kdo").textContent = "nepřipojeno";
+  CFG = null; odemkni(false); prepni("p-pripojeni");
   zprava("z-pristup", "Token byl z prohlížeče smazán.");
 };
 
-// ---------------------------------------------------------------- obrázky
+// ================================================================
+// PODKLADY
+// ================================================================
 async function pripravObrazky() {
-  if (!KONFIG) KONFIG = (await import("./config.js?" + Date.now())).default;
-  naplnHlasujici();
   const sloty = $("sloty");
   sloty.innerHTML = "";
-  for (const [klic, cesta] of Object.entries(KONFIG.obrazky || {})) {
+  for (const [klic, cesta] of Object.entries((CFG && CFG.obrazky) || {})) {
     const el = document.createElement("div");
     el.className = "slot";
     el.innerHTML = `
-      <div style="font-weight:700; font-size:13.5px;">${klic}</div>
-      <div style="font-size:12px; color:var(--muted);"><code>${cesta}</code></div>
+      <div style="font-weight:700; font-size:13.5px;">${POPIS_OBRAZKU[klic] || klic}</div>
+      <div style="font-size:12px; color:var(--muted);"><code>${esc(cesta)}</code></div>
       <img src="${A.pages}/${cesta}?cb=${Date.now()}" alt="" onerror="this.style.display='none'">
       <input type="file" accept="image/png,image/jpeg" style="font-size:12px;">
       <div class="stav"></div>`;
@@ -293,11 +1020,10 @@ async function pripravObrazky() {
     sloty.appendChild(el);
   }
 }
-
 async function nahrajObrazek(soubor, cesta, el) {
   if (!soubor) return;
   const stav = el.querySelector(".stav");
-  const napis = (t) => { stav.textContent = t; };
+  const napis = (t, barva) => { stav.textContent = t; stav.style.color = barva || "var(--muted)"; };
   try {
     napis("nahrávám…");
     const bajty = new Uint8Array(await soubor.arrayBuffer());
@@ -307,50 +1033,45 @@ async function nahrajObrazek(soubor, cesta, el) {
     try { sha = (await gh(`/contents/${cesta}`)).sha; } catch (e) {}
     await gh(`/contents/${cesta}`, {
       method: "PUT",
-      body: JSON.stringify({
-        message: `Podklad ${cesta}`, content: btoa(bin), ...(sha ? { sha } : {}),
-      }),
+      body: JSON.stringify({ message: `Podklad ${cesta}`, content: btoa(bin), ...(sha ? { sha } : {}) }),
     });
     napis("zapsáno, čekám na publikování…");
-    const hotovo = await pockejNaPublikovani(cesta, soubor.size);
-    if (hotovo) {
-      napis(`publikováno ✓ (${Math.round(soubor.size / 1024)} kB)`);
-      stav.style.color = "var(--green)";
-      el.querySelector("img").src = `${A.pages}/${cesta}?cb=${Date.now()}`;
-      el.querySelector("img").style.display = "block";
+    if (await pockejNaPublikovani(cesta, soubor.size)) {
+      napis(`publikováno ✓ (${Math.round(soubor.size / 1024)} kB)`, "var(--green)");
+      const img = el.querySelector("img");
+      img.src = `${A.pages}/${cesta}?cb=${Date.now()}`; img.style.display = "block";
     } else {
-      napis("zapsáno, ale publikovanou verzi se zatím nepodařilo ověřit — zkuste za chvíli obnovit stránku.");
-      stav.style.color = "var(--red)";
+      napis("zapsáno, publikovanou verzi se zatím nepodařilo ověřit — zkuste za chvíli obnovit stránku.", "var(--red)");
     }
-  } catch (e) {
-    napis(`chyba: ${e.message}`);
-    stav.style.color = "var(--red)";
-  }
+  } catch (e) { napis(`chyba: ${e.message}`, "var(--red)"); }
 }
-
 // Ověření je poctivé: stahujeme skutečný publikovaný soubor a porovnáváme velikost.
 async function pockejNaPublikovani(cesta, velikost) {
   for (let pokus = 0; pokus < 30; pokus++) {
     await new Promise((r) => setTimeout(r, 4000));
     try {
       const r = await fetch(`${A.pages}/${cesta}?cb=${Date.now()}`, { cache: "no-store" });
-      if (r.ok) {
-        const b = await r.blob();
-        if (b.size === velikost) return true;
-      }
+      if (r.ok && (await r.blob()).size === velikost) return true;
     } catch (e) {}
   }
   return false;
 }
 
-// ---------------------------------------------------------------- rozeslání
+// ================================================================
+// HLASOVÁNÍ
+// ================================================================
 $("b-ok").onclick = async () => {
   const formulare = [...document.querySelectorAll(".f:checked")].map((x) => x.value);
   if (!formulare.length) { zprava("z-rozeslat", "Vyberte alespoň jeden formulář.", "chyba"); return; }
+  if (CFG && zmeneno()) {
+    zprava("z-rozeslat", "Máte neuložené změny v Nastavení. Nejdřív je uložte — "
+      + "jinak hlasující dostanou lístek podle staré konfigurace.", "chyba");
+    return;
+  }
   const bezici = KOLO && KOLO.stav === "otevreno";
   const otazka = bezici
     ? `Kolo ${KOLO.id} je stále otevřené. Rozesláním vzniknou nové tokeny a staré odkazy přestanou platit. Pokračovat?`
-    : `Rozeslat lístky ${formulare.length === 1 ? "" : formulare.length + " formulářů "}všem hlasujícím z config.js?`;
+    : `Rozeslat lístky všem hlasujícím (${(CFG && CFG.clenoveJmeno.length) || "?"})?`;
   if (!confirm(otazka)) return;
   zprava("z-rozeslat", "Spouštím rozesílání…");
   try {
@@ -361,35 +1082,28 @@ $("b-ok").onclick = async () => {
       poznamka: $("i-poznamka").value.trim(),
       prepsat: bezici,
     });
-    zprava("z-rozeslat", `Rozesílání běží. Sledujte ${odkazNaBehy()}; stav kola se tu objeví do minuty.`, "uspech");
+    zprava("z-rozeslat", `Rozesílání běží. Sledujte ${odkazNaBehy()}; stav se tu objeví do minuty.`, "uspech");
     setTimeout(obnovStav, 25000);
-  } catch (e) {
-    zprava("z-rozeslat", `Nepodařilo se spustit: ${e.message}`, "chyba");
-  }
+  } catch (e) { zprava("z-rozeslat", `Nepodařilo se spustit: ${e.message}`, "chyba"); }
 };
 
-// ---------------------------------------------------------------- stav sběru
 async function obnovStav() {
   if (!A.pat) return;
-  try {
-    KOLO = JSON.parse(await gh("/contents/data/kolo.json", { raw: true }));
-  } catch (e) {
-    $("prehled-kola").textContent = "Zatím neproběhlo žádné kolo.";
-    return;
-  }
+  try { KOLO = JSON.parse(await gh("/contents/data/kolo.json", { raw: true })); }
+  catch (e) { $("prehled-kola").textContent = "Zatím neproběhlo žádné kolo."; return; }
+
   const hotovo = KOLO.hlasujici.filter((h) => KOLO.formulare.every((t) => h.odevzdal?.[t])).length;
-  const celkem = KOLO.hlasujici.length;
   $("prehled-kola").innerHTML =
-    `<strong>${KOLO.nazev}</strong> · <code>${KOLO.id}</code> · `
+    `<strong>${esc(KOLO.nazev)}</strong> · <code>${KOLO.id}</code> · `
     + (KOLO.stav === "otevreno" ? "sběr běží" : "uzavřeno")
-    + ` · kompletně odevzdalo ${hotovo} z ${celkem}`
-    + (KOLO.termin ? ` · termín ${KOLO.termin}` : "");
+    + ` · kompletně odevzdalo ${hotovo} z ${KOLO.hlasujici.length}`
+    + (KOLO.termin ? ` · termín ${esc(KOLO.termin)}` : "");
 
   const hlavicka = KOLO.formulare.map((t) => `<th>${NAZVY[t]}</th>`).join("");
   const radky = KOLO.hlasujici.map((h) => {
     const bunky = KOLO.formulare.map((t) => h.odevzdal?.[t]
       ? `<td class="ok" title="${h.odevzdal[t]}">vyplnil</td>` : `<td class="ne">–</td>`).join("");
-    return `<tr><td>${h.jmeno}</td>${bunky}</tr>`;
+    return `<tr><td>${esc(h.jmeno)}</td>${bunky}</tr>`;
   }).join("");
   $("tabulka").innerHTML = `<table><thead><tr><th>Hlasující</th>${hlavicka}</tr></thead><tbody>${radky}</tbody></table>`;
 
@@ -397,29 +1111,24 @@ async function obnovStav() {
   await zjistiNeprirazene();
   pripravStahovani();
 }
-
 async function zjistiNeprirazene() {
   try {
     const soubory = await gh(`/contents/data/kola/${KOLO.id}/neprirazene`);
     if (Array.isArray(soubory) && soubory.length) {
-      $("neprirazene").innerHTML =
-        `<div class="zprava chyba"><strong>${soubory.length} zpráv se nepodařilo zpracovat.</strong>
-         Otevřete je v repozitáři a doplňte ručně v kroku 4:<br>`
-        + soubory.map((s) => `<a href="${s.html_url}" target="_blank" rel="noopener">${s.name}</a>`).join("<br>")
+      $("neprirazene").innerHTML = `<div class="zprava chyba"><strong>${soubory.length} zpráv se nepodařilo
+        zpracovat.</strong> Otevřete je v repozitáři a doplňte ručně v záložce Výsledky:<br>`
+        + soubory.map((s) => `<a href="${s.html_url}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join("<br>")
         + `</div>`;
       return;
     }
   } catch (e) {}
   $("neprirazene").innerHTML = "";
 }
-
 function naplnHlasujici() {
-  const sel = $("i-hlasujici");
-  const jmena = KOLO ? KOLO.hlasujici.map((h) => h.jmeno) : (KONFIG?.clenoveJmeno || []);
-  sel.innerHTML = `<option value="">– podle kódu lístku –</option>`
-    + jmena.map((j) => `<option>${j}</option>`).join("");
+  const jmena = KOLO ? KOLO.hlasujici.map((h) => h.jmeno) : ((CFG && CFG.clenoveJmeno) || []);
+  $("i-hlasujici").innerHTML = `<option value="">– podle kódu lístku –</option>`
+    + jmena.map((j) => `<option>${esc(j)}</option>`).join("");
 }
-
 $("b-obnovit").onclick = obnovStav;
 $("b-sber").onclick = async () => {
   zprava("z-stav", "Spouštím kontrolu schránky…");
@@ -430,7 +1139,75 @@ $("b-sber").onclick = async () => {
   } catch (e) { zprava("z-stav", `Nepodařilo se spustit: ${e.message}`, "chyba"); }
 };
 
-// ---------------------------------------------------------------- sdílená složka
+// ================================================================
+// VÝSLEDKY
+// ================================================================
+function pripravStahovani() {
+  if (!KOLO) { $("stahovani").innerHTML = `<span class="hint">Zatím není co stahovat.</span>`; return; }
+  $("stahovani").innerHTML =
+    `<button class="primar" id="b-xlsx">Stáhnout výsledky (jeden sešit XLSX)</button>`
+    + `<details style="width:100%; margin-top:6px;"><summary>Raději jednotlivá CSV</summary>
+        <div class="tlacitka" style="padding-top:10px;">`
+    + KOLO.formulare.map((t) => `<button class="druhy" data-csv="${t}">${NAZVY[t]}</button>`).join("")
+    + `</div></details>`;
+  $("b-xlsx").onclick = () => stahniSoubor("vysledky.xlsx", `${KOLO.id}-vysledky.xlsx`, true);
+  $("stahovani").querySelectorAll("[data-csv]").forEach((b) => {
+    b.onclick = () => stahniSoubor(`${b.dataset.csv}.csv`, `${KOLO.id}-${b.dataset.csv}.csv`, false);
+  });
+}
+// Sešit je binární, proto se tahá přes base64 z API, ne jako text.
+async function stahniSoubor(nazev, jako, binarni) {
+  try {
+    const cesta = `/contents/data/kola/${KOLO.id}/${nazev}`;
+    let blob;
+    if (binarni) {
+      const meta = await gh(cesta);
+      const bin = atob(meta.content.replace(/\n/g, ""));
+      const bajty = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bajty[i] = bin.charCodeAt(i);
+      blob = new Blob([bajty], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    } else {
+      blob = new Blob([await gh(cesta, { raw: true })], { type: "text/csv;charset=utf-8" });
+    }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = jako; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  } catch (e) {
+    zprava("z-konec", `Soubor zatím neexistuje — počkejte na první sběr. (${e.message})`, "chyba");
+  }
+}
+$("b-uzavrit").onclick = async () => {
+  if (!KOLO) { zprava("z-konec", "Žádné kolo neběží.", "chyba"); return; }
+  const chybi = KOLO.hlasujici.filter((h) => !KOLO.formulare.every((t) => h.odevzdal?.[t]));
+  const text = chybi.length
+    ? `Ještě nevyplnili: ${chybi.map((h) => h.jmeno).join(", ")}.\n\nOpravdu sběr ukončit?`
+    : "Ukončit sběr a odeslat výsledky?";
+  if (!confirm(text)) return;
+  zprava("z-konec", "Ukončuji…");
+  try {
+    await spust("uzavrit.yml", { znovu: KOLO.stav !== "otevreno", vsem: $("i-vsem").checked });
+    zprava("z-konec", `Uzávěrka běží (${odkazNaBehy()}). Výsledky dorazí e-mailem.`, "uspech");
+    setTimeout(obnovStav, 30000);
+  } catch (e) { zprava("z-konec", `Nepodařilo se spustit: ${e.message}`, "chyba"); }
+};
+$("b-doplnit").onclick = async () => {
+  const kod = $("i-kod").value.trim(), csv = $("i-csv").value.trim();
+  if (!kod && !csv) { zprava("z-konec", "Vložte kód lístku nebo obsah CSV.", "chyba"); return; }
+  if (csv && !kod && (!$("i-hlasujici").value || !$("i-formular").value)) {
+    zprava("z-konec", "U vloženého CSV vyberte hlasujícího i formulář.", "chyba"); return;
+  }
+  zprava("z-konec", "Zapisuji…");
+  try {
+    await spust("doplnit.yml", { kod, csv, hlasujici: $("i-hlasujici").value, formular: $("i-formular").value });
+    $("i-kod").value = ""; $("i-csv").value = "";
+    zprava("z-konec", `Zápis běží (${odkazNaBehy()}).`, "uspech");
+    setTimeout(obnovStav, 25000);
+  } catch (e) { zprava("z-konec", `Nepodařilo se spustit: ${e.message}`, "chyba"); }
+};
+
+// ================================================================
+// SDÍLENÁ SLOŽKA (alternativa)
+// ================================================================
 let SLOZKA = null, NALEZENO = {};
 const SLUG_TYPU = { "temata-navrhy": "navrhy", "temata-priority": "priority", "hlavni-cast": "hlavni" };
 
@@ -460,7 +1237,6 @@ async function fsNacti() {
     });
   } catch (e) { return null; }
 }
-
 // Vlastní parser: lístky mohou mít středník i čárku a hodnoty v uvozovkách.
 function parsujCsv(text) {
   text = text.replace(/^\uFEFF/, "");
@@ -480,15 +1256,12 @@ function parsujCsv(text) {
   if (bunka || pole.length) { pole.push(bunka); radky.push(pole); }
   return radky.filter((r) => r.some((b) => b.trim() !== ""));
 }
-
 async function prohledej(handle, hloubka, sber) {
   for await (const [nazev, polozka] of handle.entries()) {
     if (polozka.kind === "directory" && hloubka > 0) { await prohledej(polozka, hloubka - 1, sber); continue; }
-    if (polozka.kind !== "file") continue;
-    if (!nazev.toLowerCase().endsWith(".csv")) continue;
-    if (nazev.toUpperCase().startsWith("SOUHRN")) continue;   // vlastní výstupy nečteme
-    const zaklad = nazev.replace(/\.csv$/i, "");
-    const typ = SLUG_TYPU[zaklad.split("__")[0]];
+    if (polozka.kind !== "file" || !nazev.toLowerCase().endsWith(".csv")) continue;
+    if (nazev.toUpperCase().startsWith("SOUHRN")) continue;
+    const typ = SLUG_TYPU[nazev.replace(/\.csv$/i, "").split("__")[0]];
     if (!typ) continue;
     const soubor = await polozka.getFile();
     const radky = parsujCsv(await soubor.text());
@@ -498,19 +1271,14 @@ async function prohledej(handle, hloubka, sber) {
     (sber[typ] = sber[typ] || []).push({ jmeno, dvojice, kdy: soubor.lastModified, soubor: nazev });
   }
 }
-
 async function nactiSlozku(zeptat) {
   if (!SLOZKA) { zprava("z-slozka", "Nejdřív otevřete sdílenou složku.", "chyba"); return; }
-  const rezim = { mode: "read" };
-  let stav = await SLOZKA.queryPermission(rezim);
-  if (stav !== "granted" && zeptat) stav = await SLOZKA.requestPermission(rezim);
+  let stav = await SLOZKA.queryPermission({ mode: "read" });
+  if (stav !== "granted" && zeptat) stav = await SLOZKA.requestPermission({ mode: "read" });
   if (stav !== "granted") { zprava("z-slozka", "Přístup ke složce nebyl povolen.", "chyba"); return; }
-
   NALEZENO = {};
   try { await prohledej(SLOZKA, 1, NALEZENO); }
   catch (e) { zprava("z-slozka", `Složku se nepodařilo přečíst: ${e.message}`, "chyba"); return; }
-
-  // Kdyby někdo odevzdal dvakrát, platí novější soubor.
   Object.keys(NALEZENO).forEach((typ) => {
     const podleJmena = {};
     NALEZENO[typ].forEach((z) => {
@@ -518,52 +1286,41 @@ async function nactiSlozku(zeptat) {
     });
     NALEZENO[typ] = Object.values(podleJmena);
   });
-
   vykresliSlozku();
 }
-
 function vykresliSlozku() {
-  const typy = Object.keys(SLUG_TYPU).map((s) => SLUG_TYPU[s]);
-  const jmena = KONFIG?.clenoveJmeno || [];
+  const typy = Object.values(SLUG_TYPU);
+  const jmena = (CFG && CFG.clenoveJmeno) || [];
   const cizi = [];
-  Object.values(NALEZENO).forEach((zaznamy) => zaznamy.forEach((z) => {
+  Object.values(NALEZENO).forEach((zz) => zz.forEach((z) => {
     if (z.jmeno && !jmena.includes(z.jmeno) && !cizi.includes(z.jmeno)) cizi.push(z.jmeno);
   }));
-
   const hlavicka = typy.map((t) => `<th>${NAZVY[t]}</th>`).join("");
   const radky = [...jmena, ...cizi].map((j) => {
     const bunky = typy.map((t) => {
       const z = (NALEZENO[t] || []).find((x) => x.jmeno === j);
-      return z
-        ? `<td class="ok" title="${z.soubor}">odevzdal</td>`
-        : `<td class="ne">–</td>`;
+      return z ? `<td class="ok" title="${esc(z.soubor)}">odevzdal</td>` : `<td class="ne">–</td>`;
     }).join("");
-    const znacka = jmena.includes(j) ? j : `${j} <span style="color:var(--red);">(není v config.js)</span>`;
+    const znacka = jmena.includes(j) ? esc(j) : `${esc(j)} <span style="color:var(--red);">(není v seznamu)</span>`;
     return `<tr><td>${znacka}</td>${bunky}</tr>`;
   }).join("");
   $("slozka-tabulka").innerHTML = radky
     ? `<table><thead><tr><th>Hlasující</th>${hlavicka}</tr></thead><tbody>${radky}</tbody></table>`
     : `<p class="hint">Ve složce zatím není žádný lístek.</p>`;
-
   const dostupne = typy.filter((t) => (NALEZENO[t] || []).length);
   $("slozka-export").innerHTML = dostupne
-    .map((t) => `<button class="druhy" data-slouc="${t}">Stáhnout ${NAZVY[t]} (${NALEZENO[t].length})</button>`)
-    .join("") + (dostupne.length
-      ? `<button class="primar" id="b-souhrn">Uložit souhrny do složky</button>` : "");
+    .map((t) => `<button class="druhy" data-slouc="${t}">Stáhnout ${NAZVY[t]} (${NALEZENO[t].length})</button>`).join("")
+    + (dostupne.length ? `<button class="primar" id="b-souhrn">Uložit souhrny do složky</button>` : "");
   $("slozka-export").querySelectorAll("[data-slouc]").forEach((b) => {
     b.onclick = () => { const { csv, nazev } = sloucCsv(b.dataset.slouc); stahni(csv, nazev); };
   });
   if ($("b-souhrn")) $("b-souhrn").onclick = ulozSouhrny;
-
   const celkem = dostupne.reduce((a, t) => a + NALEZENO[t].length, 0);
-  zprava("z-slozka", `Načteno ${celkem} lístků ze složky <strong>${SLOZKA.name}</strong>.`,
-         celkem ? "uspech" : "");
+  zprava("z-slozka", `Načteno ${celkem} lístků ze složky <strong>${esc(SLOZKA.name)}</strong>.`, celkem ? "uspech" : "");
 }
-
-// Sloučení: sloupce se sjednotí, pořadí řádků podle config.js.
 function sloucCsv(typ) {
-  const sep = KONFIG?.csvDelimiter || ";";
-  const jmena = KONFIG?.clenoveJmeno || [];
+  const sep = (CFG && CFG.csvDelimiter) || ";";
+  const jmena = (CFG && CFG.clenoveJmeno) || [];
   const zaznamy = [...(NALEZENO[typ] || [])].sort((a, b) => {
     const ia = jmena.indexOf(a.jmeno), ib = jmena.indexOf(b.jmeno);
     return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
@@ -574,7 +1331,7 @@ function sloucCsv(typ) {
     v = String(v ?? "");
     return /[";\n,]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
   };
-  const radky = [sloupce.map((h) => pole(h)).join(sep)];
+  const radky = [sloupce.map(pole).join(sep)];
   zaznamy.forEach((z) => {
     const mapa = Object.fromEntries(z.dvojice);
     radky.push(sloupce.map((h) => pole(mapa[h] ?? "")).join(sep));
@@ -582,15 +1339,12 @@ function sloucCsv(typ) {
   const kolo = KOLO ? KOLO.id : new Date().toISOString().slice(0, 10);
   return { csv: "\ufeff" + radky.join("\r\n") + "\r\n", nazev: `SOUHRN-${kolo}-${typ}.csv` };
 }
-
 function stahni(text, nazev) {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([text], { type: "text/csv;charset=utf-8" }));
-  a.download = nazev;
-  a.click();
+  a.download = nazev; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
 }
-
 async function ulozSouhrny() {
   try {
     if (await SLOZKA.queryPermission({ mode: "readwrite" }) !== "granted"
@@ -608,102 +1362,32 @@ async function ulozSouhrny() {
       ulozene.push(nazev);
     }
     zprava("z-slozka", `Uloženo do složky: ${ulozene.join(", ")}.`, "uspech");
-  } catch (e) {
-    zprava("z-slozka", `Zápis se nepodařil: ${e.message}`, "chyba");
-  }
+  } catch (e) { zprava("z-slozka", `Zápis se nepodařil: ${e.message}`, "chyba"); }
 }
-
 $("b-slozka").onclick = async () => {
+  if (typeof window.showDirectoryPicker !== "function") {
+    zprava("z-slozka", "Tento prohlížeč neumí číst složku na disku. Použijte Chrome nebo Edge na počítači.", "chyba");
+    return;
+  }
   try {
     SLOZKA = await window.showDirectoryPicker({ mode: "readwrite", id: "okform-sber" });
     await fsUloz(SLOZKA);
-    $("slozka-nazev").innerHTML = `Složka: <strong>${SLOZKA.name}</strong>`;
+    $("slozka-nazev").innerHTML = `Složka: <strong>${esc(SLOZKA.name)}</strong>`;
     await nactiSlozku(true);
   } catch (e) { if (e.name !== "AbortError") zprava("z-slozka", e.message, "chyba"); }
 };
 $("b-slouc").onclick = () => nactiSlozku(true);
 
-// ---------------------------------------------------------------- uzávěrka
-function pripravStahovani() {
-  if (!KOLO) return;
-  $("stahovani").innerHTML =
-    `<button class="primar" id="b-xlsx">Stáhnout výsledky (jeden sešit XLSX)</button>`
-    + `<details style="width:100%; margin-top:6px;"><summary>Raději jednotlivá CSV</summary>
-        <div class="tlacitka" style="padding-top:10px;">`
-    + KOLO.formulare.map((t) => `<button class="druhy" data-csv="${t}">${NAZVY[t]}</button>`).join("")
-    + `</div></details>`;
-  $("b-xlsx").onclick = () => stahniSoubor("vysledky.xlsx", `${KOLO.id}-vysledky.xlsx`, true);
-  $("stahovani").querySelectorAll("[data-csv]").forEach((b) => {
-    b.onclick = () => stahniSoubor(`${b.dataset.csv}.csv`, `${KOLO.id}-${b.dataset.csv}.csv`, false);
-  });
-}
-
-// Sešit je binární, proto se tahá přes base64 z API, ne jako text.
-async function stahniSoubor(nazev, jako, binarni) {
-  try {
-    const cesta = `/contents/data/kola/${KOLO.id}/${nazev}`;
-    let blob;
-    if (binarni) {
-      const meta = await gh(cesta);
-      const bin = atob(meta.content.replace(/\n/g, ""));
-      const bajty = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) bajty[i] = bin.charCodeAt(i);
-      blob = new Blob([bajty], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    } else {
-      blob = new Blob([await gh(cesta, { raw: true })], { type: "text/csv;charset=utf-8" });
-    }
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = jako;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-  } catch (e) {
-    zprava("z-konec", `Soubor zatím neexistuje — počkejte na první sběr. (${e.message})`, "chyba");
-  }
-}
-$("b-uzavrit").onclick = async () => {
-  if (!KOLO) return;
-  const chybi = KOLO.hlasujici.filter((h) => !KOLO.formulare.every((t) => h.odevzdal?.[t]));
-  const text = chybi.length
-    ? `Ještě nevyplnili: ${chybi.map((h) => h.jmeno).join(", ")}.\n\nOpravdu sběr ukončit?`
-    : "Ukončit sběr a odeslat výsledky?";
-  if (!confirm(text)) return;
-  zprava("z-konec", "Ukončuji…");
-  try {
-    await spust("uzavrit.yml", { znovu: KOLO.stav !== "otevreno", vsem: $("i-vsem").checked });
-    zprava("z-konec", `Uzávěrka běží (${odkazNaBehy()}). Výsledky dorazí e-mailem.`, "uspech");
-    setTimeout(obnovStav, 30000);
-  } catch (e) { zprava("z-konec", `Nepodařilo se spustit: ${e.message}`, "chyba"); }
-};
-$("b-doplnit").onclick = async () => {
-  const kod = $("i-kod").value.trim(), csv = $("i-csv").value.trim();
-  if (!kod && !csv) { zprava("z-konec", "Vložte kód lístku nebo obsah CSV.", "chyba"); return; }
-  if (csv && !kod && (!$("i-hlasujici").value || !$("i-formular").value)) {
-    zprava("z-konec", "U vloženého CSV vyberte hlasujícího i formulář.", "chyba"); return;
-  }
-  zprava("z-konec", "Zapisuji…");
-  try {
-    await spust("doplnit.yml", {
-      kod, csv, hlasujici: $("i-hlasujici").value, formular: $("i-formular").value,
-    });
-    $("i-kod").value = ""; $("i-csv").value = "";
-    zprava("z-konec", `Zápis běží (${odkazNaBehy()}).`, "uspech");
-    setTimeout(obnovStav, 25000);
-  } catch (e) { zprava("z-konec", `Nepodařilo se spustit: ${e.message}`, "chyba"); }
-};
-
-// ---------------------------------------------------------------- start
+// ================================================================
+// START
+// ================================================================
 nactiUlozene();
 if (A.pat) $("b-pripojit").click();
-if (typeof window.showDirectoryPicker !== "function") {
-  $("s-slozka").innerHTML = `<div class="kicker">KROK 3</div><h2>Sběr ze sdílené složky</h2>
-    <div class="zprava chyba">Tento prohlížeč neumí číst složku na disku. Otevřete administraci
-    v Chrome nebo Edge na počítači.</div>`;
-} else {
+if (typeof window.showDirectoryPicker === "function") {
   fsNacti().then((h) => {
     if (!h) return;
     SLOZKA = h;
-    $("slozka-nazev").innerHTML = `Složka: <strong>${h.name}</strong> — klikněte na Načíst znovu.`;
+    $("slozka-nazev").innerHTML = `Složka: <strong>${esc(h.name)}</strong> — klikněte na Načíst znovu.`;
   });
 }
 setInterval(() => { if (A.pat && KOLO && KOLO.stav === "otevreno") obnovStav(); }, 60000);
