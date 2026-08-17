@@ -1,9 +1,9 @@
 {
   "id": "2026-08-17-2",
   "nazev": "Hlasování investičního výboru",
-  "stav": "otevreno",
+  "stav": "uzavreno",
   "otevreno": "2026-08-17T06:36:10Z",
-  "uzavreno": null,
+  "uzavreno": "2026-08-17T06:44:02Z",
   "termin": "17. 8. 2026",
   "formulare": [
     "priority"
