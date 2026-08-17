@@ -349,9 +349,13 @@
     <div id="prehled-kola" class="hint">Žádné kolo zatím neběží.</div>
     <div id="tabulka"></div>
     <div class="tlacitka">
-      <button class="druhy" id="b-obnovit">Obnovit stav</button>
-      <button class="druhy" id="b-sber">Zkontrolovat schránku teď</button>
+      <button class="druhy" id="b-obnovit">Načíst tabulku znovu</button>
+      <button class="primar" id="b-sber">Vybrat schránku teď</button>
     </div>
+    <p class="hint"><strong>Načíst tabulku znovu</strong> jen přečte, co už je zapsané —
+      nic nespouští a je to okamžité (děje se to i samo každou minutu).
+      <strong>Vybrat schránku teď</strong> spustí úlohu, která zajde do pošty pro nové lístky;
+      trvá to zhruba minutu a nemusíte na ni čekat do dalšího desetiminutového cyklu.</p>
     <div id="z-stav"></div>
     <div id="neprirazene"></div>
   </section>
@@ -1129,14 +1133,24 @@ function naplnHlasujici() {
   $("i-hlasujici").innerHTML = `<option value="">– podle kódu lístku –</option>`
     + jmena.map((j) => `<option>${esc(j)}</option>`).join("");
 }
-$("b-obnovit").onclick = obnovStav;
+$("b-obnovit").onclick = async () => {
+  zprava("z-stav", "Načítám…");
+  await obnovStav();
+  zprava("z-stav", `Načteno v ${new Date().toLocaleTimeString("cs-CZ")}.`);
+};
 $("b-sber").onclick = async () => {
-  zprava("z-stav", "Spouštím kontrolu schránky…");
+  const b = $("b-sber"), puvodni = b.textContent;
+  b.disabled = true; b.textContent = "Vybírám schránku…";
+  zprava("z-stav", "Spouštím úlohu…");
   try {
     await spust("sber.yml", {});
-    zprava("z-stav", `Kontrola běží (${odkazNaBehy()}). Nové odpovědi se objeví do minuty.`, "uspech");
-    setTimeout(obnovStav, 30000);
-  } catch (e) { zprava("z-stav", `Nepodařilo se spustit: ${e.message}`, "chyba"); }
+    zprava("z-stav", `Úloha běží — ${odkazNaBehy()}. Tabulka se sama obnoví přibližně za minutu.
+      Žluté varování o Node.js v protokolu běhu je normální a nic neznamená.`, "uspech");
+    setTimeout(() => { obnovStav(); b.disabled = false; b.textContent = puvodni; }, 45000);
+  } catch (e) {
+    zprava("z-stav", `Nepodařilo se spustit: ${e.message}`, "chyba");
+    b.disabled = false; b.textContent = puvodni;
+  }
 };
 
 // ================================================================

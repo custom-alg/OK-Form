@@ -159,6 +159,30 @@ def zkontroluj_payload(d: dict) -> None:
 
 
 # --------------------------------------------------------------------------
+# Čtení proměnných prostředí
+#
+# Pozor: workflow předává secrets vždy, i když neexistují – pak dorazí
+# prázdný řetězec, na který se výchozí hodnota v os.environ.get() nechytí.
+# Proto se všechny nepovinné hodnoty čtou přes tyhle dvě funkce.
+# --------------------------------------------------------------------------
+def text_z_prostredi(klic: str, vychozi: str) -> str:
+    return (os.environ.get(klic) or "").strip() or vychozi
+
+
+def cislo_z_prostredi(klic: str, vychozi: int) -> int:
+    hodnota = (os.environ.get(klic) or "").strip()
+    if not hodnota:
+        return vychozi
+    try:
+        return int(hodnota)
+    except ValueError:
+        raise SystemExit(
+            f"Secret {klic} musí být číslo, ale obsahuje {hodnota!r}. "
+            f"Buď ho opravte, nebo smažte – pak se použije výchozí {vychozi}."
+        )
+
+
+# --------------------------------------------------------------------------
 # Odesílání pošty
 # --------------------------------------------------------------------------
 def _smtp_nastaveni() -> dict:
@@ -167,7 +191,7 @@ def _smtp_nastaveni() -> dict:
         raise SystemExit("Chybí secrets: " + ", ".join(chybi))
     return {
         "host": os.environ["SMTP_HOST"],
-        "port": int(os.environ.get("SMTP_PORT", "587")),
+        "port": cislo_z_prostredi("SMTP_PORT", 587),
         "user": os.environ["SMTP_USER"],
         "pass": os.environ["SMTP_PASS"],
         "from": os.environ.get("MAIL_FROM") or os.environ["SMTP_USER"],

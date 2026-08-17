@@ -196,9 +196,9 @@ def main() -> None:
     hostitel = os.environ.get("IMAP_HOST")
     if not hostitel:
         raise SystemExit("Chybí secret IMAP_HOST.")
-    M = imaplib.IMAP4_SSL(hostitel, int(os.environ.get("IMAP_PORT", "993")))
+    M = imaplib.IMAP4_SSL(hostitel, s.cislo_z_prostredi("IMAP_PORT", 993))
     M.login(os.environ["IMAP_USER"], os.environ["IMAP_PASS"])
-    M.select(os.environ.get("IMAP_FOLDER", "INBOX"))
+    M.select(s.text_z_prostredi("IMAP_FOLDER", "INBOX"))
 
     typ_hledani, cisla = M.search(None, "UNSEEN")
     ids = cisla[0].split()[:MAX_ZPRAV] if typ_hledani == "OK" and cisla[0] else []
