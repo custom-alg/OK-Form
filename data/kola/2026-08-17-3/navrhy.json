@@ -52,6 +52,58 @@
     ]
   },
   {
+    "i": 1,
+    "jmeno": "michael",
+    "prijato": "2026-08-17T08:08:16Z",
+    "odesilatel": "ručně doplněno administrátorem",
+    "pary": [
+      [
+        "Timestamp",
+        "8/17/2026 09:58:12"
+      ],
+      [
+        "Email Address",
+        "michael.blaha@monecois.cz"
+      ],
+      [
+        "Jméno a příjmení",
+        "michael"
+      ],
+      [
+        "AKCIE - ZAŘAZENÍ NOVÉHO TÉMATU č. 1",
+        "Nuklearni energie"
+      ],
+      [
+        "AKCIE - ZAŘAZENÍ NOVÉHO TÉMATU č. 2",
+        ""
+      ],
+      [
+        "AKCIE - VYŘAZENÍ STÁVAJÍCÍHO TÉMATU č. 1",
+        "Indie"
+      ],
+      [
+        "AKCIE - VYŘAZENÍ STÁVAJÍCÍHO TÉMATU č. 2",
+        ""
+      ],
+      [
+        "DLUHOPISY - ZAŘAZENÍ NOVÉHO TÉMATU č. 1",
+        ""
+      ],
+      [
+        "DLUHOPISY - ZAŘAZENÍ NOVÉHO TÉMATU č. 2",
+        ""
+      ],
+      [
+        "DLUHOPISY - VYŘAZENÍ STÁVAJÍCÍHO TÉMATU č. 1",
+        ""
+      ],
+      [
+        "DLUHOPISY - VYŘAZENÍ STÁVAJÍCÍHO TÉMATU č. 2",
+        ""
+      ]
+    ]
+  },
+  {
     "i": 2,
     "jmeno": "Vojtech",
     "prijato": "2026-08-17T07:54:17Z",
