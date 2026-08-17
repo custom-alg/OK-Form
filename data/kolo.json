@@ -1,28 +1,28 @@
 {
-  "id": "2026-08-17",
+  "id": "2026-08-17-2",
   "nazev": "Hlasování investičního výboru",
-  "stav": "uzavreno",
-  "otevreno": "2026-08-17T05:46:48Z",
-  "uzavreno": "2026-08-17T06:07:51Z",
-  "termin": "",
+  "stav": "otevreno",
+  "otevreno": "2026-08-17T06:36:10Z",
+  "uzavreno": null,
+  "termin": "17. 8. 2026",
   "formulare": [
-    "navrhy"
+    "priority"
   ],
   "hlasujici": [
     {
       "i": 0,
       "jmeno": "Pokus 1",
-      "token_hash": "2eb6c3867212c8b03632ce3da1e91fdd7ece3f90e51b9a6ae168cbd68457b0ba",
+      "token_hash": "c6ee1b83698a26ad91ed44417e4f7f64096cebaadb0777e29e597590f8e51918",
       "odevzdal": {
-        "navrhy": "2026-08-17T06:04:17Z"
+        "priority": null
       }
     },
     {
       "i": 1,
       "jmeno": "Pokus 2",
-      "token_hash": "2e4f3ca4f0e86a66352ec07cdb89a841bd9a163f38d2c95c486121eb3bac1759",
+      "token_hash": "dc871e100cd0def279d110a6e13c7cd3d3a0b5fd1d5f8e5833b3d49b2fd3f357",
       "odevzdal": {
-        "navrhy": "2026-08-17T05:52:01Z"
+        "priority": null
       }
     }
   ]
