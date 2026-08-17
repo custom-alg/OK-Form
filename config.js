@@ -6,15 +6,15 @@
 // ================================================================
 export default {
   // --- Obecné ---
-  vysledkyEmail: "ok.form.monecois@gmail.com",   // kam směřuje tlačítko „Odeslat e-mailem"
-  sberRezim: "email",                            // "email" = lístky chodí do sběrné schránky (GitHub Actions)
-  nextcloudOdkaz: "",                            // nepovinný odkaz na sdílenou složku; prázdné = tlačítko skryto
-  csvDelimiter: ";",                             // oddělovač CSV: "," nebo ";"
-  darkLightMode: true,                           // false = přepínač tmavého režimu se skryje
-  defaultTheme: "light",                         // "light" | "dark"
-  validaceRezim: "block",                        // "block" = nedosažitelné volby zešednou a nejdou stisknout
-                                                 // "warning" = vše lze klikat, ale lístek se součtem != 0 nelze odeslat
-  nettoSkore: true,                              // true = v hlavičce sekce se ukazuje netto skóre (-3 az +3)
+  vysledkyEmail: "ok.form.monecois@gmail.com",  // kam směřuje tlačítko „Odeslat e-mailem"
+  sberRezim: "email",                           // "email" = lístky chodí do sběrné schránky (GitHub Actions)
+  nextcloudOdkaz: "",                           // nepovinný odkaz na sdílenou složku; prázdné = tlačítko skryto
+  csvDelimiter: ";",                            // oddělovač CSV: "," nebo ";"
+  darkLightMode: true,                          // false = přepínač tmavého režimu se skryje
+  defaultTheme: "light",                        // "light" | "dark"
+  validaceRezim: "block",                       // "block" = nedosažitelné volby zešednou a nejdou stisknout
+                                                // "warning" = vše lze klikat, ale lístek se součtem != 0 nelze odeslat
+  nettoSkore: true,                             // true = v hlavičce sekce se ukazuje netto skóre (-3 az +3)
 
   // --- Cesty k obrázkům (admin je přepisuje soubory se stejným názvem) ---
   obrazky: {
@@ -30,13 +30,13 @@ export default {
 
   // --- Lístek 1: stav poolu témat (určuje, kolik vyřazení musí doprovázet zařazení) ---
   pool: {
-    akcie:     { aktualne: 5, max: 5, min: 2 },
-    dluhopisy: { aktualne: 4, max: 5, min: 2 },
+    akcie:     { aktualne: 7, max: 10, min: 2 },
+    dluhopisy: { aktualne: 5, max: 10, min: 2 },
   },
 
   // --- Lístek 2: dostupná témata k prioritizaci ---
-  temataAkcie: ["Polovodiče", "Obrana", "Indie", "Umělá inteligence", "Inovace ve zdravotnictví", "Nukleární energie"],
-  temataDluhopisy: ["Global Enhanced", "Absolute return", "Konvertibilní dluhopisy", "ABS"],
+  temataAkcie: ["Polovodiče", "Obrana", "Indie", "Umělá inteligence", "Inovace ve zdravotnictví", "Nukleární energie", "hello"],
+  temataDluhopisy: ["Global Enhanced", "Absolute return", "Konvertibilní dluhopisy", "ABS", "hello"],
   maxPriorit: 5,
 
   // --- Lístek 3: škála a sekce ---
