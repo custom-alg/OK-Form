@@ -6,15 +6,15 @@
 // ================================================================
 export default {
   // --- Obecné ---
-  vysledkyEmail: "ok.form.monecois@gmail.com",   // kam směřuje tlačítko „Odeslat e-mailem"
-  sberRezim: "email",                            // "email" = lístky chodí do sběrné schránky (GitHub Actions)
-  nextcloudOdkaz: "",                            // nepovinný odkaz na sdílenou složku; prázdné = tlačítko skryto
-  csvDelimiter: ";",                             // oddělovač CSV: "," nebo ";"
-  darkLightMode: true,                           // false = přepínač tmavého režimu se skryje
-  defaultTheme: "light",                         // "light" | "dark"
-  validaceRezim: "block",                        // "block" = nedosažitelné volby zešednou a nejdou stisknout
-                                                 // "warning" = vše lze klikat, ale lístek se součtem != 0 nelze odeslat
-  nettoSkore: true,                              // true = v hlavičce sekce se ukazuje netto skóre (-3 az +3)
+  vysledkyEmail: "ok.form.monecois@gmail.com",  // kam směřuje tlačítko „Odeslat e-mailem"
+  sberRezim: "email",                           // "email" = lístky chodí do sběrné schránky (GitHub Actions)
+  nextcloudOdkaz: "",                           // nepovinný odkaz na sdílenou složku; prázdné = tlačítko skryto
+  csvDelimiter: ";",                            // oddělovač CSV: "," nebo ";"
+  darkLightMode: true,                          // false = přepínač tmavého režimu se skryje
+  defaultTheme: "light",                        // "light" | "dark"
+  validaceRezim: "block",                       // "block" = nedosažitelné volby zešednou a nejdou stisknout
+                                                // "warning" = vše lze klikat, ale lístek se součtem != 0 nelze odeslat
+  nettoSkore: true,                             // true = v hlavičce sekce se ukazuje netto skóre (-3 az +3)
 
   // --- Cesty k obrázkům (admin je přepisuje soubory se stejným názvem) ---
   obrazky: {
@@ -25,8 +25,8 @@ export default {
   },
 
   // --- Hlasující ---
-  clenoveJmeno: ["Petr Budinský", "Jiří Mikeš", "Ondřej Pěška", "Petr Šimčák", "Jiří Šindelář"],
-  clenoveMail: ["petr.budinsky@monecois.cz", "jiri.mikes@monecois.cz", "ondrej.peska@monecois.cz", "petr.simcak@monecois.cz", "jiri.sindelar@monecois.cz"],
+  clenoveJmeno: ["Pokus 1", "Pokus 2"],
+  clenoveMail: ["peta.simcak@gmail.com", "peta.simcak@outlook.cz"],
 
   // --- Lístek 1: stav poolu témat (určuje, kolik vyřazení musí doprovázet zařazení) ---
   pool: {
