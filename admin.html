@@ -126,10 +126,10 @@
   <section>
     <div class="rada">
       <label>Vlastník (organizace nebo uživatel)<input type="text" id="i-owner" placeholder="custom-alg"></label>
-      <label>Repozitář<input type="text" id="i-repo" placeholder="OK-Form"></label>
+      <label>Repozitář<input type="text" id="i-repo" placeholder="OK-Form-Git"></label>
     </div>
     <label>Přístupový token (fine-grained PAT)<input type="password" id="i-pat" placeholder="github_pat_…"></label>
-    <label>Adresa publikované stránky<input type="url" id="i-pages" placeholder="https://custom-alg.github.io/OK-Form"></label>
+    <label>Adresa publikované stránky<input type="url" id="i-pages" placeholder="https://custom-alg.github.io/OK-Form-Git"></label>
     <div class="tlacitka">
       <button class="primar" id="b-pripojit">Připojit</button>
       <button class="druhy" id="b-odhlasit">Odhlásit a smazat token</button>
@@ -141,7 +141,11 @@
         Developer settings → Personal access tokens → Fine-grained tokens → Generate new token.
         V <em>Repository access</em> zvolte „Only select repositories" a tenhle repozitář,
         v <em>Permissions</em> nastavte <strong>Contents: Read and write</strong> a
-        <strong>Actions: Read and write</strong>. Podrobně v docs/PRUVODCE-GITHUB.md, krok 6.</p>
+        <strong>Actions: Read and write</strong>.</p>
+      <p class="hint">Nejrychleji přes předvyplněný odkaz — stačí doplnit repozitář a potvrdit:<br>
+        <a href="https://github.com/settings/personal-access-tokens/new?name=OK+Forms+-+administrace&amp;description=Token+pro+admin.html&amp;expires_in=366&amp;contents=write&amp;actions=write"
+           target="_blank" rel="noopener">Vytvořit token</a> ·
+        podrobný postup a řešení potíží v <code>docs/TOKEN.md</code></p>
     </details>
   </section>
 </div>
@@ -448,9 +452,9 @@ const SLOUPCE_MODELU = [
 const KAPACITA_MODELU = 5;   // řádků, na které jsou v modelu nastavené vzorce
 const POPIS_OBRAZKU = {
   temataAktualni: "Aktuální témata (lístek 1)",
-  akciePrehled: "Přehled akcií (lístek 2)",
-  dluhopisyPrehled: "Přehled dluhopisů (lístek 2)",
-  poolSchvaleny: "Schválený pool (lístek 3)",
+  akciePrehled: "Přehled akcií (lístek 3)",
+  dluhopisyPrehled: "Přehled dluhopisů (lístek 3)",
+  poolSchvaleny: "Schválený pool (lístek 2)",
 };
 
 // ---------------------------------------------------------------- základ
@@ -461,23 +465,71 @@ function esc(t) {
   return String(t ?? "").replace(/[&<>"]/g, (z) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[z]));
 }
 async function gh(cesta, moznosti = {}) {
-  const r = await fetch(`https://api.github.com/repos/${A.owner}/${A.repo}${cesta}`, {
-    ...moznosti,
-    headers: {
-      Authorization: `Bearer ${A.pat}`,
-      Accept: moznosti.raw ? "application/vnd.github.raw" : "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-      ...(moznosti.body ? { "Content-Type": "application/json" } : {}),
-      ...(moznosti.headers || {}),
-    },
-  });
-  if (r.status === 204) return null;
-  if (!r.ok) {
-    let detail = r.statusText;
-    try { detail = (await r.json()).message || detail; } catch (e) {}
-    throw new Error(`${r.status} – ${detail}`);
+  const adresa = `https://api.github.com/repos/${A.owner}/${A.repo}${cesta}`;
+  let r;
+  try {
+    r = await fetch(adresa, {
+      ...moznosti,
+      headers: {
+        Authorization: `Bearer ${A.pat}`,
+        Accept: moznosti.raw ? "application/vnd.github.raw" : "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        ...(moznosti.body ? { "Content-Type": "application/json" } : {}),
+        ...(moznosti.headers || {}),
+      },
+    });
+  } catch (e) {
+    // Sem spadne jen síťové selhání – zablokovaný požadavek, výpadek, offline.
+    throw new Error("Požadavek na GitHub vůbec neodešel. Bývá to blokováním v prohlížeči "
+      + "(Brave Shields, blokovač reklam, firemní proxy) nebo výpadkem sítě. "
+      + "Zkuste pro api.github.com vypnout Shields, nebo stránku otevřít v jiném prohlížeči.");
   }
+  if (r.status === 204) return null;
+  if (!r.ok) throw new Error(await popisChyby(r));
   return moznosti.raw ? r.text() : r.json();
+}
+
+// Z odpovědi GitHubu se dá vyčíst dost přesně, co se stalo – vyplatí se to říct.
+async function popisChyby(r) {
+  let zprava = r.statusText;
+  try { zprava = (await r.json()).message || zprava; } catch (e) {}
+  const zbyva = r.headers.get("x-ratelimit-remaining");
+  const reset = r.headers.get("x-ratelimit-reset");
+  const pockat = r.headers.get("retry-after");
+
+  const zaCas = () => {
+    if (pockat) return `${Math.ceil(+pockat / 60)} min`;
+    if (reset) {
+      const kdy = new Date(+reset * 1000);
+      return `${Math.max(1, Math.ceil((kdy - Date.now()) / 60000))} min (v ${kdy.toLocaleTimeString("cs-CZ")})`;
+    }
+    // Bez hlaviček (prohlížeč je přes CORS nemusí vydat) je lepší říct řádový odhad
+    // než mlhavé „chvíli“ – limity GitHubu se resetují v řádu minut až hodiny.
+    return "několik minut (u přísnějšího limitu až hodinu)";
+  };
+
+  if (r.status === 401)
+    return "401 – token neplatí. Bývá vypršelý, smazaný, nebo se při kopírování "
+      + "přenesla mezera. Vytvořte nový podle docs/TOKEN.md.";
+  if (r.status === 403 && (zbyva === "0" || /rate limit exceeded/i.test(zprava)))
+    return `403 – vyčerpaný limit požadavků na GitHub API. Obnoví se za ${zaCas()}. `
+      + "Do té doby administrace nic nepřečte ani nezapíše.";
+  if ((r.status === 403 || r.status === 429) && /secondary rate|abuse|too many requests/i.test(zprava))
+    return `403 – GitHub dočasně přibrzdil požadavky (sekundární limit). `
+      + `Počkejte ${zaCas()} a zkuste to znovu; pomůže neotvírat administraci ve více oknech naráz.`;
+  if (r.status === 403)
+    return `403 – token nemá dost oprávnění, nebo ho organizace neschválila. `
+      + `Zkontrolujte, že má Contents i Actions na Read and write a že není ve stavu „pending". (${zprava})`;
+  if (r.status === 404)
+    return "404 – repozitář nenalezen. Buď je překlep ve vlastníkovi či názvu, "
+      + "nebo token nemá tenhle repozitář vybraný v Repository access.";
+  if (r.status === 409)
+    return "409 – soubor se mezitím změnil jinde. Dejte „Zahodit změny“ a proveďte úpravu znovu.";
+  if (r.status === 422)
+    return `422 – GitHub požadavek odmítl: ${zprava}`;
+  if (r.status === 429)
+    return `429 – příliš mnoho požadavků. Zkuste to za ${zaCas()}.`;
+  return `${r.status} – ${zprava}`;
 }
 async function spust(soubor, vstupy) {
   await gh(`/actions/workflows/${soubor}/dispatches`, {
@@ -994,7 +1046,7 @@ $("b-pripojit").onclick = async () => {
     await obnovStav();
     prepni("p-nastaveni");
   } catch (e) {
-    zprava("z-pristup", `Připojení selhalo: ${e.message}. Zkontrolujte token a jeho oprávnění.`, "chyba");
+    zprava("z-pristup", `<strong>Připojení selhalo.</strong><br>${esc(e.message)}`, "chyba");
   }
 };
 $("b-odhlasit").onclick = () => {
