@@ -7,3 +7,4 @@
 - 21.09.2026 18:07 UTC – petr test vyplnil Témata – priority (oprava dřívější odpovědi)
 - 21.09.2026 18:07 UTC – Peta Simcak outlook vyplnil Témata – priority
 - 21.09.2026 18:07 UTC – Peta Simcak outlook vyplnil Témata – priority (oprava dřívější odpovědi)
+- 21.09.2026 18:08 UTC – sběr uzavřen
