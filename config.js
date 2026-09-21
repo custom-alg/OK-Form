@@ -25,18 +25,18 @@ export default {
   },
 
   // --- Hlasující ---
-  clenoveJmeno: ["Peta", "michael", "Vojtech"],
-  clenoveMail: ["peta.simcak@outlook.cz", "michael.blaha@monecois.cz", "vojtech.rjasko@monecois.cz"],
+  clenoveJmeno: ["Peta Simcak", "petr test", "petr prace"],
+  clenoveMail: ["peta.simcak@outlook.cz", "peta.simcak@gmail.com", "petr@42prague.com"],
 
   // --- Lístek 1: stav poolu témat (určuje, kolik vyřazení musí doprovázet zařazení) ---
   pool: {
-    akcie:     { aktualne: 5, max: 10, min: 2 },
-    dluhopisy: { aktualne: 4, max: 10, min: 2 },
+    akcie:     { aktualne: 6, max: 10, min: 3 },
+    dluhopisy: { aktualne: 5, max: 10, min: 3 },
   },
 
   // --- Lístek 2: dostupná témata k prioritizaci ---
   temataAkcie: ["Polovodiče", "Obrana", "Indie", "Umělá inteligence", "Inovace ve zdravotnictví", "Nukleární energie"],
-  temataDluhopisy: ["Global Enhanced", "Absolute return", "Konvertibilní dluhopisy", "ABS"],
+  temataDluhopisy: ["Global Enhanced", "Absolute return", "Konvertibilní dluhopisy", "ABS", "pokus"],
   maxPriorit: 5,
 
   // --- Lístek 3: škála a sekce ---
