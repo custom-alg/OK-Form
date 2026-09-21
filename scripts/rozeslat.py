@@ -39,10 +39,11 @@ def telo_pozvanky(jmeno: str, odkazy: list[tuple[str, str]], nazev: str,
     for popis, url in odkazy:
         radky += [f"  {popis}:", f"  {url}", ""]
     radky += [
-        "Postup: formulář vyplňte, klikněte na „Odevzdat lístek“ a potom",
-        "na „Odeslat e-mailem“. Otevře se Vám rozepsaná zpráva – jen ji odešlete.",
-        "Text v kódovém bloku na konci zprávy prosím neupravujte, čte ho",
-        "automat, který odpovědi sbírá. Přijetí Vám potvrdíme zpět e-mailem.",
+        "Postup: vyplňte formulář(e) a u každého klikněte na „Odevzdat lístek“.",
+        "Po posledním se zobrazí zpráva – klikněte na „Zkopírovat zprávu“,",
+        "v tomto e-mailu dejte „Odpovědět“, zprávu vložte do těla a odešlete.",
+        "Text ve zprávě prosím neupravujte, čte ho automat, který odpovědi sbírá.",
+        "Přijetí Vám potvrdíme zpět e-mailem.",
         "",
         "Děkujeme.",
     ]

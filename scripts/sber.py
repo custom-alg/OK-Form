@@ -173,9 +173,9 @@ def vada(jmeno: str, duvod: str) -> str:
         "",
         f"Vaši odpověď se nepodařilo automaticky zpracovat: {duvod}.",
         "",
-        "Zkuste prosím ve formuláři znovu kliknout na „Odeslat e-mailem“ a zprávu",
-        "odeslat beze změn – kódový blok na konci nesmí být upravený ani zkrácený.",
-        "Pokud to nepomůže, přepošlete prosím stažený soubor CSV; doplníme ho ručně.",
+        "Zkuste prosím ve formuláři znovu zobrazit zprávu k odeslání, kliknout na",
+        "„Zkopírovat zprávu“ a vložit ji do odpovědi beze změn – kódové bloky nesmí",
+        "být upravené ani zkrácené. Pokud to nepomůže, dejte nám vědět; doplníme to ručně.",
     ])
 
 
