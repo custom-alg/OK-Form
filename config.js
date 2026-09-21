@@ -25,13 +25,13 @@ export default {
   },
 
   // --- Hlasující ---
-  clenoveJmeno: ["Peta Simcak outlook", "petr gmail", "petr seznam"],
+  clenoveJmeno: ["Peta outlook", "petr gmail", "petr seznam"],
   clenoveMail: ["peta.simcak@outlook.cz", "peta.simcak@gmail.com", "peta-simcak@seznam.cz"],
 
   // --- Lístek 1: stav poolu témat (určuje, kolik vyřazení musí doprovázet zařazení) ---
   pool: {
-    akcie:     { aktualne: 6, max: 10, min: 3 },
-    dluhopisy: { aktualne: 5, max: 10, min: 3 },
+    akcie:     { aktualne: 6, max: 10, min: 3, poleZarazeni: 2, poleVyrazeni: 2 },
+    dluhopisy: { aktualne: 5, max: 10, min: 3, poleZarazeni: 2, poleVyrazeni: 2 },
   },
 
   // --- Lístek 2: dostupná témata k prioritizaci ---
