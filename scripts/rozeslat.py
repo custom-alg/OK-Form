@@ -43,7 +43,6 @@ def telo_pozvanky(jmeno: str, odkazy: list[tuple[str, str]], nazev: str,
         "1️⃣ otevřete odkaz, vyplňte formulář a klikněte na „Odevzdat lístek“.",
         "2️⃣ Zobrazí se zpráva – klikněte na „Zkopírovat zprávu“, v tomto e-mailu",
         "3️⃣ dejte „Odpovědět“, zprávu vložte do odpovědi a odešlete.",
-        "Každý formulář se odevzdává zvlášť, vlastní odpovědí.",
         "⚠️ Text ve zprávě prosím neupravujte, čte ho automat, který odpovědi sbírá.",
         "Přijetí Vám potvrdíme zpět e-mailem.",
         "",
@@ -56,12 +55,15 @@ def main() -> None:
     nazev = os.environ.get("NAZEV") or "Hlasování investičního výboru"
     termin = (os.environ.get("TERMIN") or "").strip()
     poznamka = (os.environ.get("POZNAMKA") or "").strip()
-    formulare = [t.strip() for t in (os.environ.get("FORMULARE") or "navrhy,priority,hlavni").split(",")]
+    formulare = [t.strip() for t in (os.environ.get("FORMULARE") or "navrhy").split(",")]
     formulare = [t for t in formulare if t in s.TYPY]
     zakladni_url = (os.environ.get("PAGES_URL") or "").rstrip("/")
 
     if not formulare:
         raise SystemExit("Nebyl vybrán žádný formulář.")
+    if len(formulare) > 1:
+        raise SystemExit("Kolo smí obsahovat jen jeden formulář - každý se rozesílá zvlášť. "
+                         "Další formulář rozešlete po uzavření tohoto kola.")
     if not zakladni_url:
         raise SystemExit("Chybí proměnná PAGES_URL (adresa publikované stránky).")
 

@@ -214,13 +214,39 @@ def _list_prehled(wb: Workbook, kolo: dict) -> None:
     ws.freeze_panes = "A5"
 
 
+_ZAKLADNI = {"Timestamp", "Email Address", "Jméno a příjmení"}
+
+
+def _rozvrh_navrhu(zaznamy: list[dict]) -> tuple[dict, str | None]:
+    """
+    Počet polí u návrhů určuje nastavení kola (může být jiný než 2+2 na třídu aktiv).
+    Když se hlavičky z lístků liší od pevného rozvržení modelu (E–L), sloupce se
+    poskládají podle hlaviček a vrátí se upozornění, že je třeba upravit model.
+    """
+    zaklad = ROZVRZENI["navrhy"]
+    hlavicky: list[str] = []
+    for z in zaznamy:
+        for h, _ in z["pary"]:
+            if h not in _ZAKLADNI and h not in hlavicky:
+                hlavicky.append(h)
+    if not hlavicky or set(hlavicky) <= {k for _, _, k in zaklad["sloupce"]}:
+        return zaklad, None
+    sloupce = list(zaklad["sloupce"][:3]) + [
+        (get_column_letter(5 + i), h, h) for i, h in enumerate(hlavicky)]
+    rozvrh = dict(zaklad, sloupce=sloupce)
+    return rozvrh, ("Témata – návrhy: počet polí se liší od rozvržení modelu (sloupce E–L). "
+                    f"List obsahuje sloupce E–{sloupce[-1][0]}; rozsahy v modelu je třeba upravit.")
+
+
 def _list_bloku(wb: Workbook, kolo: dict, slozka: Path, typ: str) -> list[str]:
     """Vytvoří list v rozvržení modelu. Vrací seznam varování."""
-    rozvrh = ROZVRZENI[typ]
-    ws = wb.create_sheet(rozvrh["list"])
-    varovani: list[str] = []
-
     vsechny = sorted(_zaznamy(slozka, typ), key=lambda z: z["i"])
+    rozvrh, poznamka = ROZVRZENI[typ], None
+    if typ == "navrhy":
+        rozvrh, poznamka = _rozvrh_navrhu(vsechny)
+    ws = wb.create_sheet(rozvrh["list"])
+    varovani: list[str] = [poznamka] if poznamka else []
+
     zaznamy = vsechny[:KAPACITA]
     if len(vsechny) > KAPACITA:
         varovani.append(

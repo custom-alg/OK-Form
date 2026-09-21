@@ -72,7 +72,7 @@ img { max-width:100%; }
           <div style="background:var(--card); border:1px solid var(--line); border-top:2px solid var(--text); padding:24px; display:flex; flex-direction:column; gap:12px;">
             <div style="font-size:11px; font-weight:800; color:var(--red); letter-spacing:.1em;">FORMULÁŘ 1</div>
             <div style="font-family:var(--font-heading); font-weight:800; font-size:20px;">Témata - návrhy</div>
-            <div style="font-size:14px; color:var(--muted); flex:1; text-wrap:pretty;">Návrhy na zařazení a vyřazení témat pro akcie a dluhopisy. Až 2 návrhy na třídu aktiv; každé zařazení musí doprovázet vyřazení.</div>
+            <div style="font-size:14px; color:var(--muted); flex:1; text-wrap:pretty;">Návrhy na zařazení a vyřazení témat pro akcie a dluhopisy. Počet polí určuje nastavení kola; pool nesmí překročit maximum ani klesnout pod minimum.</div>
             <button onClick="{{ goB1 }}" style="background:var(--red); color:#fff; border:none; padding:12px 20px; font-size:15px; font-weight:700; cursor:pointer; text-align:left; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">{{ lbl1 }}</button>
             <sc-if value="{{ maZ1 }}" hint-placeholder-val="{{ false }}">
               <button onClick="{{ zobrazZ1 }}" style="background:none; color:var(--green); border:none; padding:2px 0; font-size:13px; font-weight:700; cursor:pointer; text-align:left;">✓ Lístek odevzdán - zobrazit zprávu k odeslání</button>
@@ -137,7 +137,7 @@ img { max-width:100%; }
           <details style="font-size:14px; color:var(--muted);">
             <summary style="cursor:pointer; font-weight:600; color:var(--text);">Pravidla hlasování</summary>
             <div style="padding-top:10px; display:grid; gap:8px; text-wrap:pretty;">
-              <div>Každý hlasující může navrhnout až 2 témata ke každé třídě aktiv. Každý návrh na zařazení musí být doprovázen jedním návrhem na vyřazení - výjimkou je pool, který ještě nedosáhl maxima.</div>
+              <div>{{ navrhyLimit }} Každý návrh na zařazení musí být doprovázen jedním návrhem na vyřazení - výjimkou je pool, který ještě nedosáhl maxima.</div>
               <div>{{ poolPravidlo }} Do každého pole uveďte vždy jen jedno téma.</div>
               <div>Pokud nenavrhujete žádné téma, odešlete lístek nevyplněný - v archivu se tak odliší chybějící hlas od neutrálního.</div>
             </div>
@@ -435,19 +435,20 @@ img { max-width:100%; }
 // Dvojice jdou do kódového bloku v e-mailu; sběrací skript z nich sestaví CSV/XLSX (formát exportu Google Forms).
 // ================================================================
 const CSV_SPECS = {
-  navrhy: (s, k) => [
-    ["Timestamp", razitko()],
-    ["Email Address", s.email],
-    ["Jméno a příjmení", s.jmeno],
-    ["AKCIE - ZAŘAZENÍ NOVÉHO TÉMATU č. 1", s.b1.az1],
-    ["AKCIE - ZAŘAZENÍ NOVÉHO TÉMATU č. 2", s.b1.az2],
-    ["AKCIE - VYŘAZENÍ STÁVAJÍCÍHO TÉMATU č. 1", s.b1.av1],
-    ["AKCIE - VYŘAZENÍ STÁVAJÍCÍHO TÉMATU č. 2", s.b1.av2],
-    ["DLUHOPISY - ZAŘAZENÍ NOVÉHO TÉMATU č. 1", s.b1.dz1],
-    ["DLUHOPISY - ZAŘAZENÍ NOVÉHO TÉMATU č. 2", s.b1.dz2],
-    ["DLUHOPISY - VYŘAZENÍ STÁVAJÍCÍHO TÉMATU č. 1", s.b1.dv1],
-    ["DLUHOPISY - VYŘAZENÍ STÁVAJÍCÍHO TÉMATU č. 2", s.b1.dv2],
-  ],
+  navrhy: (s, k) => {
+    const pole = (arr, n) => Array.from({ length: n }, (_, i) => (arr[i] || "").trim());
+    const blok = (trida, pref, p) => [
+      ...pole(s.b1[pref + "z"], poleZar(p)).map((v, i) => [trida + " - ZAŘAZENÍ NOVÉHO TÉMATU č. " + (i + 1), v]),
+      ...pole(s.b1[pref + "v"], poleVyr(p)).map((v, i) => [trida + " - VYŘAZENÍ STÁVAJÍCÍHO TÉMATU č. " + (i + 1), v]),
+    ];
+    return [
+      ["Timestamp", razitko()],
+      ["Email Address", s.email],
+      ["Jméno a příjmení", s.jmeno],
+      ...blok("AKCIE", "a", k.pool.akcie),
+      ...blok("DLUHOPISY", "d", k.pool.dluhopisy),
+    ];
+  },
   priority: (s, k) => [
     ["Timestamp", razitko()],
     ["Email Address", s.email],
@@ -496,7 +497,21 @@ function koloZUrl() {
 }
 
 const DRAFT_KEY = "bc-hlasovani-draft-v1";
-const EMPTY_B1 = { az1:"", az2:"", av1:"", av2:"", dz1:"", dz2:"", dv1:"", dv2:"" };
+// Lístek 1: pole jsou seznamy (zařazení / vyřazení, zvlášť akcie a dluhopisy); jejich počet určuje config.
+const EMPTY_B1 = () => ({ az:[], av:[], dz:[], dv:[] });
+const POCET_POLI = 2;   // záloha, když config počty polí neuvádí (starší config.js)
+const poleZar = (p) => Math.max(0, parseInt(p && p.poleZarazeni, 10) || 0) || POCET_POLI;
+const poleVyr = (p) => Math.max(0, parseInt(p && p.poleVyrazeni, 10) || 0) || POCET_POLI;
+// Starý koncept měl pevná pole az1, az2, av1 ... - převedeme na seznamy.
+function b1ZKonceptu(b) {
+  const nove = EMPTY_B1();
+  if (!b || typeof b !== "object") return nove;
+  ["az", "av", "dz", "dv"].forEach(k => {
+    if (Array.isArray(b[k])) nove[k] = b[k].map(x => String(x == null ? "" : x));
+    else nove[k] = [b[k + "1"], b[k + "2"]].filter(x => x != null).map(String);
+  });
+  return nove;
+}
 // ---- Směrování přes URL hash (funguje na statickém hostingu, umožňuje tlačítko Zpět) ----
 // Každé zobrazení má vlastní hash → vlastní záznam v historii prohlížeče.
 const VIEW_HASH = { home:"#/", b1:"#/temata-navrhy", b2:"#/temata-priority", b3:"#/hlavni-cast", done:"#/hotovo" };
@@ -508,7 +523,7 @@ const K_FALLBACK = { vysledkyEmail:"", nextcloudOdkaz:"", sberRezim:"email", csv
   temataAkcie:[], temataDluhopisy:[], maxPriorit:5, skala:["- - -","- -","-","N","+","+ +","+ + +"], sekceHlavni:[] };
 
 class Component extends DCLogic {
-  state = { k:null, rezim:"block", view:"home", theme:"light", email:"", jmeno:"", b1:{...EMPTY_B1}, rankA:[], rankD:[], ratings:{},
+  state = { k:null, rezim:"block", view:"home", theme:"light", email:"", jmeno:"", b1:EMPTY_B1(), rankA:[], rankD:[], ratings:{},
             odevzdano:{}, posledni:"", zkopirovano:false,
             tok:"", koloUrl:"", tokenOk:null, kolo:null, koloNacteno:false };
 
@@ -541,7 +556,7 @@ class Component extends DCLogic {
       const zTokenu = (ti >= 0 && k.clenoveJmeno[ti])
         ? { jmeno: k.clenoveJmeno[ti], email: k.clenoveMail[ti] || "" } : {};
       this.setState({ k, rezim: k.validaceRezim, theme, view, tok, koloUrl, odevzdano, posledni,
-        ...(draft ? { email:draft.email||"", jmeno:draft.jmeno||"", b1:{...EMPTY_B1, ...draft.b1}, rankA:draft.rankA||[], rankD:draft.rankD||[], ratings:draft.ratings||{} } : {}),
+        ...(draft ? { email:draft.email||"", jmeno:draft.jmeno||"", b1:b1ZKonceptu(draft.b1), rankA:draft.rankA||[], rankD:draft.rankD||[], ratings:draft.ratings||{} } : {}),
         ...zTokenu });
       this.nactiKolo(tok, ti);
     });
@@ -598,9 +613,9 @@ class Component extends DCLogic {
   }
 
   // ---- lístek 1 ----
-  b1Trida(zKeys, vKeys, pool) {
-    const s = this.state.b1;
-    const z = zKeys.filter(k => s[k].trim()).length, v = vKeys.filter(k => s[k].trim()).length;
+  b1Trida(zArr, vArr, pool) {
+    const neprazdne = (a) => (a || []).filter(x => String(x).trim()).length;
+    const z = neprazdne(zArr), v = neprazdne(vArr);
     const po = pool.aktualne + z - v;
     if (po > pool.max) return { ok:false, stav:"Chybí návrh na vyřazení (" + (po - pool.max) + "×)" };
     if (po < pool.min) return { ok:false, stav:"Pool by klesl pod minimum " + pool.min + " témat" };
@@ -803,9 +818,18 @@ class Component extends DCLogic {
     const blokovat = st.rezim === "block";
 
     // lístek 1
-    const ak = this.b1Trida(["az1","az2"], ["av1","av2"], k.pool.akcie);
-    const dl = this.b1Trida(["dz1","dz2"], ["dv1","dv2"], k.pool.dluhopisy);
-    const b1Pole = (key, label) => ({ label, value: st.b1[key], onChange: (e) => this.setState(s => ({ b1: { ...s.b1, [key]: e.target.value } })) });
+    const ak = this.b1Trida(st.b1.az, st.b1.av, k.pool.akcie);
+    const dl = this.b1Trida(st.b1.dz, st.b1.dv, k.pool.dluhopisy);
+    // Počet polí určuje nastavení (pool.<třída>.poleZarazeni / poleVyrazeni).
+    const b1Pole = (key, n, predpona) => Array.from({ length: n }, (_, i) => ({
+      label: predpona + " č. " + (i + 1),
+      value: st.b1[key][i] || "",
+      onChange: (e) => { const hodnota = e.target.value; this.setState(s => {
+        const a = [...(s.b1[key] || [])]; while (a.length <= i) a.push(""); a[i] = hodnota;
+        return { b1: { ...s.b1, [key]: a } }; }); },
+    }));
+    const lim = (t, p) => t + ": až " + poleZar(p) + " témat k zařazení a až " + poleVyr(p) + " k vyřazení";
+    const navrhyLimit = "Počet návrhů je omezen (" + lim("akcie", k.pool.akcie) + "; " + lim("dluhopisy", k.pool.dluhopisy) + ").";
     const chip = (r) => ({ stavBg: r.ok ? "var(--greenbg)" : "var(--redbg)", stavFg: r.ok ? "var(--green)" : "var(--red)" });
     const pi = (p) => "Pool: aktuálně " + p.aktualne + " · min " + p.min + " · max " + p.max;
     const poolPravidlo = "Pool akcií musí obsahovat minimálně " + k.pool.akcie.min + " a maximálně " + k.pool.akcie.max
@@ -873,15 +897,15 @@ class Component extends DCLogic {
 
       b1Skupiny: [
         { titul: "AKCIE - NÁVRHY", poolInfo: pi(k.pool.akcie), ...chip(ak), stav: ak.stav,
-          pridat: [b1Pole("az1", "Nové téma č. 1"), b1Pole("az2", "Nové téma č. 2")],
-          vyradit: [b1Pole("av1", "Stávající téma č. 1"), b1Pole("av2", "Stávající téma č. 2")] },
+          pridat: b1Pole("az", poleZar(k.pool.akcie), "Nové téma"),
+          vyradit: b1Pole("av", poleVyr(k.pool.akcie), "Stávající téma") },
         { titul: "DLUHOPISY - NÁVRHY", poolInfo: pi(k.pool.dluhopisy), ...chip(dl), stav: dl.stav,
-          pridat: [b1Pole("dz1", "Nové téma č. 1"), b1Pole("dz2", "Nové téma č. 2")],
-          vyradit: [b1Pole("dv1", "Stávající téma č. 1"), b1Pole("dv2", "Stávající téma č. 2")] },
+          pridat: b1Pole("dz", poleZar(k.pool.dluhopisy), "Nové téma"),
+          vyradit: b1Pole("dv", poleVyr(k.pool.dluhopisy), "Stávající téma") },
       ],
       b1Dis: !b1Ok, b1BtnBg: btn(b1Ok).bg, b1BtnCur: btn(b1Ok).cur, b1Hint: hint(b1Ok, b1Chybi), b1HintFg: b1Ok ? "var(--green)" : "var(--muted)",
       submitB1: () => this.odevzdat("navrhy"),
-      clearB1: () => this.setState({ b1: { ...EMPTY_B1 } }),
+      clearB1: () => this.setState({ b1: EMPTY_B1() }),
 
       akcieAvail: k.temataAkcie.map(t => this.availItem("A", t)),
       dluhAvail: k.temataDluhopisy.map(t => this.availItem("D", t)),
@@ -905,7 +929,7 @@ class Component extends DCLogic {
       submitB3: () => this.odevzdat("hlavni"),
       clearB3: () => this.setState({ ratings: {} }),
 
-      poolPravidlo,
+      poolPravidlo, navrhyLimit,
       ...this.banner(),
       ...this.doneVals(),
     };

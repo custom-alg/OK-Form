@@ -221,7 +221,9 @@
     <div class="kicker">LÍSTEK 1 — NÁVRHY</div>
     <h2>Stav poolu témat</h2>
     <p class="hint">Určuje, kolik vyřazení musí doprovázet zařazení nového tématu.
-      Je-li pool plný (aktuálně = max), zařazení bez vyřazení nejde odeslat.</p>
+      Je-li pool plný (aktuálně = max), zařazení bez vyřazení nejde odeslat.
+      „Polí k zařazení / vyřazení“ určuje, kolik políček pro nová a stávající témata
+      hlasující u dané třídy uvidí (podle obrázku s aktuálními tématy).</p>
     <div class="rada">
       <div class="sekce-box">
         <h3>Akcie</h3>
@@ -230,6 +232,10 @@
           <label>Maximum<input type="number" id="c-pool-akcie-max" min="1" max="99"></label>
           <label>Minimum<input type="number" id="c-pool-akcie-min" min="0" max="99"></label>
         </div>
+        <div class="rada">
+          <label>Polí k zařazení<input type="number" id="c-pool-akcie-poleZarazeni" min="1" max="30"></label>
+          <label>Polí k vyřazení<input type="number" id="c-pool-akcie-poleVyrazeni" min="1" max="30"></label>
+        </div>
       </div>
       <div class="sekce-box">
         <h3>Dluhopisy</h3>
@@ -237,6 +243,10 @@
           <label>Aktuálně<input type="number" id="c-pool-dluhopisy-aktualne" min="0" max="99"></label>
           <label>Maximum<input type="number" id="c-pool-dluhopisy-max" min="1" max="99"></label>
           <label>Minimum<input type="number" id="c-pool-dluhopisy-min" min="0" max="99"></label>
+        </div>
+        <div class="rada">
+          <label>Polí k zařazení<input type="number" id="c-pool-dluhopisy-poleZarazeni" min="1" max="30"></label>
+          <label>Polí k vyřazení<input type="number" id="c-pool-dluhopisy-poleVyrazeni" min="1" max="30"></label>
         </div>
       </div>
     </div>
@@ -334,13 +344,15 @@
       <label>Termín pro vyplnění<input type="text" id="i-termin" placeholder="15. 8. 2026"></label>
     </div>
     <label>Doplňující věta do pozvánky (nepovinné)<input type="text" id="i-poznamka"></label>
-    <label>Formuláře
+    <div class="skupina-formulare">
+      <div style="font-size:14px; font-weight:600; margin-bottom:6px;">Formulář</div>
       <div style="display:flex; gap:18px; flex-wrap:wrap; padding-top:4px; font-weight:400; color:var(--color-text);">
-        <span class="prepinac"><input type="checkbox" class="f" value="navrhy" checked> Témata – návrhy</span>
-        <span class="prepinac"><input type="checkbox" class="f" value="priority" checked> Témata – priority</span>
-        <span class="prepinac"><input type="checkbox" class="f" value="hlavni" checked> Hlavní část</span>
+        <label class="prepinac"><input type="radio" name="formular" class="f" value="navrhy" checked> Témata – návrhy</label>
+        <label class="prepinac"><input type="radio" name="formular" class="f" value="priority"> Témata – priority</label>
+        <label class="prepinac"><input type="radio" name="formular" class="f" value="hlavni"> Hlavní část</label>
       </div>
-    </label>
+      <p class="hint">Každý formulář se rozesílá zvlášť, jako samostatné kolo. Další formulář rozešlete po uzavření předchozího kola.</p>
+    </div>
     <div class="tlacitka"><button class="primar velky" id="b-ok">OK — rozeslat hlasujícím</button></div>
     <div id="z-rozeslat"></div>
   </section>
@@ -610,7 +622,7 @@ function serializuj(c) {
   L.push("  pool: {");
   ["akcie", "dluhopisy"].forEach((k) => {
     const p = c.pool[k];
-    L.push(`    ${k}:${" ".repeat(10 - k.length)}{ aktualne: ${p.aktualne}, max: ${p.max}, min: ${p.min} },`);
+    L.push(`    ${k}:${" ".repeat(10 - k.length)}{ aktualne: ${p.aktualne}, max: ${p.max}, min: ${p.min}, poleZarazeni: ${p.poleZarazeni}, poleVyrazeni: ${p.poleVyrazeni} },`);
   });
   L.push("  },");
   L.push("");
@@ -658,8 +670,9 @@ function vykresliConfig() {
   $("c-validaceRezim").value = c.validaceRezim || "block";
   $("c-darkLightMode").checked = !!c.darkLightMode;
   $("c-nettoSkore").checked = !!c.nettoSkore;
-  ["akcie", "dluhopisy"].forEach((k) => ["aktualne", "max", "min"].forEach((p) => {
-    $(`c-pool-${k}-${p}`).value = c.pool[k][p];
+  ["akcie", "dluhopisy"].forEach((k) => ["aktualne", "max", "min", "poleZarazeni", "poleVyrazeni"].forEach((p) => {
+    // starší config.js počty polí neobsahuje - dřív byla pole vždy dvě
+    $(`c-pool-${k}-${p}`).value = c.pool[k][p] ?? (p.startsWith("pole") ? 2 : "");
   }));
   $("c-maxPriorit").value = c.maxPriorit;
 
@@ -864,8 +877,10 @@ function sesbirej() {
     nettoSkore: $("c-nettoSkore").checked,
     maxPriorit: +$("c-maxPriorit").value || 1,
     pool: {
-      akcie: { aktualne: +$("c-pool-akcie-aktualne").value, max: +$("c-pool-akcie-max").value, min: +$("c-pool-akcie-min").value },
-      dluhopisy: { aktualne: +$("c-pool-dluhopisy-aktualne").value, max: +$("c-pool-dluhopisy-max").value, min: +$("c-pool-dluhopisy-min").value },
+      akcie: { aktualne: +$("c-pool-akcie-aktualne").value, max: +$("c-pool-akcie-max").value, min: +$("c-pool-akcie-min").value,
+               poleZarazeni: +$("c-pool-akcie-poleZarazeni").value, poleVyrazeni: +$("c-pool-akcie-poleVyrazeni").value },
+      dluhopisy: { aktualne: +$("c-pool-dluhopisy-aktualne").value, max: +$("c-pool-dluhopisy-max").value, min: +$("c-pool-dluhopisy-min").value,
+                   poleZarazeni: +$("c-pool-dluhopisy-poleZarazeni").value, poleVyrazeni: +$("c-pool-dluhopisy-poleVyrazeni").value },
     },
   };
 }
@@ -895,6 +910,9 @@ function zkontroluj(c) {
     if (p.min > p.max) chyby.push(`Pool ${k}: minimum je větší než maximum.`);
     if (p.aktualne > p.max) chyby.push(`Pool ${k}: aktuální počet překračuje maximum.`);
     if (p.aktualne < p.min) varovani.push(`Pool ${k}: aktuální počet je pod minimem.`);
+    if (!(p.poleZarazeni >= 1 && p.poleZarazeni <= 30)) chyby.push(`Pool ${k}: počet polí k zařazení musí být 1 až 30.`);
+    if (!(p.poleVyrazeni >= 1 && p.poleVyrazeni <= 30)) chyby.push(`Pool ${k}: počet polí k vyřazení musí být 1 až 30.`);
+    if (p.poleVyrazeni > p.aktualne) varovani.push(`Pool ${k}: polí k vyřazení je víc než témat v poolu (${p.aktualne}).`);
   });
 
   if (c.temataAkcie.length < c.maxPriorit)
@@ -1118,7 +1136,7 @@ async function pockejNaPublikovani(cesta, velikost) {
 // ================================================================
 $("b-ok").onclick = async () => {
   const formulare = [...document.querySelectorAll(".f:checked")].map((x) => x.value);
-  if (!formulare.length) { zprava("z-rozeslat", "Vyberte alespoň jeden formulář.", "chyba"); return; }
+  if (formulare.length !== 1) { zprava("z-rozeslat", "Vyberte právě jeden formulář.", "chyba"); return; }
   if (CFG && zmeneno()) {
     zprava("z-rozeslat", "Máte neuložené změny v Nastavení. Nejdřív je uložte — "
       + "jinak hlasující dostanou lístek podle staré konfigurace.", "chyba");

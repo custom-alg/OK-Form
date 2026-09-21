@@ -8,11 +8,11 @@ on:
         required: true
         default: Hlasování investičního výboru
       formulare:
-        description: Které formuláře rozeslat (čárkou oddělené - navrhy,priority,hlavni)
+        description: Který formulář rozeslat (jen jeden - navrhy | priority | hlavni)
         required: true
-        default: navrhy,priority,hlavni
+        default: navrhy
       termin:
-        description: Termín pro vyplnění (volitelné, např. 5. 8. 2026)
+        description: Termín pro vyplnění (volitelné, např. 13. 4. 2026)
         required: false
         default: ""
       poznamka:
