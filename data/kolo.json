@@ -1,9 +1,9 @@
 {
   "id": "2026-09-21-2",
   "nazev": "Hlasování pokus s maily",
-  "stav": "otevreno",
+  "stav": "uzavreno",
   "otevreno": "2026-09-21T17:44:06Z",
-  "uzavreno": null,
+  "uzavreno": "2026-09-21T17:56:42Z",
   "termin": "21.9.2026",
   "formulare": [
     "navrhy"
