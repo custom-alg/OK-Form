@@ -66,7 +66,7 @@ img { max-width:100%; }
       <div style="display:grid; gap:28px;">
         <div style="display:grid; gap:10px; padding:8px 0 4px;">
           <div style="font-family:var(--font-heading); font-weight:800; font-size:38px; line-height:1.08; letter-spacing:-.015em;">Hlasování investičního výboru</div>
-          <div style="font-size:16px; color:var(--muted); max-width:640px; text-wrap:pretty;">Vyberte hlasovací formulář. Pravidla hlasování jsou kontrolována přímo ve formuláři - neplatný lístek nelze odeslat. Po vyplnění všech formulářů se zobrazí zpráva, kterou zkopírujete do odpovědi na e-mail s pozvánkou.</div>
+          <div style="font-size:16px; color:var(--muted); max-width:640px; text-wrap:pretty;">Vyberte hlasovací formulář. Pravidla hlasování jsou kontrolována přímo ve formuláři - neplatný lístek nelze odeslat. Po odevzdání lístku se zobrazí zpráva, kterou zkopírujete a vložíte do odpovědi na e-mail s pozvánkou.</div>
         </div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:18px;">
           <div style="background:var(--card); border:1px solid var(--line); border-top:2px solid var(--text); padding:24px; display:flex; flex-direction:column; gap:12px;">
@@ -74,28 +74,31 @@ img { max-width:100%; }
             <div style="font-family:var(--font-heading); font-weight:800; font-size:20px;">Témata - návrhy</div>
             <div style="font-size:14px; color:var(--muted); flex:1; text-wrap:pretty;">Návrhy na zařazení a vyřazení témat pro akcie a dluhopisy. Až 2 návrhy na třídu aktiv; každé zařazení musí doprovázet vyřazení.</div>
             <button onClick="{{ goB1 }}" style="background:var(--red); color:#fff; border:none; padding:12px 20px; font-size:15px; font-weight:700; cursor:pointer; text-align:left; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">{{ lbl1 }}</button>
+            <sc-if value="{{ maZ1 }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ zobrazZ1 }}" style="background:none; color:var(--green); border:none; padding:2px 0; font-size:13px; font-weight:700; cursor:pointer; text-align:left;">✓ Lístek odevzdán - zobrazit zprávu k odeslání</button>
+            </sc-if>
           </div>
           <div style="background:var(--card); border:1px solid var(--line); border-top:2px solid var(--text); padding:24px; display:flex; flex-direction:column; gap:12px;">
             <div style="font-size:11px; font-weight:800; color:var(--red); letter-spacing:.1em;">FORMULÁŘ 2</div>
             <div style="font-family:var(--font-heading); font-weight:800; font-size:20px;">Témata - priority</div>
             <div style="font-size:14px; color:var(--muted); flex:1; text-wrap:pretty;">Seřazení témat podle priority přetažením. Priorita 1 má nejvyšší váhu.</div>
             <button onClick="{{ goB2 }}" style="background:var(--red); color:#fff; border:none; padding:12px 20px; font-size:15px; font-weight:700; cursor:pointer; text-align:left; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">{{ lbl2 }}</button>
+            <sc-if value="{{ maZ2 }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ zobrazZ2 }}" style="background:none; color:var(--green); border:none; padding:2px 0; font-size:13px; font-weight:700; cursor:pointer; text-align:left;">✓ Lístek odevzdán - zobrazit zprávu k odeslání</button>
+            </sc-if>
           </div>
           <div style="background:var(--card); border:1px solid var(--line); border-top:2px solid var(--text); padding:24px; display:flex; flex-direction:column; gap:12px;">
             <div style="font-size:11px; font-weight:800; color:var(--red); letter-spacing:.1em;">FORMULÁŘ 3</div>
             <div style="font-family:var(--font-heading); font-weight:800; font-size:20px;">Hlavní část</div>
             <div style="font-size:14px; color:var(--muted); flex:1; text-wrap:pretty;">Rating tříd aktiv a podkategorií na škále - - - až + + +. Součet kontrolních hodnot každé sekce musí být 0.</div>
             <button onClick="{{ goB3 }}" style="background:var(--red); color:#fff; border:none; padding:12px 20px; font-size:15px; font-weight:700; cursor:pointer; text-align:left; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">{{ lbl3 }}</button>
+            <sc-if value="{{ maZ3 }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ zobrazZ3 }}" style="background:none; color:var(--green); border:none; padding:2px 0; font-size:13px; font-weight:700; cursor:pointer; text-align:left;">✓ Lístek odevzdán - zobrazit zprávu k odeslání</button>
+            </sc-if>
           </div>
         </div>
         <div style="border-top:2px solid var(--line); padding-top:16px; display:grid; gap:12px; justify-items:start;">
-          <sc-if value="{{ maOdevzdano }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; font-size:13.5px;">
-              <strong style="font-family:var(--font-heading);">{{ pocetText }}</strong>
-              <button onClick="{{ goDone }}" style="background:var(--chip); color:var(--text); border:1px solid var(--line); padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer;" style-hover="background:color-mix(in srgb, var(--text) 8%, transparent);">{{ doneTlacitko }}</button>
-            </div>
-          </sc-if>
-          <div style="font-size:13px; color:var(--muted); text-wrap:pretty;">Rozpracovaný lístek se automaticky ukládá v tomto prohlížeči. Nic se nestahuje - po odevzdání všech formulářů dostanete jednu zprávu, kterou vložíte do odpovědi na e-mail s pozvánkou.</div>
+          <div style="font-size:13px; color:var(--muted); text-wrap:pretty;">Rozpracovaný lístek se automaticky ukládá v tomto prohlížeči. Nic se nestahuje - po odevzdání dostanete zprávu, kterou vložíte do odpovědi na e-mail s pozvánkou. Každý formulář se odesílá zvlášť.</div>
         </div>
       </div>
     </sc-if>
@@ -107,7 +110,7 @@ img { max-width:100%; }
             <a onClick="{{ goHome }}" style="font-size:13px; font-weight:600; cursor:pointer; text-decoration:none;">← Rozcestník</a>
             <div class="page-title" style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací formulář - témata · návrhy</div>
           </div>
-          <div style="font-size:13px; color:var(--muted);">Lístek 1 / 3</div>
+          <div style="font-size:13px; color:var(--muted);">Formulář 1</div>
         </div>
 
         <div style="background:var(--card); border:1px solid var(--line); padding:22px 24px; display:grid; gap:16px;">
@@ -134,8 +137,8 @@ img { max-width:100%; }
           <details style="font-size:14px; color:var(--muted);">
             <summary style="cursor:pointer; font-weight:600; color:var(--text);">Pravidla hlasování</summary>
             <div style="padding-top:10px; display:grid; gap:8px; text-wrap:pretty;">
-              <div>Každý hlasující může navrhnout až 2 témata ke každé třídě aktiv. Každý návrh na zařazení musí být doprovázen jedním návrhem na vyřazení - výjimkou je nenaplněný pool (méně než 5 témat).</div>
-              <div>Každý pool musí obsahovat minimálně 2 a maximálně 5 témat. Do každého pole uveďte vždy jen jedno téma.</div>
+              <div>Každý hlasující může navrhnout až 2 témata ke každé třídě aktiv. Každý návrh na zařazení musí být doprovázen jedním návrhem na vyřazení - výjimkou je pool, který ještě nedosáhl maxima.</div>
+              <div>{{ poolPravidlo }} Do každého pole uveďte vždy jen jedno téma.</div>
               <div>Pokud nenavrhujete žádné téma, odešlete lístek nevyplněný - v archivu se tak odliší chybějící hlas od neutrálního.</div>
             </div>
           </details>
@@ -144,7 +147,10 @@ img { max-width:100%; }
         <sc-for list="{{ b1Skupiny }}" as="g" hint-placeholder-count="2">
           <div style="background:var(--card); border:1px solid var(--line); padding:22px 24px; display:grid; gap:16px;">
             <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-              <div style="font-weight:800; font-size:13px; letter-spacing:.08em; font-family:var(--font-heading);">{{ g.titul }}</div>
+              <div style="display:grid; gap:3px;">
+                <div style="font-weight:800; font-size:13px; letter-spacing:.08em; font-family:var(--font-heading);">{{ g.titul }}</div>
+                <div style="font-size:12.5px; color:var(--muted);">{{ g.poolInfo }}</div>
+              </div>
               <div style="font-size:12.5px; font-weight:600; padding:5px 12px; background: {{ g.stavBg }}; color: {{ g.stavFg }};">{{ g.stav }}</div>
             </div>
             <div class="form1-cols" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
@@ -189,7 +195,7 @@ img { max-width:100%; }
             <a onClick="{{ goHome }}" style="font-size:13px; font-weight:600; cursor:pointer; text-decoration:none;">← Rozcestník</a>
             <div class="page-title" style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací lístek - témata · priority</div>
           </div>
-          <div style="font-size:13px; color:var(--muted);">Lístek 2 / 3</div>
+          <div style="font-size:13px; color:var(--muted);">Formulář 2</div>
         </div>
 
         <div style="background:var(--card); border:1px solid var(--line); padding:22px 24px; display:grid; gap:16px;">
@@ -297,7 +303,7 @@ img { max-width:100%; }
             <a onClick="{{ goHome }}" style="font-size:13px; font-weight:600; cursor:pointer; text-decoration:none;">← Rozcestník</a>
             <div class="page-title" style="font-family:var(--font-heading); font-weight:800; font-size:30px; letter-spacing:-.015em; margin-top:6px;">Hlasovací lístek - hlavní část</div>
           </div>
-          <div style="font-size:13px; color:var(--muted);">Lístek 3 / 3</div>
+          <div style="font-size:13px; color:var(--muted);">Formulář 3</div>
         </div>
 
         <div style="background:var(--card); border:1px solid var(--line); padding:22px 24px; display:grid; gap:16px;">
@@ -374,32 +380,40 @@ img { max-width:100%; }
     </sc-if>
 
     <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
-      <div style="max-width:680px; margin:40px auto 0; background:var(--card); border:1px solid var(--line); border-top:2px solid var(--green); padding:36px; display:grid; gap:18px;">
-        <div style="width:56px; height:56px; background:var(--greenbg); color:var(--green); display:grid; place-items:center; font-size:26px; font-weight:700;">✓</div>
-        <div style="font-family:var(--font-heading); font-weight:800; font-size:26px; letter-spacing:-.015em;">{{ doneNadpis }}</div>
-        <div style="font-size:14.5px; color:var(--muted); text-wrap:pretty;">{{ doneText }}</div>
-        <div style="display:grid; gap:0; border:1px solid var(--line);">
-          <sc-for list="{{ doneRadky }}" as="r" hint-placeholder-count="3">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:11px 14px; border-bottom:1px solid var(--line);">
-              <span style="font-weight:600; font-size:14px;">{{ r.nazev }}</span>
-              <span style="display:flex; align-items:center; gap:12px;">
-                <span style="font-size:12.5px; font-weight:700; padding:4px 10px; background: {{ r.bg }}; color: {{ r.fg }};">{{ r.stav }}</span>
-                <button onClick="{{ r.jdi }}" style="background:var(--chip); color:var(--text); border:1px solid var(--line); padding:6px 12px; font-size:13px; font-weight:600; cursor:pointer;" style-hover="background:color-mix(in srgb, var(--text) 8%, transparent);">{{ r.label }}</button>
-              </span>
-            </div>
-          </sc-for>
+      <div style="max-width:680px; margin:40px auto 0; background:var(--card); border:1px solid var(--line); border-top:2px solid var(--green); padding:36px; display:grid; gap:20px;">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div style="flex:none; width:52px; height:52px; background:var(--greenbg); color:var(--green); display:grid; place-items:center; font-size:24px; font-weight:700;">✓</div>
+          <div style="display:grid; gap:2px;">
+            <div style="font-family:var(--font-heading); font-weight:800; font-size:26px; letter-spacing:-.015em;">Lístek odevzdán</div>
+            <div style="font-size:14px; color:var(--muted);">{{ doneForm }}</div>
+          </div>
         </div>
-        <sc-if value="{{ vseHotovo }}" hint-placeholder-val="{{ false }}">
-          <div style="display:grid; gap:12px; border-top:1px solid var(--line); padding-top:18px;">
-            <div style="font-weight:800; font-size:13px; letter-spacing:.08em; font-family:var(--font-heading);">ZPRÁVA K ODESLÁNÍ</div>
-            <ol style="margin:0; padding-left:20px; font-size:14px; color:var(--muted); display:grid; gap:4px;">
-              <li>Klikněte na Zkopírovat zprávu.</li>
-              <li>Otevřete e-mail s pozvánkou a dejte Odpovědět.</li>
-              <li>Vložte zprávu do těla e-mailu a odešlete. Text neupravujte.</li>
-            </ol>
-            <div style="font-family:ui-monospace, monospace; font-size:11px; line-height:1.5; background:var(--field); border:1px solid var(--line); padding:12px; max-height:260px; overflow:auto; word-break:break-all; white-space:pre-wrap; user-select:all;">{{ zpravaText }}</div>
-            <button onClick="{{ copyZprava }}" style="background:var(--red); color:#fff; border:none; padding:14px 26px; font-size:15px; font-weight:700; cursor:pointer; justify-self:start; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">{{ copyLabel }}</button>
-            <div style="font-size:13px; color:var(--muted); text-wrap:pretty;">Přijetí Vám potvrdíme zpět e-mailem. Pokud později některý formulář opravíte, zkopírujte a odešlete zprávu znovu - nová odpověď nahradí původní.</div>
+        <div style="background:var(--chip); border-left:4px solid var(--red); padding:14px 16px; font-size:14.5px; text-wrap:pretty;"><strong>Ještě není hotovo.</strong> Lístek se započítá až po odeslání e-mailem - zkopírujte zprávu a pošlete ji jako odpověď na pozvánku.</div>
+        <ol style="margin:0; padding-left:22px; font-size:14.5px; display:grid; gap:6px;">
+          <li>Klikněte na <strong>Zkopírovat zprávu</strong>.</li>
+          <li>Otevřete e-mail s pozvánkou a klikněte na <strong>Odpovědět</strong>.</li>
+          <li>Zprávu vložte do odpovědi a odešlete. Text neupravujte.</li>
+        </ol>
+        <div style="display:grid; gap:12px;">
+          <div style="font-family:ui-monospace, monospace; font-size:11px; line-height:1.5; background:var(--field); border:1px solid var(--line); padding:12px; max-height:200px; overflow:auto; word-break:break-all; white-space:pre-wrap; user-select:all;">{{ zpravaText }}</div>
+          <button onClick="{{ copyZprava }}" style="background:var(--red); color:#fff; border:none; padding:14px 26px; font-size:15px; font-weight:700; cursor:pointer; justify-self:start; font-family:var(--font-heading);" style-hover="filter:brightness(.9);">{{ copyLabel }}</button>
+          <div style="font-size:13px; color:var(--muted); text-wrap:pretty;">Přijetí Vám potvrdíme zpět e-mailem. Když formulář později opravíte, odešlete novou zprávu - nahradí původní.</div>
+        </div>
+        <sc-if value="{{ maDalsi }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; gap:10px; border-top:1px solid var(--line); padding-top:18px;">
+            <div style="font-weight:800; font-size:13px; letter-spacing:.08em; font-family:var(--font-heading);">DALŠÍ FORMULÁŘE V TOMTO KOLE</div>
+            <div style="font-size:13px; color:var(--muted);">Každý formulář se odevzdává zvlášť a odesílá vlastním e-mailem.</div>
+            <div style="display:grid; gap:0; border:1px solid var(--line);">
+              <sc-for list="{{ dalsiRadky }}" as="r" hint-placeholder-count="2">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line);">
+                  <span style="font-weight:600; font-size:14px;">{{ r.nazev }}</span>
+                  <span style="display:flex; align-items:center; gap:12px;">
+                    <span style="font-size:12.5px; font-weight:700; padding:4px 10px; background: {{ r.bg }}; color: {{ r.fg }};">{{ r.stav }}</span>
+                    <button onClick="{{ r.jdi }}" style="background:var(--chip); color:var(--text); border:1px solid var(--line); padding:6px 12px; font-size:13px; font-weight:600; cursor:pointer;" style-hover="background:color-mix(in srgb, var(--text) 8%, transparent);">{{ r.label }}</button>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
           </div>
         </sc-if>
         <a onClick="{{ goHome }}" style="font-size:13.5px; font-weight:600; cursor:pointer;">← Zpět na rozcestník</a>
@@ -475,6 +489,11 @@ const FORM_VIEW = { navrhy: "b1", priority: "b2", hlavni: "b3" };
 const VSECHNY_FORMULARE = ["navrhy", "priority", "hlavni"];
 // Odevzdané lístky (kódové bloky) se drží v prohlížeči, aby přežily přechod mezi formuláři i reload.
 const ODEVZDANO_KEY = "bc-hlasovani-odevzdano-v1";
+// Odkaz v pozvánce nese i id kola (?k=...), takže formulář ví, do kterého kola patří,
+// i když se stav kola na GitHub Pages ještě nepřenesl (cache/nasazení trvá řádově minuty).
+function koloZUrl() {
+  try { return new URLSearchParams(location.search).get("k") || ""; } catch (e) { return ""; }
+}
 
 const DRAFT_KEY = "bc-hlasovani-draft-v1";
 const EMPTY_B1 = { az1:"", az2:"", av1:"", av2:"", dz1:"", dz2:"", dv1:"", dv2:"" };
@@ -490,11 +509,12 @@ const K_FALLBACK = { vysledkyEmail:"", nextcloudOdkaz:"", sberRezim:"email", csv
 
 class Component extends DCLogic {
   state = { k:null, rezim:"block", view:"home", theme:"light", email:"", jmeno:"", b1:{...EMPTY_B1}, rankA:[], rankD:[], ratings:{},
-            odevzdano:{}, zkopirovano:false,
-            tok:"", tokenOk:null, kolo:null, koloNacteno:false };
+            odevzdano:{}, posledni:"", zkopirovano:false,
+            tok:"", koloUrl:"", tokenOk:null, kolo:null, koloNacteno:false };
 
   componentDidMount() {
-    import(new URL("./config.js", document.baseURI).href).then(m => {
+    // ?v=čas obchází cache prohlížeče i CDN, aby se změny z administrace projevily hned po nasazení
+    import(new URL("./config.js?v=" + Date.now(), document.baseURI).href).then(m => {
       const k = m.default;
       let theme = this.props.defaultTheme ?? k.defaultTheme, draft = null;
       try {
@@ -504,20 +524,23 @@ class Component extends DCLogic {
       if (!k.darkLightMode) theme = this.props.defaultTheme ?? k.defaultTheme;
       document.body.dataset.theme = theme;
       // Token z pozvánky přebíjí rozepsaný koncept – identitu určuje odkaz.
-      const tok = tokenZUrl();
+      const tok = tokenZUrl(), koloUrl = koloZUrl();
+      // Koncept z jiného kola se zahodí, ať se do nového kola nepřenesou staré odpovědi.
+      if (draft && koloUrl && draft.k && draft.k !== koloUrl) draft = null;
       // Odevzdané lístky patří k tokenu; cizí nebo starý token se ignoruje.
-      let odevzdano = {};
+      let odevzdano = {}, posledni = "";
       try {
         const ul = JSON.parse(localStorage.getItem(ODEVZDANO_KEY) || "null");
-        if (ul && ul.tok === tok && ul.forms) odevzdano = ul.forms;
+        if (ul && ul.tok === tok && ul.forms) { odevzdano = ul.forms; posledni = ul.posledni || ""; }
       } catch (e) {}
+      if (!odevzdano[posledni]) posledni = Object.keys(odevzdano)[0] || "";
       // Stránka "hotovo" dává smysl jen když už něco odevzdáno je.
       let view = viewFromHash();
-      if (view === "done" && !Object.keys(odevzdano).length) { view = "home"; history.replaceState(null, "", location.pathname + location.search); }
+      if (view === "done" && !posledni) { view = "home"; history.replaceState(null, "", location.pathname + location.search); }
       const ti = tok ? parseInt(tok.split(".")[0], 10) : -1;
       const zTokenu = (ti >= 0 && k.clenoveJmeno[ti])
         ? { jmeno: k.clenoveJmeno[ti], email: k.clenoveMail[ti] || "" } : {};
-      this.setState({ k, rezim: k.validaceRezim, theme, view, tok, odevzdano,
+      this.setState({ k, rezim: k.validaceRezim, theme, view, tok, koloUrl, odevzdano, posledni,
         ...(draft ? { email:draft.email||"", jmeno:draft.jmeno||"", b1:{...EMPTY_B1, ...draft.b1}, rankA:draft.rankA||[], rankD:draft.rankD||[], ratings:draft.ratings||{} } : {}),
         ...zTokenu });
       this.nactiKolo(tok, ti);
@@ -537,13 +560,13 @@ class Component extends DCLogic {
     else location.hash = h;
   }
   componentDidUpdate() {
-    const { email, jmeno, b1, rankA, rankD, ratings } = this.state;
-    try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ email, jmeno, b1, rankA, rankD, ratings })); } catch (e) {}
+    const { email, jmeno, b1, rankA, rankD, ratings, koloUrl } = this.state;
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ k: koloUrl, email, jmeno, b1, rankA, rankD, ratings })); } catch (e) {}
   }
 
   // Stav kola je veřejný soubor v repozitáři; token ověříme proti jeho otisku.
   nactiKolo(tok, ti) {
-    fetch(new URL("./data/kolo.json", document.baseURI).href, { cache: "no-store" })
+    fetch(new URL("./data/kolo.json?v=" + Date.now(), document.baseURI).href, { cache: "no-store" })
       .then(r => (r.ok ? r.json() : null))
       .then(kolo => {
         if (!kolo) return;
@@ -559,11 +582,10 @@ class Component extends DCLogic {
       .finally(() => this.setState({ koloNacteno: true }));
   }
 
-  // Formuláře, které kolo vyžaduje (bez načteného kola všechny tři).
-  formulareKola() {
-    const f = this.state.kolo && this.state.kolo.formulare;
-    const ok = (f || []).filter(t => VSECHNY_FORMULARE.includes(t));
-    return ok.length ? ok : VSECHNY_FORMULARE;
+  // Načtený stav kola odpovídá kolu z odkazu (nebo odkaz kolo neuvádí).
+  koloSedi() {
+    const st = this.state;
+    return !!st.kolo && (!st.koloUrl || st.kolo.id === st.koloUrl);
   }
 
   k() { return this.state.k || K_FALLBACK; }
@@ -654,28 +676,34 @@ class Component extends DCLogic {
   }
 
   // ---- Odevzdání ----
-  // Lístek se nikam nestahuje ani neposílá; vznikne z něj kódový blok, který se po
-  // dokončení všech formulářů složí do jedné zprávy ke zkopírování.
+  // Lístek se nikam nestahuje ani neposílá; vznikne z něj kódový blok ve zprávě,
+  // kterou hlasující zkopíruje a vloží do odpovědi na pozvánku. Každý formulář zvlášť.
   odevzdat(typ) {
     const pary = CSV_SPECS[typ](this.state, this.k());
     const odevzdano = { ...this.state.odevzdano, [typ]: this.kodListku(typ, pary) };
-    try { localStorage.setItem(ODEVZDANO_KEY, JSON.stringify({ tok: this.state.tok, forms: odevzdano })); } catch (e) {}
-    this.setState({ odevzdano, zkopirovano: false });
+    try { localStorage.setItem(ODEVZDANO_KEY, JSON.stringify({ tok: this.state.tok, forms: odevzdano, posledni: typ })); } catch (e) {}
+    this.setState({ odevzdano, posledni: typ, zkopirovano: false });
+    this.jdiNa("done");
+  }
+  zobrazZpravu(typ) {
+    const st = this.state;
+    try { localStorage.setItem(ODEVZDANO_KEY, JSON.stringify({ tok: st.tok, forms: st.odevzdano, posledni: typ })); } catch (e) {}
+    this.setState({ posledni: typ, zkopirovano: false });
     this.jdiNa("done");
   }
 
-  // Zpráva pro vložení do odpovědi na pozvánku: krátký text + kódové bloky všech lístků.
-  zprava() {
+  // Zpráva pro vložení do odpovědi na pozvánku: krátký text + kódový blok jednoho lístku.
+  zprava(typ) {
     const st = this.state;
-    const bloky = this.formulareKola().filter(t => st.odevzdano[t]).map(t => st.odevzdano[t]);
-    return "Dobrý den,\n\nposílám vyplněné hlasovací lístky.\n\n" + st.jmeno
-      + "\n\n----- neupravujte text níže, čte ho automat -----\n" + bloky.join("\n") + "\n";
+    if (!typ || !st.odevzdano[typ]) return "";
+    return "Dobrý den,\n\nposílám vyplněný hlasovací lístek (" + FORM_NAZVY[typ] + ").\n\n" + st.jmeno
+      + "\n\n----- neupravujte text níže, čte ho automat -----\n" + st.odevzdano[typ] + "\n";
   }
 
   // Strojově čitelný otisk lístku vkládaný do e-mailu.
   kodListku(typ, pary) {
     const st = this.state;
-    const data = { v:1, k: st.kolo ? st.kolo.id : "", f: typ, t: st.tok,
+    const data = { v:1, k: st.koloUrl || (st.kolo ? st.kolo.id : ""), f: typ, t: st.tok,
                    n: st.jmeno, e: st.email, ts: new Date().toISOString(), p: pary };
     const kod = b64url(new TextEncoder().encode(JSON.stringify(data)));
     return "##OKF/1/" + kod.length + "##\n" + (kod.match(/.{1,76}/g) || []).join("\n") + "\n##/OKF##";
@@ -693,35 +721,31 @@ class Component extends DCLogic {
 
   // Stav odevzdání pro rozcestník a stránku „hotovo“.
   doneVals() {
-    const st = this.state, req = this.formulareKola();
+    const st = this.state, typ = st.posledni;
     const hotovo = (t) => !!st.odevzdano[t];
-    const pocet = req.filter(hotovo).length, vse = pocet === req.length;
-    const stavKola = st.koloNacteno || !!st.kolo;
     const lbl = (t) => hotovo(t) ? "Upravit formulář →" : "Vyplnit formulář →";
+    // Další formuláře kola vypisujeme jen ze stavu, který odpovídá kolu z odkazu.
+    const dalsi = this.koloSedi()
+      ? (st.kolo.formulare || []).filter(t => VSECHNY_FORMULARE.includes(t) && t !== typ) : [];
     return {
       submitLabel: "Odevzdat lístek",
       lbl1: lbl("navrhy"), lbl2: lbl("priority"), lbl3: lbl("hlavni"),
-      maOdevzdano: Object.keys(st.odevzdano).length > 0,
-      pocetText: "Odevzdáno " + pocet + " z " + req.length + " formulářů.",
-      doneTlacitko: vse ? "Zobrazit zprávu k odeslání" : "Zobrazit stav",
-      goDone: () => this.jdiNa("done"),
-      vseHotovo: vse && stavKola,
-      doneNadpis: vse ? "Hotovo - zbývá odeslat e-mail" : "Lístek odevzdán",
-      doneText: vse
-        ? "Všechny formuláře jsou vyplněné. Zkopírujte zprávu níže a vložte ji do odpovědi na e-mail s pozvánkou."
-        : "Odevzdáno " + pocet + " z " + req.length + ". Zpráva k odeslání se zobrazí, jakmile vyplníte všechny formuláře.",
-      doneRadky: req.map(t => ({
+      maZ1: hotovo("navrhy"), maZ2: hotovo("priority"), maZ3: hotovo("hlavni"),
+      zobrazZ1: () => this.zobrazZpravu("navrhy"), zobrazZ2: () => this.zobrazZpravu("priority"), zobrazZ3: () => this.zobrazZpravu("hlavni"),
+      doneForm: (FORM_NAZVY[typ] || "") + (st.jmeno ? " · " + st.jmeno : ""),
+      zpravaText: this.zprava(typ),
+      maDalsi: dalsi.length > 0,
+      dalsiRadky: dalsi.map(t => ({
         nazev: FORM_NAZVY[t],
-        stav: hotovo(t) ? "✓ odevzdáno" : "čeká na vyplnění",
+        stav: hotovo(t) ? "✓ vyplněno" : "nevyplněno",
         bg: hotovo(t) ? "var(--greenbg)" : "var(--chip)",
         fg: hotovo(t) ? "var(--green)" : "var(--muted)",
-        label: hotovo(t) ? "Upravit" : "Vyplnit",
-        jdi: () => this.jdiNa(FORM_VIEW[t]),
+        label: hotovo(t) ? "Zobrazit zprávu" : "Vyplnit →",
+        jdi: () => hotovo(t) ? this.zobrazZpravu(t) : this.jdiNa(FORM_VIEW[t]),
       })),
-      zpravaText: vse ? this.zprava() : "",
       copyLabel: st.zkopirovano ? "Zkopírováno ✓" : "Zkopírovat zprávu",
       copyZprava: () => {
-        const text = this.zprava();
+        const text = this.zprava(st.posledni);
         const hotovoKopie = () => { this.setState({ zkopirovano: true });
           setTimeout(() => this.setState({ zkopirovano: false }), 2500); };
         const zaloha = () => {
@@ -741,6 +765,12 @@ class Component extends DCLogic {
   banner() {
     const st = this.state, kolo = st.kolo;
     const prazdny = { maBanner:false, bannerNadpis:"", bannerText:"", bannerBarva:"var(--line)" };
+    if (kolo && st.koloUrl && kolo.id !== st.koloUrl) {
+      return { maBanner:true, bannerNadpis:"Stav kola se ještě načítá.",
+        bannerText:"Odkaz patří ke kolu " + st.koloUrl + ", web zatím ukazuje kolo " + kolo.id
+          + ". Pokud jste pozvánku dostali před chvílí, počkejte minutu a obnovte stránku. Lístek jde odevzdat i tak.",
+        bannerBarva:"var(--red)" };
+    }
     if (!st.tok) {
       if (kolo && kolo.stav === "uzavreno") {
         return { maBanner:true, bannerNadpis:"Sběr je uzavřen.",
@@ -777,6 +807,10 @@ class Component extends DCLogic {
     const dl = this.b1Trida(["dz1","dz2"], ["dv1","dv2"], k.pool.dluhopisy);
     const b1Pole = (key, label) => ({ label, value: st.b1[key], onChange: (e) => this.setState(s => ({ b1: { ...s.b1, [key]: e.target.value } })) });
     const chip = (r) => ({ stavBg: r.ok ? "var(--greenbg)" : "var(--redbg)", stavFg: r.ok ? "var(--green)" : "var(--red)" });
+    const pi = (p) => "Pool: aktuálně " + p.aktualne + " · min " + p.min + " · max " + p.max;
+    const poolPravidlo = "Pool akcií musí obsahovat minimálně " + k.pool.akcie.min + " a maximálně " + k.pool.akcie.max
+      + " témat (nyní " + k.pool.akcie.aktualne + "), pool dluhopisů minimálně " + k.pool.dluhopisy.min + " a maximálně "
+      + k.pool.dluhopisy.max + " témat (nyní " + k.pool.dluhopisy.aktualne + ").";
     const b1Ok = ak.ok && dl.ok && chybiId.length === 0;
     const b1Chybi = [...chybiId, ...(ak.ok ? [] : ["opravte návrhy u akcií"]), ...(dl.ok ? [] : ["opravte návrhy u dluhopisů"])];
 
@@ -838,10 +872,10 @@ class Component extends DCLogic {
       imgFail: (e) => { e.currentTarget.style.display = "none"; },
 
       b1Skupiny: [
-        { titul: "AKCIE - NÁVRHY", ...chip(ak), stav: ak.stav,
+        { titul: "AKCIE - NÁVRHY", poolInfo: pi(k.pool.akcie), ...chip(ak), stav: ak.stav,
           pridat: [b1Pole("az1", "Nové téma č. 1"), b1Pole("az2", "Nové téma č. 2")],
           vyradit: [b1Pole("av1", "Stávající téma č. 1"), b1Pole("av2", "Stávající téma č. 2")] },
-        { titul: "DLUHOPISY - NÁVRHY", ...chip(dl), stav: dl.stav,
+        { titul: "DLUHOPISY - NÁVRHY", poolInfo: pi(k.pool.dluhopisy), ...chip(dl), stav: dl.stav,
           pridat: [b1Pole("dz1", "Nové téma č. 1"), b1Pole("dz2", "Nové téma č. 2")],
           vyradit: [b1Pole("dv1", "Stávající téma č. 1"), b1Pole("dv2", "Stávající téma č. 2")] },
       ],
@@ -871,6 +905,7 @@ class Component extends DCLogic {
       submitB3: () => this.odevzdat("hlavni"),
       clearB3: () => this.setState({ ratings: {} }),
 
+      poolPravidlo,
       ...this.banner(),
       ...this.doneVals(),
     };

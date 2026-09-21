@@ -35,14 +35,16 @@ def telo_pozvanky(jmeno: str, odkazy: list[tuple[str, str]], nazev: str,
         radky.append(f"Prosíme o vyplnění do {termin}.")
     if poznamka:
         radky += ["", poznamka]
-    radky += ["", "Vaše osobní odkazy (nesdílejte je, identifikují Vás):", ""]
+    radky += ["", "Váš osobní odkaz (nesdílejte jej, identifikuje Vás):", ""]
     for popis, url in odkazy:
         radky += [f"  {popis}:", f"  {url}", ""]
     radky += [
-        "Postup: vyplňte formulář(e) a u každého klikněte na „Odevzdat lístek“.",
-        "Po posledním se zobrazí zpráva – klikněte na „Zkopírovat zprávu“,",
-        "v tomto e-mailu dejte „Odpovědět“, zprávu vložte do těla a odešlete.",
-        "Text ve zprávě prosím neupravujte, čte ho automat, který odpovědi sbírá.",
+        "⚠️ Postup:",
+        "1️⃣ otevřete odkaz, vyplňte formulář a klikněte na „Odevzdat lístek“.",
+        "2️⃣ Zobrazí se zpráva – klikněte na „Zkopírovat zprávu“, v tomto e-mailu",
+        "3️⃣ dejte „Odpovědět“, zprávu vložte do odpovědi a odešlete.",
+        "Každý formulář se odevzdává zvlášť, vlastní odpovědí.",
+        "⚠️ Text ve zprávě prosím neupravujte, čte ho automat, který odpovědi sbírá.",
         "Přijetí Vám potvrdíme zpět e-mailem.",
         "",
         "Děkujeme.",
@@ -94,7 +96,7 @@ def main() -> None:
             "odevzdal": {t: None for t in formulare},
         })
         odkazy = [
-            (s.NAZVY_TYPU[t], f"{zakladni_url}/?t={token}{hash_url[t]}")
+            (s.NAZVY_TYPU[t], f"{zakladni_url}/?t={token}&k={kolo['id']}{hash_url[t]}")
             for t in formulare
         ]
         try:

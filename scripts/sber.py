@@ -99,19 +99,25 @@ def dekoduj(hodnota: str | None) -> str:
 
 
 def telo_zpravy(zprava) -> str:
-    casti = []
+    # Pošta z Gmailu a spol. je multipart/alternative: stejný text je ve verzi plain i HTML.
+    # Kdyby se četly obě, kódový blok by se našel dvakrát a odpověď by se zpracovala dvakrát.
+    # Proto se bere text/plain a HTML jen tehdy, když prostý text chybí.
+    plain, html = [], []
     for cast in zprava.walk():
         if cast.get_content_maintype() == "multipart":
             continue
         if cast.get_content_disposition() == "attachment":
             continue
-        if cast.get_content_type() in ("text/plain", "text/html"):
-            try:
-                casti.append(cast.get_content())
-            except Exception:
-                syrove = cast.get_payload(decode=True) or b""
-                casti.append(syrove.decode(cast.get_content_charset() or "utf-8", "replace"))
-    text = "\n".join(casti)
+        typ = cast.get_content_type()
+        if typ not in ("text/plain", "text/html"):
+            continue
+        try:
+            obsah = cast.get_content()
+        except Exception:
+            syrove = cast.get_payload(decode=True) or b""
+            obsah = syrove.decode(cast.get_content_charset() or "utf-8", "replace")
+        (plain if typ == "text/plain" else html).append(obsah)
+    text = "\n".join(plain) if any(p.strip() for p in plain) else "\n".join(html)
     # HTML pošta: značky pryč, ať zbude čitelný text s kódovým blokem
     text = re.sub(r"<br\s*/?>|</p>|</div>", "\n", text, flags=re.I)
     text = re.sub(r"<[^>]+>", "", text)

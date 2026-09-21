@@ -127,7 +127,7 @@ class ChybnyPayload(Exception):
 
 def najdi_payloady(text: str) -> list[dict]:
     """Vrátí všechny dekódované payloady z těla mailu. Chyby hlásí výjimkou."""
-    out = []
+    out, videno = [], set()
     for m in ZACATEK.finditer(text or ""):
         ocekavana_delka = int(m.group(1))
         cisty = POVOLENE.sub("", m.group(2))
@@ -142,6 +142,10 @@ def najdi_payloady(text: str) -> list[dict]:
         except Exception as e:
             raise ChybnyPayload(f"kód lístku se nepodařilo přečíst ({e})")
         zkontroluj_payload(data)
+        klic = json.dumps(data, sort_keys=True, ensure_ascii=False)
+        if klic in videno:  # stejný blok vložený (nebo citovaný) dvakrát
+            continue
+        videno.add(klic)
         out.append(data)
     return out
 
