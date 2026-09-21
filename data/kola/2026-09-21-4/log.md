@@ -1,0 +1,3 @@
+# pokus prvnim formularem (2026-09-21-4)
+
+- 21.09.2026 18:41 UTC – kolo otevřeno, pozvánky odeslány 3 hlasujícím

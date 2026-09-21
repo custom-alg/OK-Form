@@ -1,36 +1,36 @@
 {
-  "id": "2026-09-21-3",
-  "nazev": "Hlasování pokus s maily",
-  "stav": "uzavreno",
-  "otevreno": "2026-09-21T17:59:15Z",
-  "uzavreno": "2026-09-21T18:08:35Z",
-  "termin": "21.9.2026",
+  "id": "2026-09-21-4",
+  "nazev": "pokus prvnim formularem",
+  "stav": "otevreno",
+  "otevreno": "2026-09-21T18:41:24Z",
+  "uzavreno": null,
+  "termin": "",
   "formulare": [
-    "priority"
+    "navrhy"
   ],
   "hlasujici": [
     {
       "i": 0,
       "jmeno": "Peta Simcak outlook",
-      "token_hash": "eddfba6bc9cdf3e2b67326808fd05483984a74a212d7c538829943a13c6caf1f",
+      "token_hash": "0820d029b4e73c8ea1b2cdf021508a0ae51e8e511866db108f7be3744c5969c2",
       "odevzdal": {
-        "priority": "2026-09-21T18:07:34Z"
+        "navrhy": null
       }
     },
     {
       "i": 1,
-      "jmeno": "petr test",
-      "token_hash": "6d8d7f170e659217373a787df8de964d1cabeab8ec243c3ee611ac9210eaf629",
+      "jmeno": "petr gmail",
+      "token_hash": "43f031d9544dd81f87b5a4ca73afe435f8db4c82e42d935b93b6945294e4b0f8",
       "odevzdal": {
-        "priority": "2026-09-21T18:07:30Z"
+        "navrhy": null
       }
     },
     {
       "i": 2,
-      "jmeno": "petr prace",
-      "token_hash": "e4846b7a74c445f25e4824aa80db4bb58c84d54d574a057580442c0364e4d759",
+      "jmeno": "petr seznam",
+      "token_hash": "8b46310e2bfe7c6053f2a20b8c9067ff54ecdb2b25066b9e73a925775eeaf343",
       "odevzdal": {
-        "priority": "2026-09-21T18:07:26Z"
+        "navrhy": null
       }
     }
   ]
