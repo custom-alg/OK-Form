@@ -1,3 +1,5 @@
 # Pokusne halsovani (2026-09-21)
 
 - 21.09.2026 16:19 UTC – kolo otevřeno, pozvánky odeslány 3 hlasujícím
+- 21.09.2026 16:29 UTC – petr prace vyplnil Témata – návrhy
+- 21.09.2026 16:29 UTC – petr prace vyplnil Témata – návrhy (oprava dřívější odpovědi)
