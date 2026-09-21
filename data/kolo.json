@@ -14,7 +14,7 @@
       "jmeno": "Peta Simcak outlook",
       "token_hash": "eddfba6bc9cdf3e2b67326808fd05483984a74a212d7c538829943a13c6caf1f",
       "odevzdal": {
-        "priority": null
+        "priority": "2026-09-21T18:07:34Z"
       }
     },
     {
@@ -22,7 +22,7 @@
       "jmeno": "petr test",
       "token_hash": "6d8d7f170e659217373a787df8de964d1cabeab8ec243c3ee611ac9210eaf629",
       "odevzdal": {
-        "priority": null
+        "priority": "2026-09-21T18:07:30Z"
       }
     },
     {
@@ -30,7 +30,7 @@
       "jmeno": "petr prace",
       "token_hash": "e4846b7a74c445f25e4824aa80db4bb58c84d54d574a057580442c0364e4d759",
       "odevzdal": {
-        "priority": null
+        "priority": "2026-09-21T18:07:26Z"
       }
     }
   ]
