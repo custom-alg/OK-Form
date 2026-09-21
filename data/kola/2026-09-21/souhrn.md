@@ -1,7 +1,7 @@
 # Souhrn kola 2026-09-21 – Pokusne halsovani
 
 - Otevřeno: 21.09.2026 16:19 UTC
-- Uzavřeno: 21.09.2026 17:28 UTC
+- Uzavřeno: 21.09.2026 17:40 UTC
 - Hlasujících: 3
 - Formuláře: Témata – návrhy
 
