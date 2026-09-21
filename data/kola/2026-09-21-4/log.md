@@ -5,3 +5,4 @@
 - 21.09.2026 18:58 UTC – petr seznam – Témata – návrhy doplněno ručně
 - 21.09.2026 18:58 UTC – petr seznam – Témata – návrhy doplněno ručně
 - 21.09.2026 18:59 UTC – Peta Simcak outlook – Témata – návrhy doplněno ručně
+- 21.09.2026 19:02 UTC – Peta Simcak outlook vyplnil Témata – návrhy (oprava dřívější odpovědi)
