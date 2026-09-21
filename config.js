@@ -25,7 +25,7 @@ export default {
   },
 
   // --- Hlasující ---
-  clenoveJmeno: ["Peta Simcak", "petr test", "petr prace"],
+  clenoveJmeno: ["Peta Simcak outlook", "petr test", "petr prace"],
   clenoveMail: ["peta.simcak@outlook.cz", "peta.simcak@gmail.com", "petr@42prague.com"],
 
   // --- Lístek 1: stav poolu témat (určuje, kolik vyřazení musí doprovázet zařazení) ---
