@@ -35,8 +35,8 @@ export default {
   },
 
   // --- Lístek 2: dostupná témata k prioritizaci ---
-  temataAkcie: ["Polovodiče", "Obrana", "Indie", "Umělá inteligence", "Inovace ve zdravotnictví", "Nukleární energie"],
-  temataDluhopisy: ["Global Enhanced", "Absolute return", "Konvertibilní dluhopisy", "ABS", "pokus"],
+  temataAkcie: ["Polovodiče", "Obrana", "Indie", "Umělá inteligence", "Inovace ve zdravotnictví", "Nukleární energie", "test3", "test4"],
+  temataDluhopisy: ["Global Enhanced", "Absolute return", "Konvertibilní dluhopisy", "ABS", "pokus", "test1", "test2"],
   maxPriorit: 5,
 
   // --- Lístek 3: škála a sekce ---
