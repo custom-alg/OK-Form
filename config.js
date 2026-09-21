@@ -30,7 +30,7 @@ export default {
 
   // --- Lístek 1: stav poolu témat (určuje, kolik vyřazení musí doprovázet zařazení) ---
   pool: {
-    akcie:     { aktualne: 6, max: 10, min: 3, poleZarazeni: 2, poleVyrazeni: 2 },
+    akcie:     { aktualne: 6, max: 10, min: 3, poleZarazeni: 3, poleVyrazeni: 3 },
     dluhopisy: { aktualne: 5, max: 10, min: 3, poleZarazeni: 2, poleVyrazeni: 2 },
   },
 
